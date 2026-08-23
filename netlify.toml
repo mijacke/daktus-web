@@ -1,4 +1,5 @@
-# Dočasná statická coming-soon stránka — publikuje sa koreň repa, bez build kroku.
-# Po pridaní Nuxt scaffoldu túto konfiguráciu nahradí konfigurácia pre Nuxt.
+# Statický build Nuxt 4 — výstup nuxt generate ide do .output/public.
+# Verzia Node sa berie z .nvmrc.
 [build]
-  publish = "."
+  command = "npm run generate"
+  publish = ".output/public"

@@ -8,6 +8,16 @@ Nuxt 4 (Vue 3), animácie GSAP a Lenis, Node.js 24 LTS (Nuxt 4 vyžaduje Node 22
 
 Aktuálne verzie k 23. 8. 2026: Nuxt 4.5.2, Vue 3.5.41, GSAP 3.15.0, Lenis 1.3.26.
 
+## Lokálne spustenie
+
+```bash
+nvm use        # Node 24 podľa .nvmrc
+npm install
+npm run dev    # http://localhost:3000
+```
+
+Ďalšie príkazy: `npm run generate` (statický build do `.output/public`), `npm run lint`, `npm run typecheck`.
+
 ## Vývoj
 
 Vetva `master` je chránená — každá zmena ide cez pull request. Na PR beží CI (lint, typecheck a testy, keď pribudnú) a Netlify vytvorí deploy preview. Detaily v [CONTRIBUTING.md](CONTRIBUTING.md), pravidlá pre AI agentov v [CLAUDE.md](CLAUDE.md).
@@ -18,4 +28,4 @@ Hosting Netlify. Každý merge do vetvy `master` sa automaticky nasadí na produ
 
 ## Stav
 
-Na produkcii je zatiaľ dočasná coming-soon stránka (`index.html` v koreni repa, publikovaná cez `netlify.toml`). Nuxt 4 scaffold pribudne neskôr a nahradí ju.
+Nuxt 4 scaffold je hotový — dočasnú coming-soon stránku teraz renderuje Nuxt (`app/app.vue`). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) pribudne v ďalších PR.
