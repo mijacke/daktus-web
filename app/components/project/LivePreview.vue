@@ -19,7 +19,9 @@ const props = withDefaults(defineProps<{
   device?: PreviewDevice
   /** Tmavá edícia zariadení (space gray / čierny iPhone) — svetlé weby nechávajú striebornú. */
   dark?: boolean
-}>(), { device: 'mac', mobileSrc: undefined, dark: false })
+  /** Farba stavového pruhu iPhonu — má splývať s hlavičkou mobilného webu. */
+  phoneBar?: 'card' | 'blush'
+}>(), { device: 'mac', mobileSrc: undefined, dark: false, phoneBar: 'card' })
 
 defineEmits<{ close: [] }>()
 
@@ -62,7 +64,7 @@ const shell = cva({
     device: {
       mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
       imac: { bottom: '3%', height: '94%', width: '88%' },
-      iphone: { bottom: '3%', height: '86%', width: 'min(60%, 220px)' },
+      iphone: { bottom: '-8%', height: '104%', width: 'min(64%, 245px)' },
     },
     tone: {
       light: {
@@ -264,17 +266,17 @@ const screen = css({
 })
 
 /**
- * Stavový pruh iPhonu — web začína až pod ním ako v Safari,
- * dynamic island sedí v pruhu a neprekrýva hlavičku stránky.
+ * Stavový pruh iPhonu — web začína až pod ním ako v Safari a pruh farebne
+ * splýva s hlavičkou webu. Čas a ikony sedia po stranách dynamic islandu.
  */
 const statusBar = cva({
   base: {
+    position: 'relative',
     flexShrink: 0,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
-    background: 'card',
     transitionProperty: 'height, opacity',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
@@ -283,9 +285,31 @@ const statusBar = cva({
     device: {
       mac: { height: '0px', opacity: 0 },
       imac: { height: '0px', opacity: 0 },
-      iphone: { height: '34px', opacity: 1 },
+      iphone: { height: '32px', opacity: 1 },
+    },
+    tint: {
+      card: { background: 'card' },
+      blush: { background: 'cover.blush' },
     },
   },
+})
+
+const statusTime = css({
+  position: 'absolute',
+  left: '15px',
+  fontSize: '9.5px',
+  fontWeight: 600,
+  letterSpacing: '0.02em',
+  color: 'ink',
+})
+
+const statusIcons = css({
+  position: 'absolute',
+  right: '12px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '3px',
+  color: 'ink',
 })
 
 /** Dynamic island so šošovkou kamery pri pravom okraji. */
@@ -339,8 +363,14 @@ const frame = cva({
         <div :class="barWrap({ device })">
           <BrowserBar :url="domain" mac-controls @close="$emit('close')" />
         </div>
-        <div :class="statusBar({ device })" aria-hidden="true">
+        <div :class="statusBar({ device, tint: phoneBar })" aria-hidden="true">
+          <span :class="statusTime">9:41</span>
           <div :class="island" />
+          <span :class="statusIcons">
+            <svg width="12" height="8" viewBox="0 0 12 8" fill="currentColor"><rect x="0" y="5" width="2" height="3" rx="0.6" /><rect x="3.3" y="3.5" width="2" height="4.5" rx="0.6" /><rect x="6.6" y="2" width="2" height="6" rx="0.6" /><rect x="9.9" y="0.5" width="2" height="7.5" rx="0.6" /></svg>
+            <svg width="11" height="8" viewBox="0 0 11 8" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M1 2.6a6.4 6.4 0 0 1 9 0" stroke-width="1.4" /><path d="M2.7 4.6a4 4 0 0 1 5.6 0" stroke-width="1.4" /><circle cx="5.5" cy="6.7" r="0.9" fill="currentColor" stroke="none" /></svg>
+            <svg width="17" height="9" viewBox="0 0 17 9"><rect x="0.5" y="0.5" width="13.5" height="8" rx="2.2" fill="none" stroke="currentColor" opacity="0.4" /><rect x="2" y="2" width="10.5" height="5" rx="1.1" fill="currentColor" /><path d="M15.7 3.2v2.6" stroke="currentColor" stroke-width="1.1" stroke-linecap="round" opacity="0.4" /></svg>
+          </span>
         </div>
         <div ref="screenEl" :class="screen">
           <iframe

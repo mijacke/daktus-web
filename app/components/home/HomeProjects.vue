@@ -69,6 +69,7 @@ const grid = cva({
           <LivePreview
             src="https://www.paulifotografka.sk/"
             domain="paulifotografka.sk"
+            phone-bar="blush"
             :device="deviceFor(0)"
             @close="active = null"
           />
