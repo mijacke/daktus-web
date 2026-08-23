@@ -7,7 +7,7 @@
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "postinstall": "panda codegen && nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },
@@ -17,10 +17,14 @@
     "nuxt": "^4.5.2",
     "vue": "^3.5.41"
   },
+  "overrides": {
+    "postcss": "^8.5.26"
+  },
   "devDependencies": {
     "@nuxt/eslint": "^1.17.0",
+    "@pandacss/dev": "^1.12.0",
     "eslint": "^10.9.0",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "vue-tsc": "^3.3.11"
   }
 }
