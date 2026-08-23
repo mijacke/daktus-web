@@ -10,10 +10,6 @@ export default defineConfig({
     extend: {
       tokens: { colors, easings, fonts, shadows },
       keyframes: {
-        marquee: {
-          from: { transform: 'translateX(0)' },
-          to: { transform: 'translateX(-50%)' },
-        },
         riseIn: {
           from: { opacity: '0', transform: 'translateY(12px)' },
           to: { opacity: '1', transform: 'none' },
