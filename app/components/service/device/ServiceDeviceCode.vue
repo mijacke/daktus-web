@@ -1,89 +1,82 @@
 <script setup lang="ts">
-import { css, cva } from '~~/styled-system/css'
+import { css } from '~~/styled-system/css'
 
-/** Mini editor kódu — služba „Vývoj softvéru". Hover karty „dopíše" posledný riadok. */
-const LINES = [
-  { tone: 'keyword', width: '52%', indent: false },
-  { tone: 'plain', width: '74%', indent: true },
-  { tone: 'string', width: '58%', indent: true },
-  { tone: 'plain', width: '38%', indent: true },
-] as const
-
-const win = css({
-  border: '1px solid',
-  borderColor: 'hairline.soft',
-  borderRadius: '10px',
-  background: 'dark.panel',
-  overflow: 'hidden',
+/**
+ * Terminál na celú kartu — služba „Vývoj softvéru". Karta sama je tmavá
+ * dlaždica; hover dopíše ďalší riadok behu.
+ */
+const root = css({
+  padding: '16px 22px 6px',
+  display: 'flex',
+  flexDirection: 'column',
 })
 
 const head = css({
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
-  height: '24px',
-  paddingInline: '9px',
+  paddingBottom: '10px',
   borderBottom: '1px solid',
-  borderColor: 'dark.fg/9',
+  borderColor: 'dark.fg/8',
 })
 
 const dot = css({
-  width: '5px',
-  height: '5px',
+  width: '6px',
+  height: '6px',
   borderRadius: 'full',
-  background: 'dark.fg/18',
+  '&:nth-child(1)': { background: 'traffic.red' },
+  '&:nth-child(2)': { background: 'traffic.amber' },
+  '&:nth-child(3)': { background: 'traffic.green' },
 })
 
-const file = css({
+const headTitle = css({
   marginInline: 'auto',
   fontFamily: 'mono',
-  fontSize: '8.5px',
+  fontSize: '9px',
   letterSpacing: '0.05em',
   color: 'dark.dim',
 })
 
-const body = css({ padding: '11px 12px 13px' })
+const lines = css({ paddingTop: '9px' })
 
-const line = cva({
-  base: {
-    height: '6px',
-    borderRadius: '3px',
-    marginTop: '8px',
-    '&:first-child': { marginTop: 0 },
-  },
-  variants: {
-    tone: {
-      keyword: { background: 'accent/80' },
-      plain: { background: 'dark.fg/30' },
-      string: { background: 'mockup.codeString/75' },
-    },
-    indent: {
-      true: { marginLeft: '14%' },
-      false: {},
-    },
-  },
+const line = css({
+  fontFamily: 'mono',
+  fontSize: '11.5px',
+  lineHeight: 1.9,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  color: 'dark.fg/60',
+  '&[data-tone="cmd"]': { color: 'dark.fg/88' },
+  '&[data-tone="ok"]': { _firstLetter: { color: 'accent' } },
 })
 
-const lastRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '5px',
-  marginTop: '8px',
-})
-
-const lastLine = css({
-  height: '6px',
-  width: '12%',
-  borderRadius: '3px',
-  background: 'accent/80',
-  transition: 'width 0.9s {easings.out}',
-  '[data-svc]:hover &': { width: '34%' },
+/** Posledný riadok behu — dopíše sa až na hover karty. */
+const lineNew = css({
+  overflow: 'hidden',
+  maxHeight: 0,
+  opacity: 0,
+  transition: 'max-height 0.45s {easings.out}, opacity 0.35s ease 0.1s',
+  '[data-svc]:hover &': { maxHeight: '24px', opacity: 1 },
   _motionReduce: { transition: 'none' },
 })
 
+const caretRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  height: '22px',
+})
+
+const prompt = css({
+  fontFamily: 'mono',
+  fontSize: '11.5px',
+  color: 'dark.dim',
+})
+
 const caret = css({
-  width: '5px',
-  height: '10px',
+  width: '6px',
+  height: '12px',
   background: 'accent',
   animation: 'caretBlink 1.1s steps(1) infinite',
   _motionReduce: { animation: 'none' },
@@ -91,15 +84,20 @@ const caret = css({
 </script>
 
 <template>
-  <div :class="win" aria-hidden="true">
+  <div :class="root" aria-hidden="true">
     <div :class="head">
       <i :class="dot" /><i :class="dot" /><i :class="dot" />
-      <span :class="file">rezervacie.ts</span>
+      <span :class="headTitle">daktus — zsh</span>
     </div>
-    <div :class="body">
-      <div v-for="(item, index) in LINES" :key="index" :class="line({ tone: item.tone, indent: item.indent })" />
-      <div :class="lastRow">
-        <span :class="lastLine" />
+    <div :class="lines">
+      <div :class="line" data-tone="cmd">$ daktus init crm</div>
+      <div :class="line" data-tone="ok">✓ moduly: rezervácie, faktúry</div>
+      <div :class="line" data-tone="ok">✓ prepojenie na váš proces</div>
+      <div :class="lineNew">
+        <div :class="line" data-tone="ok">✓ pripravené na nasadenie</div>
+      </div>
+      <div :class="caretRow">
+        <span :class="prompt">$</span>
         <span :class="caret" />
       </div>
     </div>

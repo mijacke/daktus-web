@@ -41,10 +41,10 @@ onBeforeUnmount(() => cleanup?.())
 
 const stage = css({
   position: 'absolute',
-  right: 'clamp(30px, 6vw, 130px)',
-  top: 'clamp(150px, 18vh, 230px)',
+  right: 'clamp(52px, 11vw, 215px)',
+  top: 'clamp(170px, 21vh, 265px)',
   zIndex: 1,
-  width: 'clamp(190px, 15vw, 270px)',
+  width: 'clamp(235px, 19vw, 330px)',
   pointerEvents: 'none',
   // objaví sa až po dostavaní hera (sekvencia v HomeHero končí ~2,2 s)
   opacity: 0,
@@ -82,16 +82,17 @@ const ground = css({
 
 // plastelínové odtiene — šalvia z akcentu, telo z clay tónov mockup paliet
 // (stopColor nie je Panda vlastnosť, tokeny preto vždy cez explicitné token())
-const stopSageLight = css({ stopColor: 'color-mix(in srgb, token(colors.accent) 52%, white)' })
+const stopSageLight = css({ stopColor: 'color-mix(in srgb, token(colors.accent) 55%, white)' })
 const stopSage = css({ stopColor: 'token(colors.accent)' })
 const stopSageDeep = css({ stopColor: 'token(colors.accent.deep)' })
 const stopClayLight = css({ stopColor: 'token(colors.mockup.cream)' })
 const stopClay = css({ stopColor: 'token(colors.mockup.clay)' })
 const stopClayDeep = css({ stopColor: 'color-mix(in srgb, token(colors.mockup.clay2) 90%, black)' })
 
-const barSheen = css({ fill: 'white/45' })
-const bowlSheen = css({ stroke: 'white/40' })
 const seam = css({ stroke: 'color-mix(in srgb, token(colors.accent.deep) 55%, black)' })
+
+/** Matné zrno a jamky hmoty — difúzne svetlo cez šum, mieša sa soft-light do tvarov. */
+const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
 </script>
 
 <template>
@@ -109,15 +110,35 @@ const seam = css({ stroke: 'color-mix(in srgb, token(colors.accent.deep) 55%, bl
             <stop offset="0.6" :class="stopClay" />
             <stop offset="1" :class="stopClayDeep" />
           </linearGradient>
+          <!-- ručne miesený okraj: turbulencia jemne zvlní geometriu tvarov -->
+          <filter id="clay-edge" x="-8%" y="-8%" width="116%" height="116%">
+            <feTurbulence type="turbulence" baseFrequency="0.028" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="5.5" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <!-- matný povrch: difúzne svetlo cez šum = jamky a odtlačky, žiadny lesk -->
+          <filter id="clay-bumps">
+            <feTurbulence type="fractalNoise" baseFrequency="0.09" numOctaves="4" seed="11" result="noise" />
+            <feDiffuseLighting in="noise" lighting-color="white" surfaceScale="1.5">
+              <feDistantLight azimuth="235" elevation="55" />
+            </feDiffuseLighting>
+          </filter>
+          <mask id="clay-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="210" height="226">
+            <rect x="30" y="18" width="42" height="190" rx="21" fill="white" />
+            <path d="M 100 39 a 74 74 0 0 1 0 148" stroke="white" stroke-width="44" stroke-linecap="round" />
+          </mask>
         </defs>
-        <!-- drieková tehlička s jemným leskom vytlačeným do hmoty -->
-        <rect x="30" y="18" width="42" height="190" rx="21" fill="url(#clay-body)" />
-        <rect :class="barSheen" x="38" y="27" width="10" height="76" rx="5" opacity="0.55" />
-        <!-- bruško déčka — hrubý šalviový ťah so švom po obvode -->
-        <path d="M 100 39 a 74 74 0 0 1 0 148" stroke="url(#clay-sage)" stroke-width="44" stroke-linecap="round" />
-        <path :class="bowlSheen" d="M 104 53 a 58 58 0 0 1 31 23" stroke-width="9" stroke-linecap="round" opacity="0.6" />
-        <path :class="seam" d="M 143 152 l 23 -13" stroke-width="4" stroke-linecap="round" opacity="0.5" />
-        <path :class="seam" d="M 147 161 l 19 -11" stroke-width="3" stroke-linecap="round" opacity="0.32" />
+        <g filter="url(#clay-edge)">
+          <!-- drieková tehlička -->
+          <rect x="30" y="18" width="42" height="190" rx="21" fill="url(#clay-body)" />
+          <!-- bruško déčka — hrubý šalviový ťah so švom po obvode -->
+          <path d="M 100 39 a 74 74 0 0 1 0 148" stroke="url(#clay-sage)" stroke-width="44" stroke-linecap="round" />
+          <path :class="seam" d="M 143 152 l 23 -13" stroke-width="4" stroke-linecap="round" opacity="0.45" />
+          <path :class="seam" d="M 147 161 l 19 -11" stroke-width="3" stroke-linecap="round" opacity="0.3" />
+          <!-- textúra hmoty cez oba tvary -->
+          <g :class="bumps" mask="url(#clay-mask)">
+            <rect x="0" y="0" width="210" height="226" filter="url(#clay-bumps)" />
+          </g>
+        </g>
       </svg>
     </div>
     <span :class="ground" />
