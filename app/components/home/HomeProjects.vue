@@ -13,7 +13,9 @@ const select = (index: number) => {
 
 const onDocClick = (event: MouseEvent) => {
   if (active.value === null) return
-  if (event.target instanceof Element && !gridEl.value?.contains(event.target)) active.value = null
+  // composedPath namiesto contains(target): pri reálnom kliku Vue stihne
+  // prerenderovať uprostred bublania a target (štít karty) je už odpojený z DOM
+  if (gridEl.value && !event.composedPath().includes(gridEl.value)) active.value = null
 }
 
 onMounted(() => document.addEventListener('click', onDocClick))
@@ -60,7 +62,12 @@ const grid = cva({
           :state="stateFor(0)"
           @select="select(0)"
         >
-          <MockupPauli />
+          <LivePreview
+            src="https://www.paulifotografka.sk/"
+            domain="paulifotografka.sk"
+            :expanded="active === 0"
+            @close="active = null"
+          />
         </ProjectCard>
         <ProjectCard
           name="Aditrade"

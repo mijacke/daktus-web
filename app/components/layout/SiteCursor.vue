@@ -6,6 +6,7 @@ const ballEl = ref<HTMLElement | null>(null)
 const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
+const isHidden = ref(false)
 
 let cleanup: (() => void) | null = null
 
@@ -36,6 +37,8 @@ onMounted(() => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
     isLink.value = !view && !!target?.closest('a, button')
+    // vnútri iframe sa mousemove nešíri — guľka by zamrzla na okraji, radšej zmizne
+    isHidden.value = !!target?.closest('iframe')
   }
   const onOver = (event: MouseEvent) => {
     evalTarget(event.target instanceof Element ? event.target : null)
@@ -91,12 +94,13 @@ const ballStyle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transitionProperty: 'width, height, background',
+  transitionProperty: 'width, height, background, opacity',
   transitionDuration: '0.35s',
   transitionTimingFunction: 'out',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
   '&.is-view': { width: '86px', height: '86px' },
+  '&.is-hidden': { opacity: 0 },
 })
 
 const innerStyle = css({
@@ -111,7 +115,11 @@ const innerStyle = css({
 </script>
 
 <template>
-  <div ref="ballEl" :class="[ballStyle, { 'is-link': isLink, 'is-view': isView }]" aria-hidden="true">
+  <div
+    ref="ballEl"
+    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-hidden': isHidden }]"
+    aria-hidden="true"
+  >
     <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>
   </div>
 </template>
