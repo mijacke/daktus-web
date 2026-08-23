@@ -114,7 +114,7 @@ const chipRow = css({
       :built="built"
       :content-class="coverFill"
       :data-cursor="state === 'active' ? undefined : 'view'"
-      @click="$emit('select')"
+      @click="state !== 'active' && $emit('select')"
     >
       <div :class="coverScale">
         <slot />

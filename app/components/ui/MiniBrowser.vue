@@ -2,10 +2,14 @@
 import { css } from '~~/styled-system/css'
 
 /** Náhľadové okno projektu — vizuálne pripomína natívne okno prehliadača v macOS. */
-defineProps<{
+withDefaults(defineProps<{
   /** Doména projektu vykreslená v adresnom riadku. */
   url: string
-}>()
+  /** Semafor sa správa ako na Macu: glyfy na hover, červené × zatvára. */
+  macControls?: boolean
+}>(), { macControls: false })
+
+defineEmits<{ close: [] }>()
 
 const mini = css({
   position: 'absolute',
@@ -34,14 +38,38 @@ const bar = css({
 const dots = css({
   display: 'inline-flex',
   gap: '7px',
-  '& i': {
+  '& i, & button': {
     width: '10px',
     height: '10px',
     borderRadius: 'full',
+    position: 'relative',
+    border: 'none',
+    padding: 0,
   },
 })
 
-const dotRed = css({ background: 'traffic.red' })
+/** Ako na Macu: glyfy sa objavia pri hoveri nad semaforom. */
+const macDots = css({
+  '& > *::after': {
+    position: 'absolute',
+    inset: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '9px',
+    lineHeight: 1,
+    fontWeight: 700,
+    color: 'ink/65',
+    opacity: 0,
+    transition: 'opacity 0.15s ease',
+  },
+  _hover: { '& > *::after': { opacity: 1 } },
+  '& > *:nth-child(1)::after': { content: '"×"' },
+  '& > *:nth-child(2)::after': { content: '"−"' },
+  '& > *:nth-child(3)::after': { content: '"⤢"', fontSize: '7px' },
+})
+
+const dotRed = css({ background: 'traffic.red', cursor: 'pointer' })
 const dotAmber = css({ background: 'traffic.amber' })
 const dotGreen = css({ background: 'traffic.green' })
 
@@ -72,7 +100,13 @@ const urlPill = css({
 <template>
   <div :class="mini">
     <div :class="bar">
-      <span :class="dots" aria-hidden="true">
+      <span v-if="macControls" :class="[dots, macDots]">
+        <button :class="dotRed" type="button" aria-label="Zavrieť náhľad" @click.stop="$emit('close')" /><i
+          :class="dotAmber"
+          aria-hidden="true"
+        /><i :class="dotGreen" aria-hidden="true" />
+      </span>
+      <span v-else :class="dots" aria-hidden="true">
         <i :class="dotRed" /><i :class="dotAmber" /><i :class="dotGreen" />
       </span>
       <span :class="urlPill">

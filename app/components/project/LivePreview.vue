@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-/** Živý náhľad projektu — reálny web v interaktívnom iframe vnútri macOS okna. */
+/** Živý náhľad projektu — reálny web v macOS okne. Iframe je inertný (bez scrollu a preklikov). */
 defineProps<{
   /** Adresa webu načítaná do iframe. */
   src: string
@@ -10,6 +10,8 @@ defineProps<{
   /** Rozbalená karta — okno aj obsah webu sa zväčšia. */
   expanded?: boolean
 }>()
+
+defineEmits<{ close: [] }>()
 
 // V pokoji okno sedí ako pôvodný mockup (menšie, pri spodku karty),
 // po rozbalení karty narastie takmer na celý cover.
@@ -47,6 +49,8 @@ const frame = cva({
   base: {
     border: 'none',
     transformOrigin: 'top left',
+    // živý náhľad, nie prehliadač: žiadny scroll ani prekliky na podstránky
+    pointerEvents: 'none',
   },
   variants: {
     expanded: {
@@ -58,13 +62,20 @@ const frame = cva({
 </script>
 
 <template>
-  <MiniBrowser :class="shell({ expanded: !!expanded })" :url="domain">
+  <MiniBrowser
+    :class="shell({ expanded: !!expanded })"
+    :url="domain"
+    mac-controls
+    @close="$emit('close')"
+  >
     <div :class="viewport">
       <iframe
         :src="src"
         :class="frame({ expanded: !!expanded })"
         :title="`Náhľad ${domain}`"
         loading="lazy"
+        scrolling="no"
+        tabindex="-1"
       />
     </div>
   </MiniBrowser>

@@ -66,6 +66,7 @@ const grid = cva({
             src="https://www.paulifotografka.sk/"
             domain="paulifotografka.sk"
             :expanded="active === 0"
+            @close="active = null"
           />
         </ProjectCard>
         <ProjectCard
