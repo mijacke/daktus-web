@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cva } from '~~/styled-system/css'
+import { css, cva } from '~~/styled-system/css'
 
 type PreviewDevice = 'mac' | 'imac' | 'iphone'
 
@@ -79,7 +79,7 @@ const body = cva({
     device: {
       mac: { background: 'card', borderColor: 'ink/12', borderRadius: '12px 12px 0 0', padding: '0' },
       imac: { background: 'card', borderColor: 'ink/12', borderRadius: '14px 14px 4px 4px', padding: '0' },
-      iphone: { background: 'device.graphite', borderColor: 'ink/30', borderRadius: '40px 40px 0 0', padding: '10px 10px 0' },
+      iphone: { background: 'device.aluminum', borderColor: 'ink/18', borderRadius: '40px 40px 0 0', padding: '10px 10px 0' },
     },
   },
 })
@@ -117,33 +117,42 @@ const screen = cva({
     device: {
       mac: { borderRadius: '0' },
       imac: { borderRadius: '0' },
-      iphone: { borderRadius: '30px 30px 0 0' },
+      iphone: { borderRadius: '0' },
     },
   },
 })
 
-/** Dynamic island — jediný detail iPhonu, viac rám nepotrebuje. */
-const island = cva({
+/**
+ * Stavový pruh iPhonu — web začína až pod ním ako v Safari,
+ * dynamic island sedí v pruhu a neprekrýva hlavičku stránky.
+ */
+const statusBar = cva({
   base: {
-    position: 'absolute',
-    top: '10px',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    height: '14px',
-    borderRadius: 'full',
-    background: 'device.island',
-    zIndex: 2,
-    transitionProperty: 'opacity, width',
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+    background: 'card',
+    transitionProperty: 'height, opacity, border-radius',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
   },
   variants: {
     device: {
-      mac: { opacity: 0, width: '0' },
-      imac: { opacity: 0, width: '0' },
-      iphone: { opacity: 1, width: '34%' },
+      mac: { height: '0px', opacity: 0, borderRadius: '0' },
+      imac: { height: '0px', opacity: 0, borderRadius: '0' },
+      iphone: { height: '34px', opacity: 1, borderRadius: '30px 30px 0 0' },
     },
   },
+})
+
+/** Dynamic island — jediný detail iPhonu, viac rám nepotrebuje. */
+const island = css({
+  width: '34%',
+  height: '14px',
+  borderRadius: 'full',
+  background: 'device.island',
 })
 
 /** Brada iMacu — hliníkový pás pod displejom. */
@@ -195,8 +204,10 @@ const frame = cva({
       <div :class="barWrap({ device })">
         <BrowserBar :url="domain" mac-controls @close="$emit('close')" />
       </div>
+      <div :class="statusBar({ device })" aria-hidden="true">
+        <div :class="island" />
+      </div>
       <div ref="screenEl" :class="screen({ device })">
-        <div :class="island({ device })" aria-hidden="true" />
         <iframe
           :src="currentSrc"
           :class="frame({ device })"
