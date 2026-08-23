@@ -29,20 +29,11 @@ watch(inView, (visible) => {
 
 onBeforeUnmount(() => clearTimeout(timer))
 
-const card = cva({
-  base: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '18px',
-    transition: 'transform 0.6s {easings.out}',
-  },
-  variants: {
-    state: {
-      idle: {},
-      active: { transform: 'scale(1.03)' },
-      dimmed: { transform: 'scale(0.97)' },
-    },
-  },
+const card = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '18px',
+  minWidth: 0,
 })
 
 const cover = cva({
@@ -103,7 +94,7 @@ const chipRow = css({
 </script>
 
 <template>
-  <article ref="root" :class="[card({ state }), 'group']">
+  <article ref="root" :class="[card, 'group']">
     <BlueprintFrame
       :class="cover({ tone })"
       tag="projekt"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { css } from '~~/styled-system/css'
+import { cva } from '~~/styled-system/css'
 
 const active = ref<number | null>(null)
 const gridEl = ref<HTMLElement | null>(null)
@@ -19,12 +19,23 @@ const onDocClick = (event: MouseEvent) => {
 onMounted(() => document.addEventListener('click', onDocClick))
 onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 
-const grid = css({
-  display: 'grid',
-  gridTemplateColumns: '1.15fr 0.85fr',
-  gap: '34px',
-  marginTop: '60px',
-  '@media (max-width: 860px)': { gridTemplateColumns: '1fr' },
+// Výber karty animuje priamo fr stĺpce gridu — aktívna výrazne narastie,
+// druhá klesne na polovicu svojej šírky a uhne nabok.
+const grid = cva({
+  base: {
+    display: 'grid',
+    gap: '34px',
+    marginTop: '60px',
+    transition: 'grid-template-columns 0.7s {easings.out}',
+    '@media (max-width: 860px)': { gridTemplateColumns: '1fr !important' },
+  },
+  variants: {
+    focus: {
+      none: { gridTemplateColumns: '1.15fr 0.85fr' },
+      first: { gridTemplateColumns: '1.575fr 0.425fr' },
+      second: { gridTemplateColumns: '0.575fr 1.425fr' },
+    },
+  },
 })
 </script>
 
@@ -37,7 +48,10 @@ const grid = css({
           <span :class="sectionLinkIcon"><IconArrow /></span>
         </NuxtLink>
       </SectionHead>
-      <div ref="gridEl" :class="grid">
+      <div
+        ref="gridEl"
+        :class="grid({ focus: active === null ? 'none' : active === 0 ? 'first' : 'second' })"
+      >
         <ProjectCard
           name="Pauli Fotografka"
           description="Portfólio a rezervácie pre rodinnú fotografku"
