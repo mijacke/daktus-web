@@ -163,7 +163,7 @@ const ballStyle = css({
   // žiadne prepínanie blendu, prechod je čisto veľkostný
   '&.is-view': { width: '86px', height: '86px' },
   // solid: nad svetlým krytom neinvertuje — priesvitné tmavé sklo
-  '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink/60', backdropFilter: 'blur(5px)' },
+  '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink/35', backdropFilter: 'blur(3px)' },
   '&.is-hidden': { opacity: 0 },
 })
 
