@@ -49,6 +49,8 @@ export const colors = defineTokens.colors({
     aluminum4: { value: '#8E8F91' },
     silver: { value: '#E2E3E4' },
     silver2: { value: '#C8C9CB' },
+    black: { value: '#76726F' },
+    black2: { value: '#5E5A57' },
     panel: { value: '#010101' },
     island: { value: '#08090B' },
     lens: { value: '#6074BF' },

@@ -62,9 +62,9 @@ const shell = cva({
 })
 
 /**
- * Telo okna/displeja — pozadie, rám a zaoblenie sa menia so zariadením.
- * Proporcie a detaily podľa devices.css (MIT, picturepan2): iPhone má čierne
- * sklo so strieborným kovovým prstencom, iMac strieborný bezel.
+ * Rám zariadenia podľa štruktúry devices.css (MIT, picturepan2): bezel je
+ * rovnomerný padding rámu, obsah je jediná zaoblená obrazovka. Brada iMacu
+ * žije v spodnom paddingu ako pseudo-element.
  */
 const body = cva({
   base: {
@@ -78,6 +78,21 @@ const body = cva({
     transitionProperty: 'border-radius, padding, background-color, border-color, box-shadow',
     transitionDuration: '0.7s',
     transitionTimingFunction: 'out',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      left: '1px',
+      right: '1px',
+      bottom: '1px',
+      height: '0px',
+      opacity: 0,
+      background: 'device.aluminum2',
+      borderRadius: '0 0 17px 17px',
+      boxShadow: 'inset 0 0 18px 0 rgba(0, 0, 0, 0.08)',
+      transitionProperty: 'height, opacity',
+      transitionDuration: '0.7s',
+      transitionTimingFunction: 'out',
+    },
   },
   variants: {
     device: {
@@ -85,23 +100,47 @@ const body = cva({
         background: 'device.aluminum',
         borderColor: 'device.aluminum2',
         borderRadius: '14px',
-        padding: '0',
+        padding: '8px 8px 16px',
         boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
       },
       imac: {
         background: 'device.aluminum',
         borderColor: 'device.aluminum2',
         borderRadius: '18px',
-        padding: '0',
+        padding: '12px 12px 56px',
         boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
+        '&::after': { height: '44px', opacity: 1 },
       },
       iphone: {
-        background: 'device.silver',
-        borderColor: 'device.silver2',
+        background: 'device.panel',
+        borderColor: 'device.black2',
         borderRadius: '38px 38px 0 0',
         padding: '9px 9px 0',
-        boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.6), inset 0 0 0 1px token(colors.device.silver2)',
+        boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.35), inset 0 0 0 6px token(colors.device.black)',
       },
+    },
+  },
+})
+
+/** Obrazovka v ráme — jediný zaoblený obdĺžnik, orezáva lištu aj web. */
+const screenArea = cva({
+  base: {
+    position: 'relative',
+    flex: 1,
+    minHeight: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    overflow: 'hidden',
+    background: 'card',
+    transitionProperty: 'border-radius',
+    transitionDuration: '0.7s',
+    transitionTimingFunction: 'out',
+  },
+  variants: {
+    device: {
+      mac: { borderRadius: '6px' },
+      imac: { borderRadius: '3px' },
+      iphone: { borderRadius: '29px 29px 0 0' },
     },
   },
 })
@@ -110,7 +149,6 @@ const body = cva({
 const camera = cva({
   base: {
     position: 'absolute',
-    top: '3px',
     left: '50%',
     transform: 'translateX(-50%)',
     width: '5px',
@@ -118,15 +156,15 @@ const camera = cva({
     borderRadius: 'full',
     background: 'device.panel',
     zIndex: 3,
-    transitionProperty: 'opacity',
+    transitionProperty: 'opacity, top',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
   },
   variants: {
     device: {
-      mac: { opacity: 1 },
-      imac: { opacity: 1 },
-      iphone: { opacity: 0 },
+      mac: { top: '2px', opacity: 1 },
+      imac: { top: '4px', opacity: 1 },
+      iphone: { top: '2px', opacity: 0 },
     },
   },
 })
@@ -145,9 +183,9 @@ const phoneButtons = cva({
       position: 'absolute',
       width: '3px',
       borderRadius: '2px',
-      background: 'device.silver2',
+      background: 'device.black2',
     },
-    '&::before': { left: '-2px', top: '26%', height: '30px', boxShadow: '0 38px 0 token(colors.device.silver2)' },
+    '&::before': { left: '-2px', top: '26%', height: '30px', boxShadow: '0 38px 0 token(colors.device.black2)' },
     '&::after': { right: '-2px', top: '32%', height: '46px' },
   },
   variants: {
@@ -163,38 +201,26 @@ const barWrap = cva({
   base: {
     flexShrink: 0,
     overflow: 'hidden',
-    transitionProperty: 'height, opacity, margin, border-radius',
+    transitionProperty: 'height, opacity',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
   },
   variants: {
     device: {
-      mac: { height: '38px', opacity: 1, margin: '8px 8px 0', borderRadius: '4px 4px 0 0' },
-      imac: { height: '38px', opacity: 1, margin: '12px 12px 0', borderRadius: '4px 4px 0 0' },
-      iphone: { height: '0px', opacity: 0, margin: '0', borderRadius: '0' },
+      mac: { height: '38px', opacity: 1 },
+      imac: { height: '38px', opacity: 1 },
+      iphone: { height: '0px', opacity: 0 },
     },
   },
 })
 
-const screen = cva({
-  base: {
-    position: 'relative',
-    flex: 1,
-    minHeight: 0,
-    overflow: 'hidden',
-    containerType: 'size',
-    background: 'card',
-    transitionProperty: 'margin',
-    transitionDuration: '0.7s',
-    transitionTimingFunction: 'out',
-  },
-  variants: {
-    device: {
-      mac: { margin: '0 8px 10px' },
-      imac: { margin: '0 12px' },
-      iphone: { margin: '0' },
-    },
-  },
+const screen = css({
+  position: 'relative',
+  flex: 1,
+  minHeight: 0,
+  overflow: 'hidden',
+  containerType: 'size',
+  background: 'card',
 })
 
 /**
@@ -209,15 +235,15 @@ const statusBar = cva({
     justifyContent: 'center',
     overflow: 'hidden',
     background: 'card',
-    transitionProperty: 'height, opacity, border-radius',
+    transitionProperty: 'height, opacity',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
   },
   variants: {
     device: {
-      mac: { height: '0px', opacity: 0, borderRadius: '0' },
-      imac: { height: '0px', opacity: 0, borderRadius: '0' },
-      iphone: { height: '34px', opacity: 1, borderRadius: '26px 26px 0 0' },
+      mac: { height: '0px', opacity: 0 },
+      imac: { height: '0px', opacity: 0 },
+      iphone: { height: '34px', opacity: 1 },
     },
   },
 })
@@ -239,26 +265,6 @@ const island = css({
     height: '6px',
     borderRadius: 'full',
     background: 'radial-gradient(farthest-corner at 30% 30%, token(colors.device.lens), transparent 75%)',
-  },
-})
-
-/** Brada iMacu — tmavší strieborný pás s vnútorným tieňom ako iMac 24". */
-const chin = cva({
-  base: {
-    flexShrink: 0,
-    overflow: 'hidden',
-    background: 'device.aluminum2',
-    boxShadow: 'inset 0 0 18px 0 rgba(0, 0, 0, 0.08)',
-    transitionProperty: 'height, opacity',
-    transitionDuration: '0.7s',
-    transitionTimingFunction: 'out',
-  },
-  variants: {
-    device: {
-      mac: { height: '0px', opacity: 0 },
-      imac: { height: '46px', opacity: 1 },
-      iphone: { height: '0px', opacity: 0 },
-    },
   },
 })
 
@@ -289,24 +295,25 @@ const frame = cva({
     <div :class="phoneButtons({ device })" aria-hidden="true" />
     <div :class="body({ device })">
       <div :class="camera({ device })" aria-hidden="true" />
-      <div :class="barWrap({ device })">
-        <BrowserBar :url="domain" mac-controls @close="$emit('close')" />
+      <div :class="screenArea({ device })">
+        <div :class="barWrap({ device })">
+          <BrowserBar :url="domain" mac-controls @close="$emit('close')" />
+        </div>
+        <div :class="statusBar({ device })" aria-hidden="true">
+          <div :class="island" />
+        </div>
+        <div ref="screenEl" :class="screen">
+          <iframe
+            :src="currentSrc"
+            :class="frame({ device })"
+            :style="phoneFrameStyle"
+            :title="`Náhľad ${domain}`"
+            loading="lazy"
+            scrolling="no"
+            tabindex="-1"
+          />
+        </div>
       </div>
-      <div :class="statusBar({ device })" aria-hidden="true">
-        <div :class="island" />
-      </div>
-      <div ref="screenEl" :class="screen({ device })">
-        <iframe
-          :src="currentSrc"
-          :class="frame({ device })"
-          :style="phoneFrameStyle"
-          :title="`Náhľad ${domain}`"
-          loading="lazy"
-          scrolling="no"
-          tabindex="-1"
-        />
-      </div>
-      <div :class="chin({ device })" aria-hidden="true" />
     </div>
     <DeviceFoot :device="device" />
   </div>
