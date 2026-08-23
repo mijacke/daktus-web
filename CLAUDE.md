@@ -35,6 +35,7 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), štýly Panda CSS (TypeS
 - Vetvy pomenúvaj `feat/...`, `fix/...`, `chore/...`.
 - Commit správy: angličtina, imperatív, stručne (napr. „Add hero animation").
 - Deploy: merge do `master` → produkcia (Netlify), každý PR → deploy preview. Build konfigurácia je v `netlify.toml`.
+- Po každej zmene závislostí regeneruj lockfile načisto (`rm -rf node_modules package-lock.json && npm install`) a over `npm ci` pred pushom — inkrementálny update npm locku rozbíja wasm optional podstrom (`@emnapi/*`) a CI potom padá na EUSAGE.
 - Detaily v [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## Príkazy
