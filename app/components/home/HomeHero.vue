@@ -129,6 +129,7 @@ const ctas = css({
 <template>
   <header :class="[hero, { done }]">
     <div :class="gridBg" />
+    <HeroClayMark />
     <div :class="[wrap, content]">
       <BlueprintFrame :class="eyebrowFrame" tag="značka" :built="built.eyebrow">
         <div :class="eyebrow">
