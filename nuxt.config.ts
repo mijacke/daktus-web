@@ -11,8 +11,8 @@ export default defineNuxtConfig({
   },
   nitro: {
     prerender: {
-      // Podstránky sa prenášajú z prototypu v ďalších PR — crawler ich zatiaľ nemá prerenderovať.
-      ignore: ['/projekty', '/sluzby', '/cennik', '/kontakt'],
+      // Zvyšné podstránky sa prenášajú z prototypu v ďalších PR — crawler ich zatiaľ nemá prerenderovať.
+      ignore: ['/sluzby', '/cennik', '/kontakt'],
     },
   },
   app: {

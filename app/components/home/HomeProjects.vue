@@ -20,20 +20,10 @@ const grid = css({
         </a>
       </SectionHead>
       <div :class="grid">
-        <ProjectCard
-          name="Pauli Fotografka"
-          description="Portfólio a rezervácie pre rodinnú fotografku"
-          tone="blush"
-          :chips="[{ label: 'Webstránka' }, { label: 'Naživo', accent: true }]"
-        >
+        <ProjectCard :project="PAULI">
           <MockupPauli />
         </ProjectCard>
-        <ProjectCard
-          name="Aditrade"
-          description="Web pre špecialistov na nadrozmernú prepravu"
-          tone="steel"
-          :chips="[{ label: 'Webstránka' }, { label: 'Pred spustením', accent: true }]"
-        >
+        <ProjectCard :project="ADITRADE">
           <MockupAditrade />
         </ProjectCard>
       </div>
