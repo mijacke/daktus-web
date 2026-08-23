@@ -44,7 +44,7 @@ onMounted(() => {
   // rozsvecovanie začína hneď pri vstupe a je kompletné, keď text dosiahne polku viewportu
   trigger = ScrollTrigger.create({
     trigger: statementEl.value,
-    start: 'top 90%',
+    start: 'top 80%',
     end: 'top 45%',
     onUpdate: self => (onCount.value = Math.floor(self.progress * words.length)),
   })
