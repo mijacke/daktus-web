@@ -26,3 +26,6 @@ styled-system/
 
 # Graphify (projektová mapa sa generuje lokálne)
 graphify-out/
+
+# Claude worktrees (lokálne pracovné kópie iných sessions)
+.claude/worktrees/
