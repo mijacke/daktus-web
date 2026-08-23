@@ -46,6 +46,38 @@ export const sectionNote = css({
 })
 
 /**
+ * Klipovací obal reveal riadku nadpisu. Padding + záporný margin držia
+ * diakritiku nad verzálkami (Á, É, Č…) vnútri klipu — tesný line-height
+ * nadpisov by ju inak pri overflow: hidden odsekol.
+ */
+export const revealLine = css({
+  display: 'block',
+  overflow: 'hidden',
+  paddingTop: '0.16em',
+  marginTop: '-0.16em',
+  paddingBottom: '0.1em',
+  marginBottom: '-0.1em',
+})
+
+/** Vnútro reveal riadku — vysunie sa spod klipu, keď rodič dostane triedu `in`. */
+export const revealInner = cva({
+  base: {
+    display: 'block',
+    transform: 'translateY(125%)',
+    transition: 'transform 1s {easings.out}',
+    '.in &': { transform: 'translateY(0)' },
+    _motionReduce: { transform: 'none', transition: 'none' },
+  },
+  variants: {
+    delay: {
+      1: { transitionDelay: '0.05s' },
+      2: { transitionDelay: '0.16s' },
+      3: { transitionDelay: '0.27s' },
+    },
+  },
+})
+
+/**
  * Scroll-reveal fade: element sa objaví, keď on sám (`&.in`) alebo jeho
  * pozorovaný rodič (`.in &`) dostane marker triedu `in` (useInView).
  */

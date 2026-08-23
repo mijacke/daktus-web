@@ -55,15 +55,6 @@ const heading = css({
   '[data-dark] &': { color: 'dark.fg' },
 })
 
-const revealLine = css({ display: 'block', overflow: 'hidden' })
-
-const revealInner = css({
-  display: 'block',
-  transform: 'translateY(118%)',
-  transition: 'transform 1s {easings.out}',
-  '.in &': { transform: 'translateY(0)' },
-  _motionReduce: { transform: 'none', transition: 'none' },
-})
 </script>
 
 <template>
@@ -74,7 +65,7 @@ const revealInner = css({
         <span :class="label">{{ eyebrow }}</span>
       </div>
       <h2 :class="heading">
-        <span :class="revealLine"><span :class="revealInner">{{ title }}</span></span>
+        <span :class="revealLine"><span :class="revealInner()">{{ title }}</span></span>
       </h2>
     </div>
     <slot />
