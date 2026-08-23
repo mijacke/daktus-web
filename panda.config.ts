@@ -22,6 +22,10 @@ export default defineConfig({
           from: { transform: 'scale(0.6)', opacity: '1' },
           to: { transform: 'scale(1.6)', opacity: '0' },
         },
+        caretBlink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
       },
     },
   },
