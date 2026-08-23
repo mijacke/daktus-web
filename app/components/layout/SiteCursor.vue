@@ -50,8 +50,8 @@ onMounted(() => {
     // svetlé kryty si vyžiadajú pevnú čiernu guľu — difference by tam pôsobil sivo
     isSolid.value = !!view && view.hasAttribute('data-cursor-solid')
     isLink.value = !view && !!target?.closest('a, button')
-    // vnútri iframe sa mousemove nešíri — guľka by zamrzla na okraji, radšej zmizne
-    isHidden.value = !!target?.closest('iframe')
+    // rozbalený náhľad je na pozeranie, nie na klikanie — guľka ustúpi natívnemu kurzoru
+    isHidden.value = !!target?.closest('[data-cursor="none"]')
   }
   const onOver = (event: MouseEvent) => {
     evalTarget(event.target instanceof Element ? event.target : null)
