@@ -86,6 +86,7 @@ const grid = cva({
             domain="aditrade.sk"
             mobile-src="/nahlad/aditrade/mobil.html"
             :device="deviceFor(1)"
+            dark
             @close="active = null"
           />
         </ProjectCard>

@@ -17,7 +17,9 @@ const props = withDefaults(defineProps<{
   mobileSrc?: string
   /** Zariadenie podľa stavu karty. */
   device?: PreviewDevice
-}>(), { device: 'mac', mobileSrc: undefined })
+  /** Tmavá edícia zariadení (space gray / čierny iPhone) — svetlé weby nechávajú striebornú. */
+  dark?: boolean
+}>(), { device: 'mac', mobileSrc: undefined, dark: false })
 
 defineEmits<{ close: [] }>()
 
@@ -41,6 +43,10 @@ const phoneFrameStyle = computed(() => {
   }
 })
 
+/**
+ * Plášť náhľadu. Variant tone nastavuje farebné premenné celej edície —
+ * rám, brada, prstenec telefónu aj stojan ich len čítajú cez var().
+ */
 const shell = cva({
   base: {
     position: 'absolute',
@@ -57,6 +63,40 @@ const shell = cva({
       mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
       imac: { bottom: '3%', height: '94%', width: '88%' },
       iphone: { bottom: '-2px', height: '86%', width: 'min(60%, 220px)' },
+    },
+    tone: {
+      light: {
+        '--dev-bezel': 'token(colors.device.aluminum)',
+        '--dev-edge': 'token(colors.device.aluminum2)',
+        '--dev-chin': 'token(colors.device.aluminum2)',
+        '--dev-phone': 'token(colors.device.silver)',
+        '--dev-ring': 'token(colors.device.silver2)',
+        '--dev-hi': 'rgba(255, 255, 255, 0.6)',
+        '--dev-foot1': 'token(colors.device.silver)',
+        '--dev-foot2': 'token(colors.device.silver2)',
+        '--dev-foot3': 'token(colors.device.aluminum4)',
+        '--dev-neck-a': 'token(colors.device.aluminum4)',
+        '--dev-neck-b': 'token(colors.device.aluminum3)',
+        '--dev-neck-hi': 'token(colors.white)',
+        '--dev-base-a': 'token(colors.device.aluminum2)',
+        '--dev-base-b': 'token(colors.device.aluminum4)',
+      },
+      dark: {
+        '--dev-bezel': 'token(colors.device.dark)',
+        '--dev-edge': 'token(colors.device.dark2)',
+        '--dev-chin': 'token(colors.device.dark3)',
+        '--dev-phone': 'token(colors.device.island)',
+        '--dev-ring': 'token(colors.device.dark2)',
+        '--dev-hi': 'rgba(255, 255, 255, 0.14)',
+        '--dev-foot1': 'token(colors.device.dark4)',
+        '--dev-foot2': 'token(colors.device.island)',
+        '--dev-foot3': 'token(colors.device.island)',
+        '--dev-neck-a': 'token(colors.device.island)',
+        '--dev-neck-b': 'token(colors.device.dark4)',
+        '--dev-neck-hi': 'token(colors.device.dark5)',
+        '--dev-base-a': 'token(colors.device.dark3)',
+        '--dev-base-b': 'token(colors.device.island)',
+      },
     },
   },
 })
@@ -86,7 +126,7 @@ const body = cva({
       bottom: '1px',
       height: '0px',
       opacity: 0,
-      background: 'device.aluminum2',
+      background: 'var(--dev-chin)',
       borderRadius: '0 0 17px 17px',
       boxShadow: 'inset 0 0 18px 0 rgba(0, 0, 0, 0.08)',
       transitionProperty: 'height, opacity',
@@ -97,26 +137,26 @@ const body = cva({
   variants: {
     device: {
       mac: {
-        background: 'device.aluminum',
-        borderColor: 'device.aluminum2',
+        background: 'var(--dev-bezel)',
+        borderColor: 'var(--dev-edge)',
         borderRadius: '14px',
         padding: '8px 8px 16px',
-        boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
+        boxShadow: '{shadows.window}, inset 0 0 0 1px var(--dev-edge)',
       },
       imac: {
-        background: 'device.aluminum',
-        borderColor: 'device.aluminum2',
+        background: 'var(--dev-bezel)',
+        borderColor: 'var(--dev-edge)',
         borderRadius: '18px',
         padding: '12px 12px 56px',
-        boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
+        boxShadow: '{shadows.window}, inset 0 0 0 1px var(--dev-edge)',
         '&::after': { height: '44px', opacity: 1 },
       },
       iphone: {
-        background: 'device.panel',
-        borderColor: 'device.black2',
+        background: 'var(--dev-phone)',
+        borderColor: 'var(--dev-ring)',
         borderRadius: '38px 38px 0 0',
         padding: '9px 9px 0',
-        boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.35), inset 0 0 0 6px token(colors.device.black)',
+        boxShadow: '{shadows.window}, inset 0 0 4px 2px var(--dev-hi), inset 0 0 0 6px var(--dev-ring)',
       },
     },
   },
@@ -183,9 +223,9 @@ const phoneButtons = cva({
       position: 'absolute',
       width: '3px',
       borderRadius: '2px',
-      background: 'device.black2',
+      background: 'var(--dev-ring)',
     },
-    '&::before': { left: '-2px', top: '26%', height: '30px', boxShadow: '0 38px 0 token(colors.device.black2)' },
+    '&::before': { left: '-2px', top: '26%', height: '30px', boxShadow: '0 38px 0 var(--dev-ring)' },
     '&::after': { right: '-2px', top: '32%', height: '46px' },
   },
   variants: {
@@ -291,7 +331,7 @@ const frame = cva({
 </script>
 
 <template>
-  <div :class="shell({ device })">
+  <div :class="shell({ device, tone: dark ? 'dark' : 'light' })">
     <div :class="phoneButtons({ device })" aria-hidden="true" />
     <div :class="body({ device })">
       <div :class="camera({ device })" aria-hidden="true" />

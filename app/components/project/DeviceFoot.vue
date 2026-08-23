@@ -34,8 +34,8 @@ const deck = cva({
     inset: '0 0 auto',
     height: '14px',
     borderRadius: '2px 2px 10px 10px',
-    background: 'radial-gradient(circle at center, token(colors.device.silver) 82%, token(colors.device.silver2) 100%)',
-    boxShadow: 'inset 0 -2px 6px 0 token(colors.device.aluminum4)',
+    background: 'radial-gradient(circle at center, var(--dev-foot1) 82%, var(--dev-foot2) 100%)',
+    boxShadow: 'inset 0 -2px 6px 0 var(--dev-foot3)',
     transitionProperty: 'opacity',
     transitionDuration: '0.5s',
     transitionTimingFunction: 'out',
@@ -48,7 +48,7 @@ const deck = cva({
       width: '68px',
       height: '5px',
       borderRadius: '0 0 8px 8px',
-      background: 'device.silver2',
+      background: 'var(--dev-foot2)',
     },
   },
   variants: {
@@ -73,11 +73,11 @@ const stand = cva({
       margin: '0 auto',
       background: `linear-gradient(
         180deg,
-        token(colors.device.aluminum4) 0%,
-        token(colors.device.aluminum3) 40%,
-        token(colors.device.aluminum3) 85%,
-        token(colors.white) 90%,
-        token(colors.device.aluminum4) 100%
+        var(--dev-neck-a) 0%,
+        var(--dev-neck-b) 40%,
+        var(--dev-neck-b) 85%,
+        var(--dev-neck-hi) 90%,
+        var(--dev-neck-a) 100%
       )`,
     },
     '& > b': {
@@ -85,7 +85,7 @@ const stand = cva({
       width: '150px',
       height: '6px',
       margin: '0 auto',
-      background: 'radial-gradient(circle at center, token(colors.device.aluminum2) 80%, token(colors.device.aluminum4) 100%)',
+      background: 'radial-gradient(circle at center, var(--dev-base-a) 80%, var(--dev-base-b) 100%)',
     },
   },
   variants: {
