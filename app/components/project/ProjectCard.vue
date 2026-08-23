@@ -9,7 +9,7 @@ interface ProjectChip {
 withDefaults(defineProps<{
   name: string
   description: string
-  tone: 'blush' | 'steel'
+  tone: 'blush' | 'steel' | 'navy'
   chips: ProjectChip[]
   state?: 'idle' | 'active' | 'dimmed'
 }>(), { state: 'idle' })
@@ -49,6 +49,7 @@ const cover = cva({
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
       steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
+      navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
     },
     state: {
       idle: {},

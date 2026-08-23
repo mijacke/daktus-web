@@ -33,9 +33,9 @@ const grid = cva({
   },
   variants: {
     focus: {
-      none: { gridTemplateColumns: '1.15fr 0.85fr' },
-      first: { gridTemplateColumns: '1.575fr 0.425fr' },
-      second: { gridTemplateColumns: '0.575fr 1.425fr' },
+      none: { gridTemplateColumns: '1fr 1fr' },
+      first: { gridTemplateColumns: '1.5fr 0.5fr' },
+      second: { gridTemplateColumns: '0.5fr 1.5fr' },
     },
   },
 })
@@ -72,12 +72,17 @@ const grid = cva({
         <ProjectCard
           name="Aditrade"
           description="Web pre špecialistov na nadrozmernú prepravu"
-          tone="steel"
+          tone="navy"
           :chips="[{ label: 'Webstránka' }, { label: 'Pred spustením', accent: true }]"
           :state="stateFor(1)"
           @select="select(1)"
         >
-          <MockupAditrade />
+          <LivePreview
+            src="/nahlad/aditrade/"
+            domain="aditrade.sk"
+            :expanded="active === 1"
+            @close="active = null"
+          />
         </ProjectCard>
       </div>
     </div>

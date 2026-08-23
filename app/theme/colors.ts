@@ -34,6 +34,9 @@ export const colors = defineTokens.colors({
     blush2: { value: '#EBE3D5' },
     steel: { value: '#D8E2E8' },
     steel2: { value: '#C6D4DC' },
+    // tmavá navy presne podľa návrhu aditrade.sk
+    navy: { value: '#1E2C42' },
+    navy2: { value: '#121B2A' },
     paper: { value: '#EDEDE8' },
     paper2: { value: '#E2E2DB' },
   },

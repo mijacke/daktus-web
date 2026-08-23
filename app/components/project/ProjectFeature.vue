@@ -11,7 +11,7 @@ withDefaults(defineProps<{
   tagline: string
   brief: string
   solution: string
-  tone: 'blush' | 'steel' | 'paper'
+  tone: 'blush' | 'steel' | 'paper' | 'navy'
   chips: FeatureChip[]
   flip?: boolean
 }>(), { flip: false })
@@ -42,6 +42,7 @@ const cover = cva({
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
       steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
       paper: { background: 'linear-gradient(165deg, token(colors.cover.paper), token(colors.cover.paper2))' },
+      navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
     },
     flip: {
       true: {

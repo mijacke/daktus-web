@@ -30,7 +30,7 @@ useSeoMeta({
         tagline="Špecialisti na nadrozmernú prepravu v EÚ"
         brief="Web, ktorý pôsobí dôveryhodne pre veľkých partnerov a jasne vysvetlí služby sprievodov nadrozmerných nákladov."
         solution="Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Nový web štartuje v týchto dňoch."
-        tone="steel"
+        tone="navy"
         flip
         :chips="[{ label: 'Webstránka' }, { label: 'Firemná prezentácia' }, { label: 'Pred spustením', accent: true }]"
       >
