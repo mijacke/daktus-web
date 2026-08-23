@@ -45,4 +45,4 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), štýly Panda CSS (TypeS
 
 ## Aktuálny stav
 
-Nuxt 4 scaffold je hotový, dočasnú coming-soon stránku renderuje `app/app.vue` — štýly už kompletne cez Panda CSS. TypeScript je zámerne na 5.x (vue-tsc zatiaľ oficiálne nepodporuje TS 7/tsgo — over cez Context7, kým povýšiš). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) sa bude prenášať z prototypu v ďalších PR.
+Nuxt 4 scaffold je hotový, dočasnú coming-soon stránku renderuje `app/app.vue` — štýly už kompletne cez Panda CSS. TypeScript je zámerne na 5.9.x — najnovší, ktorý funguje bez obchádzok: čistý `typescript@7` (tsgo) s vue-tsc padá na `ERR_PACKAGE_PATH_NOT_EXPORTED` (overené 23. 8. 2026), TS 6/7 vyžadujú bridge/alias balíky (`@typescript/typescript6`, `typescript-native-bridge`), ktoré Nuxt ekosystém oficiálne nepoužíva. Pred povýšením over cez Context7 (`/vuejs/language-tools`). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) sa bude prenášať z prototypu v ďalších PR.
