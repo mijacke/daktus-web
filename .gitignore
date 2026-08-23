@@ -7,6 +7,9 @@ node_modules/
 dist
 .data/
 
+# Panda CSS (generuje panda codegen v postinstall)
+styled-system/
+
 # Prostredie
 .env*
 !.env.example

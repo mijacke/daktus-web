@@ -4,7 +4,7 @@ Pravidlá pre AI agentov (Claude Code a pod.) pracujúcich v tomto repozitári.
 
 ## Projekt
 
-Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), animácie GSAP + Lenis, statický výstup (`nuxt generate`), hosting Netlify, Node.js 24 LTS (`.nvmrc`). Obsah webu je v slovenčine, kód a commit správy v angličtine.
+Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), štýly Panda CSS (TypeScript), animácie GSAP + Lenis, statický výstup (`nuxt generate`), hosting Netlify, Node.js 24 LTS (`.nvmrc`). Obsah webu je v slovenčine, kód a commit správy v angličtine.
 
 ## Zdroje informácií — vždy Context7
 
@@ -19,6 +19,15 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), animácie GSAP + Lenis, 
 - Po každej úprave kódu spusti `graphify update .` (AST-only, bez LLM nákladov).
 - `graphify-out/` je v `.gitignore` — mapa sa neverzionuje, každý si ju generuje lokálne.
 - Hrany typu EXTRACTED ber ako podložené zdrojom; INFERRED a AMBIGUOUS over v kóde skôr, než na nich postavíš rozhodnutie.
+
+## Architektúra
+
+- Malé kompozičné jednotky, žiadne monolity: bežný komponent/composable do ~100 riadkov, tvrdý strop 300 riadkov na súbor. Pri raste rozdeľ na podkomponenty alebo menšie composables.
+- Všetok aplikačný kód žije v `app/`: `components/` (PascalCase, jedna zodpovednosť), `composables/` (`use*`), `pages/`, `layouts/`, `utils/`, `theme/` (design tokeny).
+- Vue: výhradne `<script setup lang="ts">`, typované props/emits, strict TypeScript.
+- **Štýly: výhradne TypeScript cez Panda CSS** — `css()`/recipes z `styled-system` (generuje `panda codegen`, beží automaticky v postinstall). Žiadne vanilla CSS: žiadne `<style>` bloky v SFC, žiadne nové `.css` súbory, žiadne inline štýly. Jediná výnimka je `app/assets/main.css` (vstupné `@layer` deklarácie Pandy) — needituj ho.
+- Design tokeny: farby VÝHRADNE v `app/theme/colors.ts`, ostatné tokeny (fonty, neskôr spacing/typografia) v `app/theme/tokens.ts`; registrujú sa v `panda.config.ts`. V komponentoch nikdy hex/px hodnoty tam, kde existuje token — vždy token.
+- Globálne štýly a keyframes: len cez `globalCss` / `theme.keyframes` v `panda.config.ts`.
 
 ## Workflow
 
@@ -36,4 +45,4 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), animácie GSAP + Lenis, 
 
 ## Aktuálny stav
 
-Nuxt 4 scaffold je hotový, dočasnú coming-soon stránku renderuje `app/app.vue`. TypeScript je zámerne na 5.x (vue-tsc zatiaľ oficiálne nepodporuje TS 7/tsgo — over cez Context7, kým povýšiš). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) sa bude prenášať z prototypu v ďalších PR.
+Nuxt 4 scaffold je hotový, dočasnú coming-soon stránku renderuje `app/app.vue` — štýly už kompletne cez Panda CSS. TypeScript je zámerne na 5.x (vue-tsc zatiaľ oficiálne nepodporuje TS 7/tsgo — over cez Context7, kým povýšiš). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) sa bude prenášať z prototypu v ďalších PR.

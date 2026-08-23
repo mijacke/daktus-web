@@ -1,0 +1,3 @@
+/* Jediný CSS súbor v projekte — vstupný bod Panda CSS (deklarácia vrstiev).
+   Štýly sa píšu výhradne v TypeScripte, pozri CLAUDE.md → Architektúra. */
+@layer reset, base, tokens, recipes, utilities;
