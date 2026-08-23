@@ -11,19 +11,19 @@ defineProps<{
   expanded?: boolean
 }>()
 
+// V pokoji okno sedí ako pôvodný mockup (menšie, pri spodku karty),
+// po rozbalení karty narastie takmer na celý cover.
 const shell = cva({
   base: {
-    top: '10%',
     bottom: '-2px',
-    width: '92%',
     transitionProperty: 'top, width',
     transitionDuration: '0.7s',
     transitionTimingFunction: 'out',
   },
   variants: {
     expanded: {
+      false: { top: '26%', width: 'min(600px, 90%)' },
       true: { top: '5%', width: '96%' },
-      false: {},
     },
   },
 })
