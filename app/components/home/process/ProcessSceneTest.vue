@@ -1,6 +1,39 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
+const props = defineProps<{
+  /** Scéna je práve aktívna — spustí napočítanie skóre od nuly. */
+  running?: boolean
+}>()
+
+/** Cieľové skóre — drží sa ho aj animácia oblúka nižšie. */
+const TARGET = 98
+const COUNT_DURATION = 1200
+
+const score = ref(TARGET)
+const reduced = useReducedMotion()
+let raf = 0
+
+// bez immediate — beží až na klientovi pri prvej aktivácii scény (SSR nemá rAF)
+watch(() => props.running, (on) => {
+  cancelAnimationFrame(raf)
+  if (!on) return
+  if (reduced.value) {
+    score.value = TARGET
+    return
+  }
+  const start = performance.now()
+  const tick = (now: number) => {
+    const t = Math.min(1, (now - start) / COUNT_DURATION)
+    // rovnaký dobeh ako easing oblúka — rýchly nábeh, pomalý záver
+    score.value = Math.round(TARGET * (1 - (1 - t) ** 3))
+    if (t < 1) raf = requestAnimationFrame(tick)
+  }
+  raf = requestAnimationFrame(tick)
+})
+
+onBeforeUnmount(() => cancelAnimationFrame(raf))
+
 const ROWS = [
   { label: 'Rýchlosť', value: '98/100', width: 'near' as const, delay: 15 },
   { label: 'Mobilná verzia', value: 'OK', width: 'full' as const, delay: 50 },
@@ -104,7 +137,7 @@ const scoreCaption = css({
           stroke-dasharray="314"
           transform="rotate(-90 60 60)"
         />
-        <text :class="scoreText" x="60" y="66" text-anchor="middle" font-size="26">98</text>
+        <text :class="scoreText" x="60" y="66" text-anchor="middle" font-size="26">{{ score }}</text>
       </svg>
       <div :class="scoreCaption">Celkové skóre</div>
     </ProcessPanel>
