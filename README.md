@@ -10,7 +10,7 @@ Aktuálne verzie k 23. 8. 2026: Nuxt 4.5.2, Vue 3.5.41, GSAP 3.15.0, Lenis 1.3.2
 
 ## Vývoj
 
-Vetva `master` je chránená — každá zmena ide cez pull request. Na PR beží CI (lint, typecheck a testy, keď pribudnú) a Netlify vytvorí deploy preview.
+Vetva `master` je chránená — každá zmena ide cez pull request. Na PR beží CI (lint, typecheck a testy, keď pribudnú) a Netlify vytvorí deploy preview. Detaily v [CONTRIBUTING.md](CONTRIBUTING.md), pravidlá pre AI agentov v [CLAUDE.md](CLAUDE.md).
 
 ## Deploy
 
