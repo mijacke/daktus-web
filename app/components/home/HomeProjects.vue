@@ -62,7 +62,6 @@ const grid = cva({
           name="Pauli Fotografka"
           description="Portfólio a rezervácie pre rodinnú fotografku"
           tone="blush"
-          :chips="[{ label: 'Webstránka' }, { label: 'Naživo', accent: true }]"
           :state="stateFor(0)"
           @select="select(0)"
         >
@@ -78,7 +77,6 @@ const grid = cva({
           name="Aditrade"
           description="Web pre špecialistov na nadrozmernú prepravu"
           tone="navy"
-          :chips="[{ label: 'Webstránka' }, { label: 'Pred spustením', accent: true }]"
           :state="stateFor(1)"
           @select="select(1)"
         >

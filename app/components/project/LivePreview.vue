@@ -138,7 +138,7 @@ const body = cva({
       height: '0px',
       opacity: 0,
       background: 'var(--dev-chin)',
-      borderRadius: '0 0 17px 17px',
+      borderRadius: '0 0 23px 23px',
       boxShadow: 'inset 0 0 18px 0 rgba(0, 0, 0, 0.08)',
       transitionProperty: 'height, opacity',
       transitionDuration: '0.7s',
@@ -157,7 +157,7 @@ const body = cva({
       imac: {
         background: 'var(--dev-bezel)',
         borderColor: 'var(--dev-edge)',
-        borderRadius: '18px',
+        borderRadius: '24px',
         padding: '12px 12px 56px',
         boxShadow: '{shadows.window}, inset 0 0 0 1px var(--dev-edge)',
         '&::after': { height: '44px', opacity: 1 },
@@ -190,7 +190,7 @@ const screenArea = cva({
   variants: {
     device: {
       mac: { borderRadius: '6px' },
-      imac: { borderRadius: '3px' },
+      imac: { borderRadius: '9px' },
       iphone: { borderRadius: '29px' },
     },
   },
@@ -355,7 +355,7 @@ const frame = css({
       <div :class="camera({ device })" aria-hidden="true" />
       <div :class="screenArea({ device })">
         <div :class="barWrap({ device })">
-          <BrowserBar :url="domain" mac-controls @close="$emit('close')" />
+          <BrowserBar :url="domain" mac-controls :dark="dark" @close="$emit('close')" />
         </div>
         <div :class="statusBar({ device, tint: phoneBar })" aria-hidden="true">
           <span :class="statusTime">9:41</span>
