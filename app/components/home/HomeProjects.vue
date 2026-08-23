@@ -11,6 +11,10 @@ const select = (index: number) => {
   active.value = active.value === index ? null : index
 }
 
+/** Pokoj = Mac okno, rozbalená karta = iMac, odsunutá karta = iPhone s mobilnou verziou. */
+const deviceFor = (index: number) =>
+  active.value === null ? 'mac' : active.value === index ? 'imac' : 'iphone'
+
 const onDocClick = (event: MouseEvent) => {
   if (active.value === null) return
   // composedPath namiesto contains(target): pri reálnom kliku Vue stihne
@@ -58,14 +62,14 @@ const grid = cva({
           name="Pauli Fotografka"
           description="Portfólio a rezervácie pre rodinnú fotografku"
           tone="blush"
-          :chips="[{ label: 'Webstránka' }, { label: 'Naživo', accent: true }]"
           :state="stateFor(0)"
           @select="select(0)"
         >
           <LivePreview
             src="https://www.paulifotografka.sk/"
             domain="paulifotografka.sk"
-            :expanded="active === 0"
+            phone-bar="blush"
+            :device="deviceFor(0)"
             @close="active = null"
           />
         </ProjectCard>
@@ -73,14 +77,15 @@ const grid = cva({
           name="Aditrade"
           description="Web pre špecialistov na nadrozmernú prepravu"
           tone="navy"
-          :chips="[{ label: 'Webstránka' }, { label: 'Pred spustením', accent: true }]"
           :state="stateFor(1)"
           @select="select(1)"
         >
           <LivePreview
             src="/nahlad/aditrade/"
             domain="aditrade.sk"
-            :expanded="active === 1"
+            mobile-src="/nahlad/aditrade/mobil.html"
+            :device="deviceFor(1)"
+            dark
             @close="active = null"
           />
         </ProjectCard>

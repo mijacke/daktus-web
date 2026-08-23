@@ -10,9 +10,9 @@ withDefaults(defineProps<{
   name: string
   description: string
   tone: 'blush' | 'steel' | 'navy'
-  chips: ProjectChip[]
+  chips?: ProjectChip[]
   state?: 'idle' | 'active' | 'dimmed'
-}>(), { state: 'idle' })
+}>(), { state: 'idle', chips: () => [] })
 
 defineEmits<{ select: [] }>()
 
@@ -128,7 +128,7 @@ const chipRow = css({
         <div :class="metaName">{{ name }}</div>
         <div :class="metaNote">{{ description }}</div>
       </div>
-      <div :class="chipRow">
+      <div v-if="chips.length" :class="chipRow">
         <AppChip v-for="chip in chips" :key="chip.label" :accent="chip.accent">
           {{ chip.label }}
         </AppChip>
