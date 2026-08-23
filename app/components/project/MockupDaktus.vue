@@ -21,6 +21,7 @@ const headline = css({
 const outline = css({
   color: 'transparent',
   WebkitTextStroke: '1.1px token(colors.ink)',
+  _selection: { color: 'ink', WebkitTextFillColor: 'ink' },
 })
 
 const amp = css({ color: 'accent.deep' })

@@ -25,6 +25,8 @@ const big = css({
 const outline = css({
   color: 'transparent',
   WebkitTextStroke: '1.5px token(colors.dark.fg)',
+  // pri selekcii Chrome vypĺňa glyfy pôvodnou (transparentnou) farbou — dolej plnú výplň
+  _selection: { color: 'dark.fg', WebkitTextFillColor: 'dark.fg' },
 })
 
 const mark = css({ color: 'accent' })

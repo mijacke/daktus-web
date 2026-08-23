@@ -92,6 +92,8 @@ const heading = css({
 const outline = css({
   color: 'transparent',
   WebkitTextStroke: '1.5px token(colors.ink)',
+  // pri selekcii Chrome vypĺňa glyfy pôvodnou (transparentnou) farbou — dolej plnú výplň
+  _selection: { color: 'ink', WebkitTextFillColor: 'ink' },
 })
 
 const indent = css({ marginLeft: 'clamp(40px, 8vw, 150px)' })
