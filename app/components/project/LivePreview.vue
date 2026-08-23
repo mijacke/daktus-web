@@ -25,7 +25,8 @@ const props = withDefaults(defineProps<{
 
 defineEmits<{ close: [] }>()
 
-/** Logická šírka mobilného viewportu v iPhone režime. */
+/** Logické šírky viewportu — desktop a iPhone. */
+const DESKTOP_WIDTH = 1440
 const MOBILE_WIDTH = 390
 
 const screenEl = ref<HTMLElement | null>(null)
@@ -34,13 +35,19 @@ const { width: screenW, height: screenH } = useElementSize(screenEl)
 const isPhone = computed(() => props.device === 'iphone')
 const currentSrc = computed(() => (isPhone.value && props.mobileSrc ? props.mobileSrc : props.src))
 
-/** Mobilná mierka sa počíta z reálnej šírky displeja telefónu — web beží na 390px. */
-const phoneFrameStyle = computed(() => {
-  if (!isPhone.value || screenW.value === 0) return undefined
-  const scale = screenW.value / MOBILE_WIDTH
+/**
+ * Viewport beží na pevnej logickej šírke a na displej sa lepí meranou mierkou.
+ * Pevná šírka znamená, že web sa počas morfovania okna nepreskladáva (mení sa
+ * len lacný transform) a mierne presiahnutie (+2px) zakrýva subpixelové
+ * škáry, ktoré pri tmavom webe svietili na hranách displeja.
+ */
+const frameStyle = computed(() => {
+  if (screenW.value === 0) return { visibility: 'hidden' as const }
+  const logicalWidth = isPhone.value ? MOBILE_WIDTH : DESKTOP_WIDTH
+  const scale = (screenW.value + 2) / logicalWidth
   return {
-    width: `${MOBILE_WIDTH}px`,
-    height: `${Math.round(screenH.value / scale)}px`,
+    width: `${logicalWidth}px`,
+    height: `${Math.ceil(screenH.value / scale) + 2}px`,
     transform: `scale(${scale})`,
   }
 })
@@ -82,6 +89,7 @@ const shell = cva({
         '--dev-neck-hi': 'token(colors.white)',
         '--dev-base-a': 'token(colors.device.aluminum2)',
         '--dev-base-b': 'token(colors.device.aluminum4)',
+        '--dev-screen': 'token(colors.card)',
       },
       dark: {
         '--dev-bezel': 'token(colors.device.dark)',
@@ -98,6 +106,7 @@ const shell = cva({
         '--dev-neck-hi': 'token(colors.device.dark5)',
         '--dev-base-a': 'token(colors.device.dark3)',
         '--dev-base-b': 'token(colors.device.island)',
+        '--dev-screen': 'token(colors.device.island)',
       },
     },
   },
@@ -173,7 +182,7 @@ const screenArea = cva({
     display: 'flex',
     flexDirection: 'column',
     overflow: 'hidden',
-    background: 'card',
+    background: 'var(--dev-screen)',
     transitionProperty: 'border-radius',
     transitionDuration: '0.7s',
     transitionTimingFunction: 'out',
@@ -261,8 +270,7 @@ const screen = css({
   flex: 1,
   minHeight: 0,
   overflow: 'hidden',
-  containerType: 'size',
-  background: 'card',
+  background: 'var(--dev-screen)',
 })
 
 /**
@@ -332,25 +340,11 @@ const island = css({
   },
 })
 
-/**
- * Desktopový web beží v plnej šírke a škáluje sa presne na kontajner:
- * šírka iframe × mierka = 100cqw, takže footprint je vždy celé okno.
- * V iPhone režime rozmery dodáva phoneFrameStyle z merania displeja.
- */
-const frame = cva({
-  base: {
-    border: 'none',
-    transformOrigin: 'top left',
-    // živý náhľad, nie prehliadač: žiadny scroll ani prekliky na podstránky
-    pointerEvents: 'none',
-  },
-  variants: {
-    device: {
-      mac: { width: '238cqw', height: '238cqh', transform: 'scale(0.42)' },
-      imac: { width: '147cqw', height: '147cqh', transform: 'scale(0.68)' },
-      iphone: {},
-    },
-  },
+const frame = css({
+  border: 'none',
+  transformOrigin: 'top left',
+  // živý náhľad, nie prehliadač: žiadny scroll ani prekliky na podstránky
+  pointerEvents: 'none',
 })
 </script>
 
@@ -375,8 +369,8 @@ const frame = cva({
         <div ref="screenEl" :class="screen">
           <iframe
             :src="currentSrc"
-            :class="frame({ device })"
-            :style="phoneFrameStyle"
+            :class="frame"
+            :style="frameStyle"
             :title="`Náhľad ${domain}`"
             loading="lazy"
             scrolling="no"
