@@ -7,6 +7,8 @@ const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
 const isHidden = ref(false)
+const isAway = ref(false)
+const isOut = ref(false)
 
 let cleanup: (() => void) | null = null
 
@@ -66,14 +68,31 @@ onMounted(() => {
     setInner({ rotation: -angle })
   }
 
+  // pri strate fokusu okna (druhý monitor, iná appka) guľka zmizne
+  // a vráti sa až s fokusom — nezostáva visieť opustená na stránke
+  isAway.value = !document.hasFocus()
+  const onBlur = () => (isAway.value = true)
+  const onFocus = () => (isAway.value = false)
+  // plynulé zmiznutie aj pri odchode kurzora za okraj viewportu (ako cuberto.com)
+  const onLeave = () => (isOut.value = true)
+  const onEnter = () => (isOut.value = false)
+
   document.addEventListener('mousemove', onMove, { passive: true })
   document.addEventListener('mouseover', onOver)
   document.addEventListener('click', onClick)
+  document.addEventListener('mouseleave', onLeave)
+  document.addEventListener('mouseenter', onEnter)
+  window.addEventListener('blur', onBlur)
+  window.addEventListener('focus', onFocus)
   gsap.ticker.add(onTick)
   cleanup = () => {
     document.removeEventListener('mousemove', onMove)
     document.removeEventListener('mouseover', onOver)
     document.removeEventListener('click', onClick)
+    document.removeEventListener('mouseleave', onLeave)
+    document.removeEventListener('mouseenter', onEnter)
+    window.removeEventListener('blur', onBlur)
+    window.removeEventListener('focus', onFocus)
     gsap.ticker.remove(onTick)
   }
 })
@@ -117,7 +136,7 @@ const innerStyle = css({
 <template>
   <div
     ref="ballEl"
-    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-hidden': isHidden }]"
+    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-hidden': isHidden || isAway || isOut }]"
     aria-hidden="true"
   >
     <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>
