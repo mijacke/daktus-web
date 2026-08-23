@@ -2,100 +2,116 @@
 import { gsap } from 'gsap'
 import { css } from '~~/styled-system/css'
 
-const dotEl = ref<HTMLElement | null>(null)
-const ringEl = ref<HTMLElement | null>(null)
+const ballEl = ref<HTMLElement | null>(null)
+const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
-const onDark = ref(false)
 
 let cleanup: (() => void) | null = null
 
 onMounted(() => {
   if (!window.matchMedia('(pointer: fine)').matches) return
-  const dot = dotEl.value
-  const ring = ringEl.value
-  if (!dot || !ring) return
+  const ball = ballEl.value
+  const inner = innerEl.value
+  if (!ball || !inner) return
 
-  gsap.set([dot, ring], { xPercent: -50, yPercent: -50, x: window.innerWidth / 2, y: window.innerHeight / 2 })
-  const dotX = gsap.quickSetter(dot, 'x', 'px')
-  const dotY = gsap.quickSetter(dot, 'y', 'px')
-  const ringX = gsap.quickTo(ring, 'x', { duration: 0.45, ease: 'power3' })
-  const ringY = gsap.quickTo(ring, 'y', { duration: 0.45, ease: 'power3' })
+  // Pohyb rieši lerp v tickeri namiesto tweenov — tween stav sa po suspendnutí
+  // rAF (skryté/prekryté okno) rozbíja a guľka potom skáče namiesto animácie.
+  let x = window.innerWidth / 2
+  let y = window.innerHeight / 2
+  let targetX = x
+  let targetY = y
+  let stretch = 0
+  let angle = 0
+
+  gsap.set(ball, { xPercent: -50, yPercent: -50, x, y })
+  const setBall = gsap.quickSetter(ball, 'css') as (vars: gsap.TweenVars) => void
+  const setInner = gsap.quickSetter(inner, 'css') as (vars: gsap.TweenVars) => void
 
   const onMove = (event: MouseEvent) => {
-    dotX(event.clientX)
-    dotY(event.clientY)
-    ringX(event.clientX)
-    ringY(event.clientY)
+    targetX = event.clientX
+    targetY = event.clientY
   }
-  const onOver = (event: MouseEvent) => {
-    const target = event.target instanceof Element ? event.target : null
+  const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
     isLink.value = !view && !!target?.closest('a, button')
-    onDark.value = !!target?.closest('[data-dark]')
   }
+  const onOver = (event: MouseEvent) => {
+    evalTarget(event.target instanceof Element ? event.target : null)
+  }
+  const onClick = (event: MouseEvent) => {
+    // klik môže zmeniť data-cursor pod kurzorom (aktívna karta) — prehodnoť po re-renderi
+    const target = event.target instanceof Element ? event.target : null
+    nextTick(() => evalTarget(target))
+  }
+
+  const onTick = (_time: number, deltaTime: number) => {
+    // clamp: po dlhom spánku tickeru guľka dobehne plynulo, žiadny skok
+    const frames = Math.min(deltaTime / (1000 / 60), 2)
+    const ease = 1 - (1 - 0.11) ** frames
+    const dx = (targetX - x) * ease
+    const dy = (targetY - y) * ease
+    x += dx
+    y += dy
+    const dist = Math.hypot(dx, dy)
+    if (dist > 0.1) angle = (Math.atan2(dy, dx) * 180) / Math.PI
+    const speed = dist / Math.max(deltaTime, 1)
+    const target = isView.value ? 0 : Math.min(speed * 0.35, 0.4)
+    stretch += (target - stretch) * 0.2
+    setBall({ x, y, rotation: angle, scaleX: 1 + stretch, scaleY: 1 - stretch * 0.6 })
+    setInner({ rotation: -angle })
+  }
+
   document.addEventListener('mousemove', onMove, { passive: true })
   document.addEventListener('mouseover', onOver)
+  document.addEventListener('click', onClick)
+  gsap.ticker.add(onTick)
   cleanup = () => {
     document.removeEventListener('mousemove', onMove)
     document.removeEventListener('mouseover', onOver)
+    document.removeEventListener('click', onClick)
+    gsap.ticker.remove(onTick)
   }
 })
 
 onBeforeUnmount(() => cleanup?.())
 
-const root = css({
+const ballStyle = css({
   position: 'fixed',
   top: 0,
   left: 0,
   zIndex: 300,
   pointerEvents: 'none',
-  '@media (pointer: coarse)': { display: 'none' },
-})
-
-const dotStyle = css({
-  position: 'absolute',
-  width: '8px',
-  height: '8px',
+  width: '12px',
+  height: '12px',
   borderRadius: 'full',
-  background: 'ink',
-  '.on-dark &': { background: 'dark.fg' },
-})
-
-const ringStyle = css({
-  position: 'absolute',
-  width: '38px',
-  height: '38px',
-  borderRadius: 'full',
-  border: '1.5px solid',
-  borderColor: 'ink/35',
+  background: 'white',
+  mixBlendMode: 'difference',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transitionProperty: 'width, height, background, border-color',
+  transitionProperty: 'width, height, background',
   transitionDuration: '0.35s',
   transitionTimingFunction: 'out',
-  '.is-link &': { width: '56px', height: '56px', borderColor: 'accent' },
-  '.is-view &': { width: '86px', height: '86px', background: 'accent', borderColor: 'accent' },
-  '.on-dark &': { borderColor: 'dark.fg/40' },
-  '.on-dark.is-link &, .on-dark.is-view &': { borderColor: 'accent' },
+  '@media (pointer: coarse)': { display: 'none' },
+  '&.is-link': { width: '48px', height: '48px' },
+  '&.is-view': { width: '86px', height: '86px' },
 })
 
-const ringLabel = css({
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'dark.bg',
+const innerStyle = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'ink',
   opacity: 0,
   transition: 'opacity 0.2s ease',
-  whiteSpace: 'nowrap',
   '.is-view &': { opacity: 1 },
 })
 </script>
 
 <template>
-  <div :class="[root, { 'is-link': isLink, 'is-view': isView, 'on-dark': onDark }]" aria-hidden="true">
-    <div ref="ringEl" :class="ringStyle"><span :class="ringLabel">Pozrieť</span></div>
-    <div ref="dotEl" :class="dotStyle" />
+  <div ref="ballEl" :class="[ballStyle, { 'is-link': isLink, 'is-view': isView }]" aria-hidden="true">
+    <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>
   </div>
 </template>

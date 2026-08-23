@@ -3,6 +3,7 @@ import { defineTokens } from '@pandacss/dev'
 /** Farebné tokeny — jediné miesto, kde sa definujú farby. Komponenty používajú len názvy tokenov. */
 export const colors = defineTokens.colors({
   // svetlý základ
+  white: { value: '#FFFFFF' },
   paper: { value: '#F3F3F0' },
   paper2: { value: '#EBEBE6' },
   card: { value: '#FCFCFA' },

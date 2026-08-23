@@ -6,12 +6,15 @@ interface ProjectChip {
   accent?: boolean
 }
 
-defineProps<{
+withDefaults(defineProps<{
   name: string
   description: string
   tone: 'blush' | 'steel'
   chips: ProjectChip[]
-}>()
+  state?: 'idle' | 'active' | 'dimmed'
+}>(), { state: 'idle' })
+
+defineEmits<{ select: [] }>()
 
 const root = ref<HTMLElement | null>(null)
 const inView = useInView(root, { threshold: 0.05 })
@@ -30,6 +33,7 @@ const card = css({
   display: 'flex',
   flexDirection: 'column',
   gap: '18px',
+  minWidth: 0,
 })
 
 const cover = cva({
@@ -96,7 +100,8 @@ const chipRow = css({
       tag="projekt"
       :built="built"
       :content-class="coverFill"
-      data-cursor="view"
+      :data-cursor="state === 'active' ? undefined : 'view'"
+      @click="$emit('select')"
     >
       <div :class="coverScale">
         <slot />
