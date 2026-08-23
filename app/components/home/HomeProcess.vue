@@ -17,7 +17,7 @@ const runId = ref(0)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
 const demoEl = ref<HTMLElement | null>(null)
-const running = useInView(demoEl, { threshold: 0.25, rootMargin: '0px', once: false })
+const running = useInView(demoEl, { threshold: 0.25, once: false })
 const reduced = useReducedMotion()
 let timer = 0
 

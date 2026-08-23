@@ -22,19 +22,11 @@ const big = css({
   textTransform: 'uppercase',
 })
 
-const revealLine = css({ display: 'block', overflow: 'hidden' })
-
-const revealInner = css({
-  display: 'block',
-  transform: 'translateY(118%)',
-  transition: 'transform 1s {easings.out}',
-  '.in &': { transform: 'translateY(0)' },
-  _motionReduce: { transform: 'none', transition: 'none' },
-})
-
 const outline = css({
   color: 'transparent',
   WebkitTextStroke: '1.5px token(colors.dark.fg)',
+  // pri selekcii Chrome vypĺňa glyfy pôvodnou (transparentnou) farbou — dolej plnú výplň
+  _selection: { color: 'dark.fg', WebkitTextFillColor: 'dark.fg' },
 })
 
 const mark = css({ color: 'accent' })
@@ -63,7 +55,7 @@ const note = css({
     <div :class="[wrap, inner]">
       <div :class="big">
         <span :class="revealLine">
-          <span :class="revealInner"><span :class="outline">Máte</span> nápad<span :class="mark">?</span></span>
+          <span :class="revealInner()"><span :class="outline">Máte</span> nápad<span :class="mark">?</span></span>
         </span>
       </div>
       <p :class="[sub, fadeIn()]">Poďme z neho spraviť hotový produkt.</p>

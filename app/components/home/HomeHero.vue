@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { css, cva } from '~~/styled-system/css'
+import { css } from '~~/styled-system/css'
 
 /** Sekvencia „stavania" hera podľa prototypu (ms od mountnutia). */
 const BUILD_SEQUENCE = [
@@ -89,28 +89,11 @@ const heading = css({
   margin: 0,
 })
 
-const line = css({ display: 'block', overflow: 'hidden' })
-
-const lineInner = cva({
-  base: {
-    display: 'block',
-    transform: 'translateY(118%)',
-    transition: 'transform 1s {easings.out}',
-    '.in &': { transform: 'translateY(0)' },
-    _motionReduce: { transform: 'none', transition: 'none' },
-  },
-  variants: {
-    delay: {
-      1: { transitionDelay: '0.05s' },
-      2: { transitionDelay: '0.16s' },
-      3: { transitionDelay: '0.27s' },
-    },
-  },
-})
-
 const outline = css({
   color: 'transparent',
   WebkitTextStroke: '1.5px token(colors.ink)',
+  // pri selekcii Chrome vypĺňa glyfy pôvodnou (transparentnou) farbou — dolej plnú výplň
+  _selection: { color: 'ink', WebkitTextFillColor: 'ink' },
 })
 
 const indent = css({ marginLeft: 'clamp(40px, 8vw, 150px)' })
@@ -156,9 +139,9 @@ const ctas = css({
 
       <BlueprintFrame :class="headingFrame" tag="nadpis / h1" :built="built.h1">
         <h1 :class="[heading, { in: built.h1 }]">
-          <span :class="line"><span :class="lineInner({ delay: 1 })">Weby,</span></span>
-          <span :class="[line, indent]"><span :class="[lineInner({ delay: 2 }), outline]">softvér</span></span>
-          <span :class="line"><span :class="lineInner({ delay: 3 })"><span :class="amp">&amp;</span> appky.</span></span>
+          <span :class="revealLine"><span :class="revealInner({ delay: 1 })">Weby,</span></span>
+          <span :class="[revealLine, indent]"><span :class="[revealInner({ delay: 2 }), outline]">softvér</span></span>
+          <span :class="revealLine"><span :class="revealInner({ delay: 3 })"><span :class="amp">&amp;</span> appky.</span></span>
         </h1>
       </BlueprintFrame>
 

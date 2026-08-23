@@ -14,14 +14,14 @@ defineProps<{
 }>()
 
 const root = ref<HTMLElement | null>(null)
-const inView = useInView(root, { threshold: 0.25, rootMargin: '0px' })
+const inView = useInView(root, { threshold: 0.05 })
 const reduced = useReducedMotion()
 const built = ref(false)
 let timer = 0
 
 watch(inView, (visible) => {
   if (!visible) return
-  timer = window.setTimeout(() => (built.value = true), reduced.value ? 0 : 350)
+  timer = window.setTimeout(() => (built.value = true), reduced.value ? 0 : 200)
 })
 
 onBeforeUnmount(() => clearTimeout(timer))

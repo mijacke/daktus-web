@@ -46,6 +46,35 @@ export const sectionNote = css({
 })
 
 /**
+ * Klipovací obal reveal riadku nadpisu. Namiesto overflow: hidden klipuje
+ * cez clip-path so záporným presahom hore/dole — diakritika nad verzálkami
+ * (Á, É, Č…) a spodky glyfov prežijú aj tesný line-height nadpisov,
+ * a na rozdiel od padding/margin kompenzácie sa nemení layout.
+ */
+export const revealLine = css({
+  display: 'block',
+  clipPath: 'inset(-0.3em 0 -0.12em 0)',
+})
+
+/** Vnútro reveal riadku — vysunie sa spod klipu, keď rodič dostane triedu `in`. */
+export const revealInner = cva({
+  base: {
+    display: 'block',
+    transform: 'translateY(140%)',
+    transition: 'transform 0.8s {easings.out}',
+    '.in &': { transform: 'translateY(0)' },
+    _motionReduce: { transform: 'none', transition: 'none' },
+  },
+  variants: {
+    delay: {
+      1: { transitionDelay: '0.05s' },
+      2: { transitionDelay: '0.16s' },
+      3: { transitionDelay: '0.27s' },
+    },
+  },
+})
+
+/**
  * Scroll-reveal fade: element sa objaví, keď on sám (`&.in`) alebo jeho
  * pozorovaný rodič (`.in &`) dostane marker triedu `in` (useInView).
  */
@@ -54,7 +83,7 @@ export const fadeIn = cva({
     opacity: 0,
     transform: 'translateY(26px)',
     transitionProperty: 'opacity, transform',
-    transitionDuration: '0.9s',
+    transitionDuration: '0.55s',
     transitionTimingFunction: 'out',
     '.in &': { opacity: 1, transform: 'none' },
     '&.in': { opacity: 1, transform: 'none' },
@@ -63,9 +92,9 @@ export const fadeIn = cva({
   variants: {
     delay: {
       0: {},
-      1: { transitionDelay: '0.08s' },
-      2: { transitionDelay: '0.16s' },
-      3: { transitionDelay: '0.24s' },
+      1: { transitionDelay: '0.06s' },
+      2: { transitionDelay: '0.12s' },
+      3: { transitionDelay: '0.18s' },
     },
   },
   defaultVariants: { delay: 0 },
