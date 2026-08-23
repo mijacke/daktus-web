@@ -151,11 +151,11 @@ const ballStyle = css({
   alignItems: 'center',
   justifyContent: 'center',
   transitionProperty: 'width, height, background, opacity, mix-blend-mode, backdrop-filter',
-  // pomalý mäkký rast/zmenšovanie na hranách kariet; fade guľky ostáva svižný.
-  // Blend a filter sa pri odchode preklopia až po scvrknutí (odložený diskrétny
-  // prechod) — inak veľká guľa jednorazovo blikne na invertujúcu šošovku.
-  transitionDuration: '0.8s, 0.8s, 0.8s, 0.35s, 0s, 0s',
-  transitionDelay: '0s, 0s, 0s, 0s, 0.45s, 0.45s',
+  // Odchod z karty: guľa sa scvrkáva stále tmavá; farba, blend aj filter sa
+  // prelejú do invertujúceho režimu až po scvrknutí (odložený prechod) —
+  // inak veľká guľa jednorazovo blikne na bielo/invertujúcu šošovku.
+  transitionDuration: '0.8s, 0.8s, 0.35s, 0.35s, 0s, 0s',
+  transitionDelay: '0s, 0s, 0.45s, 0s, 0.45s, 0.45s',
   transitionTimingFunction: 'out',
   transitionBehavior: 'allow-discrete',
   '@media (pointer: coarse)': { display: 'none' },
@@ -168,7 +168,9 @@ const ballStyle = css({
     background: 'ink/80',
     mixBlendMode: 'normal',
     backdropFilter: 'none',
-    // pri príchode sa blend prepína hneď — guľa je vtedy ešte malá
+    // pri príchode sa blend prepína hneď (guľa je ešte malá) a farba
+    // sa stmavuje počas celého rastu
+    transitionDuration: '0.8s, 0.8s, 0.8s, 0.35s, 0s, 0s',
     transitionDelay: '0s',
   },
   '&.is-hidden': { opacity: 0 },
