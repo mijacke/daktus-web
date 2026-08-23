@@ -25,7 +25,8 @@ const bar = cva({
   variants: {
     dark: {
       false: { background: 'ink/4', borderColor: 'ink/8' },
-      true: { background: 'device.dark', borderColor: 'white/8' },
+      // svetlejší grafit než tmavé weby — hranica okna ostáva čitateľná
+      true: { background: 'device.dark4', borderColor: 'white/12' },
     },
   },
 })
