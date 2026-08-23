@@ -61,7 +61,7 @@ export const revealInner = cva({
   base: {
     display: 'block',
     transform: 'translateY(140%)',
-    transition: 'transform 1s {easings.out}',
+    transition: 'transform 0.8s {easings.out}',
     '.in &': { transform: 'translateY(0)' },
     _motionReduce: { transform: 'none', transition: 'none' },
   },
@@ -83,7 +83,7 @@ export const fadeIn = cva({
     opacity: 0,
     transform: 'translateY(26px)',
     transitionProperty: 'opacity, transform',
-    transitionDuration: '0.9s',
+    transitionDuration: '0.55s',
     transitionTimingFunction: 'out',
     '.in &': { opacity: 1, transform: 'none' },
     '&.in': { opacity: 1, transform: 'none' },
@@ -92,9 +92,9 @@ export const fadeIn = cva({
   variants: {
     delay: {
       0: {},
-      1: { transitionDelay: '0.08s' },
-      2: { transitionDelay: '0.16s' },
-      3: { transitionDelay: '0.24s' },
+      1: { transitionDelay: '0.06s' },
+      2: { transitionDelay: '0.12s' },
+      3: { transitionDelay: '0.18s' },
     },
   },
   defaultVariants: { delay: 0 },

@@ -17,7 +17,7 @@ const head = css({
   flexWrap: 'wrap',
   opacity: 0,
   transform: 'translateY(26px)',
-  transition: 'opacity 0.9s ease, transform 0.9s {easings.out}',
+  transition: 'opacity 0.55s ease, transform 0.55s {easings.out}',
   '&.in': { opacity: 1, transform: 'none' },
   _motionReduce: { opacity: 1, transform: 'none', transition: 'none' },
 })

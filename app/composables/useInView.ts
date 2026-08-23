@@ -7,8 +7,8 @@ interface UseInViewOptions extends IntersectionObserverInit {
 
 /** Sleduje, či je element vo viewporte — základ scroll-reveal animácií. */
 export function useInView(target: Ref<HTMLElement | null>, options: UseInViewOptions = {}) {
-  // nízky threshold bez spodného odsadenia = reveal štartuje hneď, ako element vojde do viewportu
-  const { once = true, threshold = 0.08, rootMargin = '0px', root } = options
+  // minimálny threshold bez spodného odsadenia = reveal štartuje hneď, ako element vojde do viewportu
+  const { once = true, threshold = 0.01, rootMargin = '0px', root } = options
   const inView = ref(false)
   let observer: IntersectionObserver | null = null
 
