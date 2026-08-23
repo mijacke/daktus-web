@@ -1,6 +1,6 @@
 import { defineConfig } from '@pandacss/dev'
 import { colors } from './app/theme/colors'
-import { fonts } from './app/theme/tokens'
+import { easings, fonts } from './app/theme/tokens'
 
 export default defineConfig({
   preflight: true,
@@ -8,25 +8,25 @@ export default defineConfig({
   outdir: 'styled-system',
   theme: {
     extend: {
-      tokens: { colors, fonts },
-      keyframes: {
-        draw: { to: { transform: 'scaleX(1)' } },
-      },
+      tokens: { colors, fonts, easings },
     },
   },
   globalCss: {
-    'html, body, #__nuxt': { height: '100%' },
     body: {
-      bg: 'bg',
-      color: 'fg',
+      bg: 'paper',
+      color: 'ink',
       fontFamily: 'sans',
+      lineHeight: 1.6,
       WebkitFontSmoothing: 'antialiased',
+      overflowX: 'hidden',
     },
-    a: {
-      color: 'accent',
-      textDecoration: 'none',
-      _hover: { textDecoration: 'underline' },
-      _focusVisible: { outline: '2px solid', outlineColor: 'accent', outlineOffset: '3px' },
+    a: { color: 'inherit', textDecoration: 'none' },
+    '::selection': { background: 'accentSelection' },
+    ':focus-visible': {
+      outline: '2px solid',
+      outlineColor: 'accent',
+      outlineOffset: '3px',
+      borderRadius: '4px',
     },
   },
 })
