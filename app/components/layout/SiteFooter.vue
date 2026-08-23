@@ -117,12 +117,12 @@ const legal = css({
         <div :class="groups">
           <div :class="group">
             <span :class="groupLabel">Menu</span>
-            <a v-for="item in MENU" :key="item.href" :class="groupLink" :href="item.href">{{ item.label }}</a>
+            <NuxtLink v-for="item in MENU" :key="item.href" :class="groupLink" :to="item.href">{{ item.label }}</NuxtLink>
           </div>
           <div :class="group">
             <span :class="groupLabel">Kontakt</span>
             <a :class="[groupLink, groupLinkAccent]" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
-            <a :class="groupLink" href="/">daktus.sk</a>
+            <NuxtLink :class="groupLink" to="/">daktus.sk</NuxtLink>
           </div>
           <div :class="group">
             <span :class="groupLabel">Sledujte nás</span>

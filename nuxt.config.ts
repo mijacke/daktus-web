@@ -9,13 +9,8 @@ export default defineNuxtConfig({
       '@pandacss/dev/postcss': {},
     },
   },
-  nitro: {
-    prerender: {
-      // Podstránky sa prenášajú z prototypu v ďalších PR — crawler ich zatiaľ nemá prerenderovať.
-      ignore: ['/projekty', '/sluzby', '/cennik', '/kontakt'],
-    },
-  },
   app: {
+    pageTransition: { name: 'page', mode: 'out-in' },
     head: {
       htmlAttrs: { lang: 'sk' },
       title: 'Daktus — weby, softvér & appky',

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import type { ServiceIconName } from '~/components/ServiceIcon.vue'
+import type { ServiceIconName } from '~/components/icons/ServiceIcon.vue'
 
 interface Service {
   icon: ServiceIconName
@@ -60,10 +60,10 @@ const noteAccent = css({
   <section id="sluzby" :class="sectionBlock">
     <div :class="wrap">
       <SectionHead eyebrow="Služby" title="Čo staviame">
-        <a :class="sectionLink" href="/sluzby">
+        <NuxtLink :class="sectionLink" to="/sluzby">
           Viac o službách
           <span :class="sectionLinkIcon"><IconArrow /></span>
-        </a>
+        </NuxtLink>
       </SectionHead>
 
       <div ref="gridEl" :class="[grid, { in: gridIn }]">

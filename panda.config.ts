@@ -50,5 +50,14 @@ export default defineConfig({
       borderRadius: '4px',
     },
     '::selection': { background: 'accent/35' },
+    // prechod medzi stránkami (app.pageTransition v nuxt.config.ts)
+    '.page-enter-active, .page-leave-active': {
+      transition: 'opacity 0.4s ease, transform 0.55s token(easings.out)',
+    },
+    '.page-enter-from': { opacity: 0, transform: 'translateY(20px)' },
+    '.page-leave-to': { opacity: 0 },
+    '@media (prefers-reduced-motion: reduce)': {
+      '.page-enter-active, .page-leave-active': { transition: 'none' },
+    },
   },
 })

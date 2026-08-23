@@ -20,12 +20,19 @@ function update() {
   })
 }
 
-onMounted(() => {
+function collect() {
   darkSections = Array.from(document.querySelectorAll('[data-dark]'))
   update()
+}
+
+onMounted(() => {
+  collect()
   window.addEventListener('scroll', update, { passive: true })
   window.addEventListener('resize', update)
 })
+
+// po prepnutí stránky sa tmavé sekcie menia — pozbieraj ich nanovo
+useNuxtApp().hook('page:finish', () => nextTick(collect))
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', update)
@@ -87,17 +94,18 @@ const navLink = css({
     transition: 'transform 0.4s {easings.out}',
   },
   _hover: { _after: { transform: 'scaleX(1)', transformOrigin: 'left' } },
+  '&.cur': { _after: { transform: 'scaleX(1)', transformOrigin: 'left' } },
   '@media (max-width: 860px)': { display: 'none' },
 })
 </script>
 
 <template>
   <nav :class="[nav, { 'scrolled': scrolled, 'over-dark': overDark }]">
-    <a :class="logo" href="/">Daktus</a>
+    <NuxtLink :class="logo" to="/">Daktus</NuxtLink>
     <div :class="links">
-      <a v-for="link in NAV_LINKS" :key="link.href" :class="navLink" :href="link.href">
+      <NuxtLink v-for="link in NAV_LINKS" :key="link.href" :class="navLink" :to="link.href" active-class="cur">
         {{ link.label }}
-      </a>
+      </NuxtLink>
       <AppButton v-magnet href="/kontakt" variant="pill" arrow>
         Napíšme si
       </AppButton>
