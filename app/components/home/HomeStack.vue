@@ -34,6 +34,8 @@ const rowTweens: (gsap.core.Tween | null)[] = ROWS.map(() => null)
 const rowWidths: number[] = ROWS.map(() => 0)
 let wobble: gsap.core.Tween | null = null
 let spin: gsap.core.Tween | null = null
+let wander: gsap.core.Tween | null = null
+let shear: gsap.core.Tween | null = null
 let morphTweens: gsap.core.Tween[] = []
 let tick: (() => void) | null = null
 let observer: ResizeObserver | null = null
@@ -143,6 +145,24 @@ onMounted(() => {
   })
   // pomalé kývavé otáčanie
   spin = gsap.fromTo(lens, { rotation: -8 }, { rotation: 10, duration: 10, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+  // autonómne blúdenie do strán — náhodný offset navrstvený na sledovanie myši
+  wander = gsap.to(lens, {
+    xPercent: () => gsap.utils.random(-45, 45),
+    yPercent: () => gsap.utils.random(-22, 22),
+    duration: () => gsap.utils.random(3, 6),
+    repeat: -1,
+    repeatRefresh: true,
+    ease: 'sine.inOut',
+  })
+  // náhodné skosenie — organický shear, nech tvar nepôsobí geometricky
+  shear = gsap.to(lens, {
+    skewX: () => gsap.utils.random(-6, 6),
+    skewY: () => gsap.utils.random(-4, 4),
+    duration: () => gsap.utils.random(3, 5),
+    repeat: -1,
+    repeatRefresh: true,
+    ease: 'sine.inOut',
+  })
   // každý roh blobu sa naťahuje nezávisle — 8 náhodne desynchronizovaných polomerov
   const shape: Record<string, number> = { a: 58, b: 42, c: 55, d: 45, e: 48, f: 62, g: 40, h: 52 }
   const applyShape = () => {
@@ -150,7 +170,7 @@ onMounted(() => {
   }
   morphTweens = Object.keys(shape).map((key, index) =>
     gsap.to(shape, {
-      [key]: () => gsap.utils.random(30, 70),
+      [key]: () => gsap.utils.random(28, 72),
       duration: () => gsap.utils.random(2.5, 5.5),
       delay: index * 0.4,
       repeat: -1,
@@ -204,6 +224,8 @@ onBeforeUnmount(() => {
   morphTweens.forEach(tween => tween.kill())
   wobble?.kill()
   spin?.kill()
+  wander?.kill()
+  shear?.kill()
   if (tick) gsap.ticker.remove(tick)
   observer?.disconnect()
   cleanupFollow?.()
@@ -276,7 +298,7 @@ const lensPane = css({
   top: 0,
   left: 0,
   zIndex: 3,
-  width: 'clamp(680px, 68vw, 1120px)',
+  width: 'clamp(460px, 46vw, 780px)',
   aspectRatio: '1.5 / 1',
   borderRadius: '58% 42% 55% 45% / 48% 62% 40% 52%',
   pointerEvents: 'none',
