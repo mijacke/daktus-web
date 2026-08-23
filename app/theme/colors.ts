@@ -35,6 +35,12 @@ export const colors = defineTokens.colors({
     paper: { value: '#EDEDE8' },
     paper2: { value: '#E2E2DB' },
   },
+  // semafor v hlavičke náhľadového okna projektu — natívne macOS odtiene, čisto dekoratívne
+  traffic: {
+    red: { value: '#FF5F57' },
+    amber: { value: '#FEBC2E' },
+    green: { value: '#28C840' },
+  },
   mockup: {
     peach: { value: '#E5C8BA' },
     peach2: { value: '#D9B4A4' },
