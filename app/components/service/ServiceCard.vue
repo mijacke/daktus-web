@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import type { ServiceIconName } from '~/components/icons/ServiceIcon.vue'
+
+export type ServiceDeviceName = 'browser' | 'code' | 'desktop' | 'phone'
 
 defineProps<{
-  icon: ServiceIconName
+  /** Mini zariadenie v hlave karty — každá služba ukáže svoj typ produktu. */
+  device: ServiceDeviceName
   title: string
   text: string
 }>()
@@ -14,7 +16,7 @@ const card = css({
   borderColor: 'hairline',
   borderRadius: '18px',
   background: 'card',
-  padding: '30px 28px 32px',
+  padding: '22px 22px 30px',
   transitionProperty: 'transform, box-shadow, border-color',
   transitionDuration: '0.5s',
   transitionTimingFunction: 'out',
@@ -25,15 +27,12 @@ const card = css({
   },
 })
 
-const iconBox = css({
-  width: '52px',
-  height: '52px',
-  borderRadius: '14px',
-  background: 'accent/13',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'accent.deep',
+/** Jednotná výška pre všetky zariadenia — okná sa natiahnu, telefón centrovaný. */
+const deviceStage = css({
+  display: 'grid',
+  alignItems: 'stretch',
+  minHeight: '112px',
+  '& > *': { minWidth: 0 },
 })
 
 const heading = css({
@@ -42,7 +41,7 @@ const heading = css({
   fontSize: '21px',
   letterSpacing: '-0.01em',
   textTransform: 'uppercase',
-  margin: '22px 0 0',
+  margin: '20px 0 0',
   lineHeight: 1.15,
 })
 
@@ -54,9 +53,12 @@ const note = css({
 </script>
 
 <template>
-  <div :class="card">
-    <div :class="iconBox">
-      <ServiceIcon :name="icon" />
+  <div :class="card" data-svc>
+    <div :class="deviceStage">
+      <ServiceDeviceBrowser v-if="device === 'browser'" />
+      <ServiceDeviceCode v-else-if="device === 'code'" />
+      <ServiceDeviceDesktop v-else-if="device === 'desktop'" />
+      <ServiceDevicePhone v-else />
     </div>
     <h3 :class="heading">{{ title }}</h3>
     <p :class="note">{{ text }}</p>
