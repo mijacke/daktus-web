@@ -137,17 +137,19 @@ const ballStyle = css({
   alignItems: 'center',
   justifyContent: 'center',
   transitionProperty: 'width, height, background, opacity',
-  transitionDuration: '0.35s',
+  // pomalší rast/zmenšovanie na hranách kariet — výrazne mäkší prechod
+  transitionDuration: '0.6s',
   transitionTimingFunction: 'out',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
   '&.is-view': {
     width: '86px',
     height: '86px',
-    // nad projektmi otáča len svetlosť (čierna↔biela), odtiene fotiek ostávajú
-    background: 'transparent',
+    // nad projektmi žiadna inverzia — vždy tmavá priesvitná guľa,
+    // farby fotiek za ňou ostávajú skutočné
+    background: 'ink/80',
     mixBlendMode: 'normal',
-    backdropFilter: 'invert(1) hue-rotate(180deg)',
+    backdropFilter: 'none',
   },
   '&.is-hidden': { opacity: 0 },
 })
@@ -159,8 +161,7 @@ const innerStyle = css({
   color: 'ink',
   opacity: 0,
   transition: 'opacity 0.2s ease',
-  // šípka sa v „lens" guli invertuje voči jej obsahu, aby bola vždy čitateľná
-  '.is-view &': { opacity: 1, color: 'white', mixBlendMode: 'difference' },
+  '.is-view &': { opacity: 1, color: 'white' },
 })
 </script>
 
