@@ -5,7 +5,7 @@ import { css } from '~~/styled-system/css'
 const shell = css({
   display: 'flex',
   flexDirection: 'column',
-  paddingInline: '8%',
+  paddingInline: '15%',
 })
 
 const bezel = css({

@@ -91,77 +91,81 @@ const sticky = css({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
-    paddingBlock: '40px',
+    paddingBlock: '34px',
   },
 })
 
-const stage = css({
-  display: 'grid',
-  gridTemplateColumns: 'minmax(320px, 430px) 1fr',
-  gap: 'clamp(36px, 4vw, 70px)',
-  marginTop: '48px',
-  alignItems: 'center',
-  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr', alignItems: 'start' },
+/** Nadpis aktívneho kroku — „01 Analýza" v strede, kroky sa v ňom prelínajú. */
+const stepHead = css({
+  position: 'relative',
+  height: 'clamp(92px, 10vh, 116px)',
+  marginTop: 'clamp(16px, 2.4vh, 32px)',
 })
 
-const rail = css({
+const stepItem = css({
+  position: 'absolute',
+  inset: 0,
   display: 'flex',
   flexDirection: 'column',
+  alignItems: 'center',
+  gap: '9px',
+  textAlign: 'center',
+  opacity: 0,
+  transform: 'translateY(14px)',
+  transition: 'opacity 0.45s ease, transform 0.55s {easings.out}',
+  pointerEvents: 'none',
+  '&.on': { opacity: 1, transform: 'none' },
+  _motionReduce: { transition: 'none' },
 })
 
-const step = css({
-  textAlign: 'left',
-  background: 'none',
-  border: 0,
-  borderTop: '1px solid',
-  borderColor: 'dark.hairline',
-  padding: '19px 6px 21px 0',
-  display: 'grid',
-  gridTemplateColumns: '46px 1fr',
-  rowGap: '6px',
-  cursor: 'pointer',
-  color: 'inherit',
-  '&:last-child': { borderBottom: '1px solid {colors.dark.hairline}' },
+const stepTitleRow = css({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '16px',
 })
 
 const stepNo = css({
   fontFamily: 'display',
   fontWeight: 800,
-  fontSize: '15px',
-  color: 'dark.dim',
-  transition: 'color 0.3s ease',
-  paddingTop: '2px',
-  '.active &': { color: 'accent' },
+  fontSize: 'clamp(15px, 1.4vw, 20px)',
+  color: 'accent',
 })
 
 const stepTitle = css({
   fontFamily: 'display',
-  fontWeight: 700,
-  fontSize: '20px',
-  color: 'dark.dim',
-  transition: 'color 0.3s ease',
-  '.active &': { color: 'dark.fg' },
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  fontSize: 'clamp(26px, 2.6vw, 42px)',
+  lineHeight: 1,
+  letterSpacing: '-0.015em',
 })
 
 const stepText = css({
-  gridColumn: 2,
-  fontSize: '13.5px',
-  lineHeight: 1.55,
+  fontSize: '14px',
   color: 'dark.dim',
-  transition: 'color 0.3s ease',
-  '.active &': { color: 'dark.fg/72' },
+  maxWidth: '560px',
 })
 
-const stepBar = css({
-  gridColumn: 2,
-  height: '2px',
-  background: 'dark.fg/12',
+/** Priebeh krokov — päť klikateľných pruhov, aktívny sa plní scrollom. */
+const dotsRow = css({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '9px',
+  marginTop: '4px',
+})
+
+const dot = css({
+  width: '36px',
+  height: '3px',
   borderRadius: 'full',
+  background: 'dark.fg/14',
   overflow: 'hidden',
-  marginTop: '10px',
+  border: 0,
+  padding: 0,
+  cursor: 'pointer',
 })
 
-const stepBarFill = css({
+const dotFill = css({
   display: 'block',
   height: '100%',
   background: 'accent',
@@ -169,12 +173,19 @@ const stepBarFill = css({
   _motionReduce: { transition: 'none' },
 })
 
+/** Široký MacBook v strede — rovnaký rám ako živé náhľady projektov. */
+const macWrap = css({
+  width: 'min(1040px, 100%)',
+  marginInline: 'auto',
+  marginTop: 'clamp(20px, 3.2vh, 40px)',
+})
+
 const demo = css({
   position: 'relative',
   background: 'dark.panel',
   overflow: 'hidden',
-  height: 'min(clamp(440px, 34vw, 560px), calc(100svh - 320px))',
-  '@media (max-width: 1000px)': { height: 'auto', minHeight: '560px' },
+  height: 'clamp(300px, min(31vw, calc(100svh - 420px)), 600px)',
+  '@media (max-width: 1000px)': { height: 'auto', minHeight: '500px' },
 })
 
 const scene = css({
@@ -184,7 +195,7 @@ const scene = css({
   transform: 'scale(0.985)',
   transition: 'opacity 0.5s ease, transform 0.6s {easings.out}',
   pointerEvents: 'none',
-  padding: 'clamp(22px, 2.4vw, 40px)',
+  padding: 'clamp(20px, 2.2vw, 36px)',
   '&.scene-on': { opacity: 1, transform: 'none' },
 })
 </script>
@@ -197,33 +208,41 @@ const scene = css({
           <span :class="sectionNote">Scrollujte — každý úsek posunie váš projekt o krok ďalej.</span>
         </SectionHead>
 
-        <div ref="stageEl" :class="[stage, fadeIn(), { in: stageIn }]">
-          <div :class="rail">
+        <div ref="stageEl" :class="[fadeIn(), { in: stageIn }]">
+          <div :class="stepHead" aria-live="polite">
+            <div v-for="(item, index) in STEPS" :key="item.no" :class="[stepItem, { on: index === active }]">
+              <div :class="stepTitleRow">
+                <span :class="stepNo">{{ item.no }}</span>
+                <span :class="stepTitle">{{ item.title }}</span>
+              </div>
+              <span :class="stepText">{{ item.text }}</span>
+            </div>
+          </div>
+
+          <div :class="dotsRow">
             <button
               v-for="(item, index) in STEPS"
               :key="item.no"
               type="button"
-              :class="[step, { active: index === active }]"
+              :class="dot"
+              :aria-label="`Krok ${item.no}: ${item.title}`"
               @click="select(index)"
             >
-              <span :class="stepNo">{{ item.no }}</span>
-              <span :class="stepTitle">{{ item.title }}</span>
-              <span :class="stepText">{{ item.text }}</span>
-              <span :class="stepBar">
-                <i :class="stepBarFill" :style="{ width: `${fillFor(index)}%` }" />
-              </span>
+              <i :class="dotFill" :style="{ width: `${fillFor(index)}%` }" />
             </button>
           </div>
 
-          <DeviceMac url="vas-projekt.sk" dark>
-            <div :class="demo">
-              <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
-              <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
-              <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
-              <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
-              <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
-            </div>
-          </DeviceMac>
+          <div :class="macWrap">
+            <DeviceMac url="vas-projekt.sk" dark>
+              <div :class="demo">
+                <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
+                <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
+                <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
+                <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
+                <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
+              </div>
+            </DeviceMac>
+          </div>
         </div>
       </div>
     </div>

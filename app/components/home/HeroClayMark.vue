@@ -41,10 +41,10 @@ onBeforeUnmount(() => cleanup?.())
 
 const stage = css({
   position: 'absolute',
-  right: 'clamp(52px, 11vw, 215px)',
-  top: 'clamp(170px, 21vh, 265px)',
+  right: 'clamp(44px, 9.5vw, 185px)',
+  top: 'clamp(150px, 19vh, 245px)',
   zIndex: 1,
-  width: 'clamp(235px, 19vw, 330px)',
+  width: 'clamp(285px, 23vw, 400px)',
   pointerEvents: 'none',
   // objaví sa až po dostavaní hera (sekvencia v HomeHero končí ~2,2 s)
   opacity: 0,
@@ -80,14 +80,14 @@ const ground = css({
   _motionReduce: { animation: 'none' },
 })
 
-// plastelínové odtiene — šalvia z akcentu, telo z clay tónov mockup paliet
+// plastelínové odtiene ako logomark: driek čierny (ink), bruško mint (accent)
 // (stopColor nie je Panda vlastnosť, tokeny preto vždy cez explicitné token())
 const stopSageLight = css({ stopColor: 'color-mix(in srgb, token(colors.accent) 55%, white)' })
 const stopSage = css({ stopColor: 'token(colors.accent)' })
 const stopSageDeep = css({ stopColor: 'token(colors.accent.deep)' })
-const stopClayLight = css({ stopColor: 'token(colors.mockup.cream)' })
-const stopClay = css({ stopColor: 'token(colors.mockup.clay)' })
-const stopClayDeep = css({ stopColor: 'color-mix(in srgb, token(colors.mockup.clay2) 90%, black)' })
+const stopInkLight = css({ stopColor: 'color-mix(in srgb, token(colors.ink) 68%, white)' })
+const stopInk = css({ stopColor: 'color-mix(in srgb, token(colors.ink) 90%, white)' })
+const stopInkDeep = css({ stopColor: 'token(colors.ink)' })
 
 const seam = css({ stroke: 'color-mix(in srgb, token(colors.accent.deep) 55%, black)' })
 
@@ -106,9 +106,9 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
             <stop offset="1" :class="stopSageDeep" />
           </linearGradient>
           <linearGradient id="clay-body" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" :class="stopClayLight" />
-            <stop offset="0.6" :class="stopClay" />
-            <stop offset="1" :class="stopClayDeep" />
+            <stop offset="0" :class="stopInkLight" />
+            <stop offset="0.6" :class="stopInk" />
+            <stop offset="1" :class="stopInkDeep" />
           </linearGradient>
           <!-- ručne miesený okraj: turbulencia jemne zvlní geometriu tvarov -->
           <filter id="clay-edge" x="-8%" y="-8%" width="116%" height="116%">

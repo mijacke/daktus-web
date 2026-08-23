@@ -37,19 +37,51 @@ const card = cva({
   },
 })
 
-/** Javisko zariadenia — rovnaká výška, iné kotvenie: stred, full-bleed, polička, stred. */
+/**
+ * Javisko zariadenia — rovnaká výška, iné kotvenie: stred, full-bleed, polička,
+ * stred. Zariadenia stoja zmenšené a hover karty ich pritiahne na plnú veľkosť
+ * (terminál nie — ten je celou kartou).
+ */
 const stage = cva({
   base: {
     display: 'flex',
     minHeight: '132px',
-    '& > *': { minWidth: 0 },
+    '& > *': {
+      minWidth: 0,
+      transition: 'transform 0.55s {easings.out}',
+      _motionReduce: { transition: 'none' },
+    },
   },
   variants: {
     device: {
-      browser: { alignItems: 'center', '& > *': { width: '100%' } },
+      browser: {
+        alignItems: 'center',
+        '& > *': { width: '100%', transformOrigin: '50% 100%' },
+        '@media (prefers-reduced-motion: no-preference)': {
+          '& > *': { transform: 'scale(0.84)' },
+          '[data-svc]:hover & > *': { transform: 'scale(1)' },
+        },
+      },
       code: { margin: '-22px -22px 0', alignItems: 'stretch', '& > *': { width: '100%' } },
-      desktop: { justifyContent: 'center', alignItems: 'flex-end', borderBottom: '1px solid', borderColor: 'hairline.soft' },
-      phone: { justifyContent: 'center', alignItems: 'center' },
+      desktop: {
+        justifyContent: 'center',
+        alignItems: 'flex-end',
+        borderBottom: '1px solid',
+        borderColor: 'hairline.soft',
+        '& > *': { transformOrigin: '50% 100%' },
+        '@media (prefers-reduced-motion: no-preference)': {
+          '& > *': { transform: 'scale(0.86)' },
+          '[data-svc]:hover & > *': { transform: 'scale(1)' },
+        },
+      },
+      phone: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        '@media (prefers-reduced-motion: no-preference)': {
+          '& > *': { transform: 'scale(0.86)' },
+          '[data-svc]:hover & > *': { transform: 'scale(1)' },
+        },
+      },
     },
   },
 })
