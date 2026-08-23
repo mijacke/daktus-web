@@ -13,8 +13,13 @@ const ROWS = [
   ['AWS', 'Azure', 'Docker', 'Kubernetes', 'DigitalOcean', 'Vercel', 'Netlify', 'Websupport'],
 ]
 
+/** Jadro stacku — technológie, na ktorých staviame najčastejšie, svietia viac. */
+const CORE = new Set(['TypeScript', 'Vue', 'Nuxt', 'Node.js'])
+
 /** Kľudová priesvitnosť názvov — kurzor ich pri prechode rozsvieti naplno. */
 const DIM = 0.34
+/** Kľudová priesvitnosť jadra stacku. */
+const CORE_DIM = 0.78
 /** Rýchlosť marquee riadkov v px/s. */
 const ROW_SPEED = 30
 /** Dosah rozsvecovania okolo kurzora (px). */
@@ -122,7 +127,8 @@ onMounted(() => {
       const dy = rect.top - hostRect.top + rect.height / 2 - mouseY
       const t = Math.max(0, 1 - Math.hypot(dx, dy) / GLOW_RADIUS)
       const eased = t * t * (3 - 2 * t)
-      gsap.set(el, { opacity: DIM + (1 - DIM) * eased })
+      const base = el.dataset.core !== undefined ? CORE_DIM : DIM
+      gsap.set(el, { opacity: base + (1 - base) * eased })
     }
   }
   gsap.ticker.add(tick)
@@ -185,6 +191,7 @@ const tech = css({
   opacity: 0.34,
   cursor: 'default',
   whiteSpace: 'nowrap',
+  '&[data-core]': { opacity: 0.78, fontWeight: 600 },
 })
 
 /** Oddeľovač v blueprint štýle — obrysový diamant namiesto hviezdičky. */
@@ -229,7 +236,7 @@ const fluidInner = css({
         <div :class="track" data-track>
           <div v-for="copy in (copies[rowIndex] ?? 2)" :key="copy" :class="group">
             <template v-for="(name, index) in row" :key="index">
-              <span :class="tech" data-tech>{{ name }}</span>
+              <span :class="tech" data-tech :data-core="CORE.has(name) ? '' : undefined">{{ name }}</span>
               <span :class="separator" />
             </template>
           </div>

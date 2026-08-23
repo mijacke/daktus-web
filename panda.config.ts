@@ -18,6 +18,14 @@ export default defineConfig({
           from: { width: '0%' },
           to: { width: '100%' },
         },
+        floaty: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-11px)' },
+        },
+        floatShadow: {
+          '0%, 100%': { transform: 'translateX(-50%) scaleX(1)', opacity: '1' },
+          '50%': { transform: 'translateX(-50%) scaleX(0.86)', opacity: '0.65' },
+        },
         pulse: {
           from: { transform: 'scale(0.6)', opacity: '1' },
           to: { transform: 'scale(1.6)', opacity: '0' },
