@@ -60,7 +60,7 @@ onMounted(() => {
     const dist = Math.hypot(dx, dy)
     if (dist > 0.1) angle = (Math.atan2(dy, dx) * 180) / Math.PI
     const speed = dist / Math.max(deltaTime, 1)
-    const target = isView.value ? 0 : Math.min(speed * 0.35, 0.4)
+    const target = Math.min(speed * 0.35, 0.4)
     stretch += (target - stretch) * 0.2
     setBall({ x, y, rotation: angle, scaleX: 1 + stretch, scaleY: 1 - stretch * 0.6 })
     setInner({ rotation: -angle })
