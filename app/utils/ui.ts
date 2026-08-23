@@ -46,24 +46,21 @@ export const sectionNote = css({
 })
 
 /**
- * Klipovací obal reveal riadku nadpisu. Padding + záporný margin držia
- * diakritiku nad verzálkami (Á, É, Č…) vnútri klipu — tesný line-height
- * nadpisov by ju inak pri overflow: hidden odsekol.
+ * Klipovací obal reveal riadku nadpisu. Namiesto overflow: hidden klipuje
+ * cez clip-path so záporným presahom hore/dole — diakritika nad verzálkami
+ * (Á, É, Č…) a spodky glyfov prežijú aj tesný line-height nadpisov,
+ * a na rozdiel od padding/margin kompenzácie sa nemení layout.
  */
 export const revealLine = css({
   display: 'block',
-  overflow: 'hidden',
-  paddingTop: '0.16em',
-  marginTop: '-0.16em',
-  paddingBottom: '0.1em',
-  marginBottom: '-0.1em',
+  clipPath: 'inset(-0.3em 0 -0.12em 0)',
 })
 
 /** Vnútro reveal riadku — vysunie sa spod klipu, keď rodič dostane triedu `in`. */
 export const revealInner = cva({
   base: {
     display: 'block',
-    transform: 'translateY(125%)',
+    transform: 'translateY(140%)',
     transition: 'transform 1s {easings.out}',
     '.in &': { transform: 'translateY(0)' },
     _motionReduce: { transform: 'none', transition: 'none' },
