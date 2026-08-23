@@ -24,6 +24,11 @@ onMounted(() => {
   let y = window.innerHeight / 2
   let targetX = x
   let targetY = y
+  // cubertovský pohyb: každý pohyb myši spustí expo.out dojazd z aktuálnej pozície
+  const DURATION = 550
+  let startX = x
+  let startY = y
+  let elapsed = DURATION
   let stretch = 0
   let angle = 0
 
@@ -34,6 +39,9 @@ onMounted(() => {
   const onMove = (event: MouseEvent) => {
     targetX = event.clientX
     targetY = event.clientY
+    startX = x
+    startY = y
+    elapsed = 0
   }
   const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
@@ -53,12 +61,15 @@ onMounted(() => {
 
   const onTick = (_time: number, deltaTime: number) => {
     // clamp: po dlhom spánku tickeru guľka dobehne plynulo, žiadny skok
-    const frames = Math.min(deltaTime / (1000 / 60), 2)
-    const ease = 1 - (1 - 0.22) ** frames
-    const dx = (targetX - x) * ease
-    const dy = (targetY - y) * ease
-    x += dx
-    y += dy
+    elapsed += Math.min(deltaTime, 34)
+    const p = Math.min(elapsed / DURATION, 1)
+    const eased = p === 1 ? 1 : 1 - 2 ** (-10 * p) // expo.out ako cuberto
+    const nx = startX + (targetX - startX) * eased
+    const ny = startY + (targetY - startY) * eased
+    const dx = nx - x
+    const dy = ny - y
+    x = nx
+    y = ny
     const dist = Math.hypot(dx, dy)
     if (dist > 0.1) angle = (Math.atan2(dy, dx) * 180) / Math.PI
     const speed = dist / Math.max(deltaTime, 1)
@@ -76,6 +87,9 @@ onMounted(() => {
   const snapToCursor = () => {
     x = targetX
     y = targetY
+    startX = x
+    startY = y
+    elapsed = DURATION
     stretch = 0
     setBall({ x, y, rotation: angle, scaleX: 1, scaleY: 1 })
     setInner({ rotation: -angle })
