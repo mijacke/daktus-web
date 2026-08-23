@@ -137,8 +137,8 @@ const ballStyle = css({
   alignItems: 'center',
   justifyContent: 'center',
   transitionProperty: 'width, height, background, opacity',
-  // pomalší rast/zmenšovanie na hranách kariet — výrazne mäkší prechod
-  transitionDuration: '0.6s',
+  // pomalý mäkký rast/zmenšovanie na hranách kariet; fade guľky ostáva svižný
+  transitionDuration: '0.8s, 0.8s, 0.8s, 0.35s',
   transitionTimingFunction: 'out',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
@@ -160,8 +160,10 @@ const innerStyle = css({
   justifyContent: 'center',
   color: 'ink',
   opacity: 0,
-  transition: 'opacity 0.2s ease',
-  '.is-view &': { opacity: 1, color: 'white' },
+  // odchod z karty: šípka zmizne hneď, nezmenšuje sa spolu s guľou
+  transition: 'opacity 0.15s ease',
+  // príchod: objaví sa jemne, až keď guľa už rastie
+  '.is-view &': { opacity: 1, color: 'white', transitionDuration: '0.3s', transitionDelay: '0.12s' },
 })
 </script>
 
