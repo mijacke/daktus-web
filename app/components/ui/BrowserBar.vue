@@ -35,34 +35,26 @@ const dots = css({
   display: 'inline-flex',
   gap: '7px',
   '& i, & button': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '10px',
     height: '10px',
     borderRadius: 'full',
-    position: 'relative',
     border: 'none',
     padding: 0,
   },
 })
 
-/** Ako na Macu: glyfy sa objavia pri hoveri nad semaforom. */
+/** Ako na Macu: SVG glyfy presne v strede, objavia sa pri hoveri nad semaforom. */
 const macDots = css({
-  '& > *::after': {
-    position: 'absolute',
-    inset: 0,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '9px',
-    lineHeight: 1,
-    fontWeight: 700,
+  '& svg': {
+    display: 'block',
     color: 'ink/65',
     opacity: 0,
     transition: 'opacity 0.15s ease',
   },
-  _hover: { '& > *::after': { opacity: 1 } },
-  '& > *:nth-child(1)::after': { content: '"×"' },
-  '& > *:nth-child(2)::after': { content: '"−"' },
-  '& > *:nth-child(3)::after': { content: '"⤢"', fontSize: '7px' },
+  _hover: { '& svg': { opacity: 1 } },
 })
 
 const dotRed = css({ background: 'traffic.red', cursor: 'pointer' })
@@ -101,10 +93,15 @@ const urlPill = cva({
 <template>
   <div :class="bar({ dark })">
     <span v-if="macControls" :class="[dots, macDots]">
-      <button :class="dotRed" type="button" aria-label="Zavrieť náhľad" @click.stop="$emit('close')" /><i
-        :class="dotAmber"
-        aria-hidden="true"
-      /><i :class="dotGreen" aria-hidden="true" />
+      <button :class="dotRed" type="button" aria-label="Zavrieť náhľad" @click.stop="$emit('close')">
+        <svg width="6" height="6" viewBox="0 0 8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" aria-hidden="true"><path d="M1.6 1.6l4.8 4.8M6.4 1.6 1.6 6.4" /></svg>
+      </button>
+      <i :class="dotAmber" aria-hidden="true">
+        <svg width="6" height="6" viewBox="0 0 8 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M1.4 4h5.2" /></svg>
+      </i>
+      <i :class="dotGreen" aria-hidden="true">
+        <svg width="6" height="6" viewBox="0 0 8 8" fill="currentColor"><path d="M4.3 1.1h2.6v2.6Z" /><path d="M3.7 6.9H1.1V4.3Z" /></svg>
+      </i>
     </span>
     <span v-else :class="dots" aria-hidden="true">
       <i :class="dotRed" /><i :class="dotAmber" /><i :class="dotGreen" />

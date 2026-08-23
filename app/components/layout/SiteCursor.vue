@@ -162,8 +162,8 @@ const ballStyle = css({
   // veľká guľa je tá istá sklenená invertujúca ako malá, len väčšia —
   // žiadne prepínanie blendu, prechod je čisto veľkostný
   '&.is-view': { width: '86px', height: '86px' },
-  // solid: nad svetlým krytom neinvertuje, stojí ako plná čierna guľa
-  '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink', backdropFilter: 'none' },
+  // solid: nad svetlým krytom neinvertuje — priesvitné tmavé sklo
+  '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink/60', backdropFilter: 'blur(5px)' },
   '&.is-hidden': { opacity: 0 },
 })
 
