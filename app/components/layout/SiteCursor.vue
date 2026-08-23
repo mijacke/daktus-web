@@ -71,13 +71,32 @@ onMounted(() => {
   // pri strate fokusu okna (druhý monitor, iná appka) guľka zmizne
   // a vráti sa až s fokusom — nezostáva visieť opustená na stránke
   isAway.value = !document.hasFocus()
+  // pri návrate zo skrytého stavu sa guľka objaví priamo pri kurzore,
+  // nie letom cez obrazovku zo starej pozície
+  const snapToCursor = () => {
+    x = targetX
+    y = targetY
+    stretch = 0
+    setBall({ x, y, rotation: angle, scaleX: 1, scaleY: 1 })
+    setInner({ rotation: -angle })
+  }
   const onBlur = () => (isAway.value = true)
-  const onFocus = () => (isAway.value = false)
+  const onFocus = () => {
+    snapToCursor()
+    isAway.value = false
+  }
   // plynulé zmiznutie aj pri odchode kurzora za okraj viewportu (ako cuberto.com)
   const onLeave = () => (isOut.value = true)
-  const onEnter = () => (isOut.value = false)
+  const onEnter = (event: MouseEvent) => {
+    targetX = event.clientX
+    targetY = event.clientY
+    snapToCursor()
+    isOut.value = false
+  }
 
   document.addEventListener('mousemove', onMove, { passive: true })
+  // mousedown chodí pred focusom — klik z inej obrazovky dodá súradnice pre snap
+  document.addEventListener('mousedown', onMove, { passive: true })
   document.addEventListener('mouseover', onOver)
   document.addEventListener('click', onClick)
   document.addEventListener('mouseleave', onLeave)
@@ -87,6 +106,7 @@ onMounted(() => {
   gsap.ticker.add(onTick)
   cleanup = () => {
     document.removeEventListener('mousemove', onMove)
+    document.removeEventListener('mousedown', onMove)
     document.removeEventListener('mouseover', onOver)
     document.removeEventListener('click', onClick)
     document.removeEventListener('mouseleave', onLeave)
