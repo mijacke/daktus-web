@@ -12,4 +12,4 @@ Hosting Netlify. Každý merge do vetvy master sa automaticky nasadí na produkc
 
 ## Stav
 
-Nuxt scaffold pribudne v ďalšom commite.
+Na produkcii je zatiaľ dočasná coming-soon stránka (`index.html` v koreni repa, publikovaná cez `netlify.toml`). Nuxt scaffold pribudne neskôr a nahradí ju.

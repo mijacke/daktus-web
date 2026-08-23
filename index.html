@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="sk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daktus — webdizajn a vývoj</title>
+<meta name="description" content="Daktus — webdizajn a vývoj. Pripravujeme.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800&family=Instrument+Sans:wght@400;500&display=swap">
+<style>
+  :root{ --bg:#0F1113; --fg:#EDEDEA; --dim:#8A9092; --accent:#6FA8A2; }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; background:var(--bg); color:var(--fg);
+    font-family:"Instrument Sans",-apple-system,"Segoe UI",sans-serif;
+    display:flex; flex-direction:column; justify-content:center; align-items:center;
+    min-height:100svh; padding:32px; text-align:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  .mark{
+    font-family:"Archivo","Helvetica Neue",Arial,sans-serif; font-weight:800;
+    font-size:clamp(52px,14vw,148px); line-height:.92; letter-spacing:-.03em;
+    margin:0; text-transform:uppercase;
+  }
+  .line{
+    width:min(320px,64vw); height:2px; background:var(--accent); margin:26px 0 24px;
+    transform-origin:center; transform:scaleX(0); animation:draw 1.1s .25s cubic-bezier(.2,.8,.25,1) forwards;
+  }
+  @keyframes draw{to{transform:scaleX(1)}}
+  @media (prefers-reduced-motion:reduce){ .line{animation:none;transform:scaleX(1)} }
+  .role{ margin:0; font-size:clamp(14px,2.4vw,17px); letter-spacing:.22em; text-transform:uppercase; color:var(--fg) }
+  .soon{ margin:14px 0 0; font-size:15.5px; color:var(--dim) }
+  footer{ position:fixed; bottom:26px; left:0; right:0; font-size:13px; color:var(--dim); letter-spacing:.04em }
+  a{ color:var(--accent); text-decoration:none }
+  a:hover{ text-decoration:underline }
+  a:focus-visible{ outline:2px solid var(--accent); outline-offset:3px }
+</style>
+</head>
+<body>
+  <h1 class="mark">Daktus</h1>
+  <div class="line" aria-hidden="true"></div>
+  <p class="role">Webdizajn a vývoj</p>
+  <p class="soon">Na stránke sa pracuje.</p>
+
+  <!-- Až budeš mať mail na doméne, odkomentuj tento riadok a doplň adresu:
+  <p class="soon"><a href="mailto:mario@daktus.sk">mario@daktus.sk</a></p>
+  -->
+
+  <footer>daktus.sk</footer>
+</body>
+</html>

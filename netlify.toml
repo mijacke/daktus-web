@@ -1,0 +1,4 @@
+# Dočasná statická coming-soon stránka — publikuje sa koreň repa, bez build kroku.
+# Po pridaní Nuxt scaffoldu túto konfiguráciu nahradí konfigurácia pre Nuxt.
+[build]
+  publish = "."
