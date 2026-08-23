@@ -20,7 +20,6 @@ export const colors = defineTokens.colors({
   // tmavé sekcie (proces, stack, CTA, footer)
   dark: {
     bg: { value: '#0F1113' },
-    bg2: { value: '#0D1015' },
     panel: { value: '#101316' },
     panel2: { value: '#0E1114' },
     fg: { value: '#EDEDEA' },

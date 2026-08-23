@@ -2,12 +2,12 @@
 import { gsap } from 'gsap'
 import { css } from '~~/styled-system/css'
 
-const TECHS = [
-  'Java', 'C#', '.NET', 'WordPress', 'HTML',
-  'React', 'Angular', 'Vue', 'Next.js', 'Node.js',
-  'Bootstrap', 'Prisma', 'Redux', 'GraphQL', 'REST API',
-  'Express', 'PostgreSQL', 'MySQL', 'MongoDB', 'MariaDB',
-  'AWS', 'Azure', 'DigitalOcean', 'Render', 'Websupport',
+/** Riadky bežia striedavo doľava/doprava ako marquee v hero. */
+const ROWS = [
+  ['Java', 'C#', '.NET', 'WordPress', 'HTML', 'React', 'Angular'],
+  ['Vue', 'Next.js', 'Node.js', 'Bootstrap', 'Prisma', 'Redux'],
+  ['GraphQL', 'REST API', 'Express', 'PostgreSQL', 'MySQL', 'MongoDB'],
+  ['MariaDB', 'AWS', 'Azure', 'DigitalOcean', 'Render', 'Websupport'],
 ]
 
 /** Kľudová priesvitnosť názvov — sklo ich pri prechode rozsvieti naplno. */
@@ -18,26 +18,28 @@ const EDGE_INSET = 0.07
 const MAP_BLUR = 12
 /** Blur skla nad pozadím (px) — nízky, nech stred ostáva číry ako pri Apple Liquid Glass. */
 const GLASS_BLUR = 1.5
+/** Rýchlosť marquee riadkov v px/s. */
+const ROW_SPEED = 30
 
 const sectionEl = ref<HTMLElement | null>(null)
-const canvasEl = ref<HTMLCanvasElement | null>(null)
-useStarfield(sectionEl, canvasEl)
-
-const gridEl = ref<HTMLElement | null>(null)
-const gridIn = useInView(gridEl)
-const gridLive = useInView(gridEl, { once: false, threshold: 0 })
-const lensWrapEl = ref<HTMLElement | null>(null)
+const rowsEl = ref<HTMLElement | null>(null)
+const rowsIn = useInView(rowsEl)
+const rowsLive = useInView(rowsEl, { once: false, threshold: 0 })
 const lensEl = ref<HTMLElement | null>(null)
 const feImageEl = ref<SVGElement | null>(null)
+const copies = ref<number[]>(ROWS.map(() => 2))
 
+const rowTweens: (gsap.core.Tween | null)[] = ROWS.map(() => null)
+const rowWidths: number[] = ROWS.map(() => 0)
 let wobble: gsap.core.Tween | null = null
+let morph: gsap.core.Tween | null = null
 let tick: (() => void) | null = null
 let observer: ResizeObserver | null = null
 let cleanupFollow: (() => void) | null = null
 
 /**
  * Displacement mapa podľa liquid-glass knižníc: červený ramp kóduje posun X,
- * modrý posun Y (spojené cez „difference"), rozmazaný sivý vnútorný obdĺžnik
+ * modrý posun Y (spojené cez „difference"), rozmazaný sivý vnútorný ovál
  * neutralizuje stred — láme sa len okrajový pás, presne ako Apple Liquid Glass.
  */
 function buildRefraction(lens: HTMLElement) {
@@ -70,9 +72,8 @@ function buildRefraction(lens: HTMLElement) {
   ctx.filter = `blur(${MAP_BLUR}px)`
   ctx.fillStyle = 'rgb(128, 128, 128)'
   const inset = Math.min(width, height) * EDGE_INSET
-  const radius = Math.max(0, Math.min(width, height) / 2 - inset)
   ctx.beginPath()
-  ctx.roundRect(inset, inset, width - inset * 2, height - inset * 2, radius)
+  ctx.ellipse(width / 2, height / 2, width / 2 - inset, height / 2 - inset, 0, 0, Math.PI * 2)
   ctx.fill()
   ctx.filter = 'none'
 
@@ -83,85 +84,104 @@ function buildRefraction(lens: HTMLElement) {
 }
 
 onMounted(() => {
-  const lensWrap = lensWrapEl.value
+  const host = sectionEl.value
+  const rowsBox = rowsEl.value
   const lens = lensEl.value
-  const gridBox = gridEl.value
-  if (!lensWrap || !lens || !gridBox) return
+  if (!host || !rowsBox || !lens) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  let spots: { el: HTMLElement, x: number, y: number }[] = []
+  let spans: HTMLElement[] = []
 
-  function measure() {
-    spots = Array.from(gridBox!.querySelectorAll<HTMLElement>('[data-tech]')).map(el => ({
-      el,
-      x: el.offsetLeft + el.offsetWidth / 2,
-      y: el.offsetTop + el.offsetHeight / 2,
-    }))
+  function refreshSpots() {
+    spans = Array.from(rowsBox!.querySelectorAll<HTMLElement>('[data-tech]'))
   }
 
-  /** Kľudová pozícia skla v gride. */
-  function restPosition() {
-    return {
-      x: Math.max(0, lensWrap!.clientWidth - lens!.offsetWidth) * 0.62,
-      y: Math.max(0, lensWrap!.clientHeight - lens!.offsetHeight) * 0.3,
-    }
+  /** Nekonečné marquee riadky — párne doľava, nepárne doprava. */
+  function buildRows() {
+    const viewport = host!.clientWidth
+    Array.from(rowsBox!.querySelectorAll<HTMLElement>('[data-track]')).forEach((track, index) => {
+      const group = track.children[0] as HTMLElement | undefined
+      const groupWidth = group?.offsetWidth
+      if (!groupWidth) return
+      const needed = Math.max(2, Math.ceil(viewport / groupWidth) + 1)
+      const changed = needed !== copies.value[index] || groupWidth !== rowWidths[index]
+      copies.value[index] = needed
+      rowWidths[index] = groupWidth
+      if (!rowTweens[index] || changed) {
+        rowTweens[index]?.kill()
+        const toLeft = index % 2 === 0
+        rowTweens[index] = gsap.fromTo(
+          track,
+          { x: toLeft ? 0 : -groupWidth },
+          { x: toLeft ? -groupWidth : 0, duration: groupWidth / ROW_SPEED, ease: 'none', repeat: -1 },
+        )
+      }
+    })
+    nextTick(refreshSpots)
   }
 
-  measure()
+  refreshSpots()
+  buildRows()
   buildRefraction(lens)
-  gsap.set(lens, restPosition())
+  document.fonts?.ready.then(buildRows)
+  gsap.set(lens, {
+    x: Math.max(0, host.clientWidth - lens.offsetWidth) * 0.68,
+    y: Math.max(0, host.clientHeight - lens.offsetHeight) * 0.45,
+  })
   gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
-  // jemné „želé" dýchanie, nech pôsobí tekuto
-  wobble = gsap.to(lens, { scaleX: 1.025, scaleY: 0.975, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
+  // jemné „želé" dýchanie + pomalé morfovanie tvaru, nech pôsobí tekuto
+  wobble = gsap.to(lens, { scaleX: 1.02, scaleY: 0.98, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
+  morph = gsap.to(lens, {
+    borderRadius: '44% 56% 39% 61% / 61% 42% 58% 39%',
+    repeat: -1,
+    yoyo: true,
+    ease: 'sine.inOut',
+    duration: 7,
+  })
 
-  // sklo stojí a fluidne nasleduje myš; po odídení sa vráti na svoje miesto
+  // blob sleduje myš globálne — mimo sekcie sa natlačí k najbližšiemu okraju či rohu
   if (window.matchMedia('(pointer: fine)').matches) {
     const xTo = gsap.quickTo(lens, 'x', { duration: 1, ease: 'power3' })
     const yTo = gsap.quickTo(lens, 'y', { duration: 1, ease: 'power3' })
     const onMove = (event: MouseEvent) => {
-      const rect = lensWrap!.getBoundingClientRect()
+      const rect = host!.getBoundingClientRect()
       const halfW = lens!.offsetWidth / 2
       const halfH = lens!.offsetHeight / 2
-      xTo(gsap.utils.clamp(-halfW * 0.5, lensWrap!.clientWidth - halfW * 1.5, event.clientX - rect.left - halfW))
-      yTo(gsap.utils.clamp(-halfH * 0.8, lensWrap!.clientHeight - halfH * 1.2, event.clientY - rect.top - halfH))
+      xTo(gsap.utils.clamp(-halfW, host!.clientWidth - halfW, event.clientX - rect.left - halfW))
+      yTo(gsap.utils.clamp(-halfH, host!.clientHeight - halfH, event.clientY - rect.top - halfH))
     }
-    const onLeave = () => {
-      const rest = restPosition()
-      xTo(rest.x)
-      yTo(rest.y)
-    }
-    const host = sectionEl.value ?? lensWrap
-    host.addEventListener('mousemove', onMove, { passive: true })
-    host.addEventListener('mouseleave', onLeave)
-    cleanupFollow = () => {
-      host.removeEventListener('mousemove', onMove)
-      host.removeEventListener('mouseleave', onLeave)
-    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    cleanupFollow = () => window.removeEventListener('mousemove', onMove)
   }
 
   observer = new ResizeObserver(() => {
-    measure()
+    buildRows()
     buildRefraction(lens)
-    gsap.set(lens, restPosition())
   })
-  observer.observe(lensWrap)
+  observer.observe(host)
 
   tick = () => {
-    if (!gridLive.value) return
+    if (!rowsLive.value) return
+    const hostRect = host!.getBoundingClientRect()
     const lensX = Number(gsap.getProperty(lens, 'x')) + lens!.offsetWidth / 2
     const lensY = Number(gsap.getProperty(lens, 'y')) + lens!.offsetHeight / 2
-    const radius = lens!.offsetWidth * 0.55
-    for (const spot of spots) {
-      const t = Math.max(0, 1 - Math.hypot(spot.x - lensX, spot.y - lensY) / radius)
+    const radius = lens!.offsetWidth * 0.42
+    for (const el of spans) {
+      const rect = el.getBoundingClientRect()
+      const dx = rect.left - hostRect.left + rect.width / 2 - lensX
+      const dy = rect.top - hostRect.top + rect.height / 2 - lensY
+      const t = Math.max(0, 1 - Math.hypot(dx, dy) / radius)
       const eased = t * t * (3 - 2 * t)
-      gsap.set(spot.el, { opacity: DIM + (1 - DIM) * eased })
+      gsap.set(el, { opacity: DIM + (1 - DIM) * eased })
     }
   }
   gsap.ticker.add(tick)
 })
 
 onBeforeUnmount(() => {
+  rowTweens.forEach(tween => tween?.kill())
   wobble?.kill()
+  morph?.kill()
   if (tick) gsap.ticker.remove(tick)
   observer?.disconnect()
   cleanupFollow?.()
@@ -173,15 +193,8 @@ const section = css({
   borderTop: '1px solid',
   borderColor: 'dark.fg/7',
   overflow: 'hidden',
-  background: 'linear-gradient(180deg, token(colors.dark.bg), token(colors.dark.bg2) 55%, token(colors.dark.bg))',
+  background: 'dark.bg',
   color: 'dark.fg',
-})
-
-const stars = css({
-  position: 'absolute',
-  inset: 0,
-  width: '100%',
-  height: '100%',
 })
 
 const content = css({
@@ -189,22 +202,32 @@ const content = css({
   zIndex: 2,
 })
 
-const gridWrap = css({
-  position: 'relative',
+const rows = css({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 'clamp(30px, 4.5vh, 56px)',
+  marginTop: 'clamp(60px, 8vh, 100px)',
 })
 
-const grid = css({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(5, 1fr)',
-  gap: 'clamp(48px, 6vh, 84px) 30px',
-  marginTop: 'clamp(60px, 8vh, 100px)',
-  '@media (max-width: 1100px)': { gridTemplateColumns: 'repeat(3, 1fr)' },
-  '@media (max-width: 640px)': { gridTemplateColumns: 'repeat(2, 1fr)' },
+const rowClip = css({
+  overflow: 'hidden',
+})
+
+const track = css({
+  display: 'flex',
+  width: 'max-content',
+  willChange: 'transform',
+})
+
+const group = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'clamp(40px, 4vw, 80px)',
+  paddingInline: 'clamp(20px, 2vw, 40px)',
 })
 
 const tech = css({
-  textAlign: 'center',
-  fontSize: 'clamp(15px, 1.3vw, 23px)',
+  fontSize: 'clamp(15px, 1.4vw, 25px)',
   fontWeight: 500,
   letterSpacing: '0.14em',
   textTransform: 'uppercase',
@@ -212,22 +235,23 @@ const tech = css({
   opacity: 0.34,
   cursor: 'default',
   whiteSpace: 'nowrap',
-  transition: 'text-shadow 0.4s ease',
-  _hover: {
-    opacity: 1,
-    textShadow: '0 0 24px color-mix(in srgb, token(colors.accent) 60%, transparent)',
-  },
-  '@media (max-width: 640px)': { whiteSpace: 'normal' },
 })
 
-/** Liquid glass tabuľa — materiál podľa referenčných liquid-glass knižníc, v našich tokenoch. */
+const spark = css({
+  display: 'inline-flex',
+  color: 'accent',
+  opacity: 0.4,
+})
+
+/** Liquid glass blob — materiál podľa referenčných liquid-glass knižníc, v našich tokenoch. */
 const lensPane = css({
   position: 'absolute',
   top: 0,
   left: 0,
-  width: 'clamp(340px, 34vw, 560px)',
-  aspectRatio: '16 / 9',
-  borderRadius: '40px',
+  zIndex: 3,
+  width: 'clamp(680px, 68vw, 1120px)',
+  aspectRatio: '1.5 / 1',
+  borderRadius: '58% 42% 55% 45% / 48% 62% 40% 52%',
   pointerEvents: 'none',
   opacity: 0,
   // fallback pre prehliadače bez SVG backdrop filtrov — Chrome dostane refrakciu cez JS
@@ -253,7 +277,6 @@ const filterDefs = css({
 
 <template>
   <section id="technologie" ref="sectionEl" :class="section" data-dark>
-    <canvas ref="canvasEl" :class="stars" aria-hidden="true" />
     <svg :class="filterDefs" aria-hidden="true">
       <filter id="daktus-liquid-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feImage ref="feImageEl" result="map" preserveAspectRatio="none" />
@@ -271,12 +294,19 @@ const filterDefs = css({
       <SectionHead eyebrow="Technológie" title="Náš stack">
         <span :class="sectionNote">Vyberáme technológiu podľa projektu, nie naopak.</span>
       </SectionHead>
-      <div ref="lensWrapEl" :class="gridWrap">
-        <div ref="gridEl" :class="[grid, fadeIn(), { in: gridIn }]">
-          <span v-for="name in TECHS" :key="name" :class="tech" data-tech>{{ name }}</span>
+    </div>
+    <div ref="rowsEl" :class="[rows, fadeIn(), { in: rowsIn }]">
+      <div v-for="(row, rowIndex) in ROWS" :key="rowIndex" :class="rowClip">
+        <div :class="track" data-track>
+          <div v-for="copy in (copies[rowIndex] ?? 2)" :key="copy" :class="group">
+            <template v-for="(name, index) in row" :key="index">
+              <span :class="tech" data-tech>{{ name }}</span>
+              <span :class="spark"><IconSpark /></span>
+            </template>
+          </div>
         </div>
-        <span ref="lensEl" :class="lensPane" aria-hidden="true" />
       </div>
     </div>
+    <span ref="lensEl" :class="lensPane" aria-hidden="true" />
   </section>
 </template>
