@@ -89,19 +89,16 @@ onMounted(() => {
       colorful: false,
       transparent: true,
       brightness: 0.35,
-      simResolution: 128,
-      dyeResolution: 1024,
+      simResolution: 96,
+      dyeResolution: 512,
       densityDissipation: 3.2,
       velocityDissipation: 0.5,
       curl: 26,
       splatRadius: 0.12,
       splatForce: 3800,
       hover: true,
-      bloom: true,
-      bloomIntensity: 0.3,
-      bloomThreshold: 0.6,
-      sunrays: true,
-      sunraysWeight: 0.4,
+      bloom: false,
+      sunrays: false,
     })
     fluidSim.start()
     fluidSim.multipleSplats(2)
@@ -113,12 +110,6 @@ onMounted(() => {
     }
     window.addEventListener('mousemove', onMove, { passive: true })
     cleanupMouse = () => window.removeEventListener('mousemove', onMove)
-
-    // mimo viewportu simuláciu pozastav
-    watch(rowsLive, (visible) => {
-      if (visible) fluidSim?.start()
-      else fluidSim?.stop()
-    })
   }
 
   // rozsvecovanie názvov v okolí kurzora — číta živé pozície aj počas behu marquee
@@ -207,16 +198,22 @@ const separator = css({
   opacity: 0.45,
 })
 
-/** Fluid stopa za kurzorom — WebGL simulácia cez celú sekciu. */
-const fluid = css({
+/**
+ * Fluid stopa za kurzorom — WebGL simulácia cez celú sekciu. Vonkajší shell drží
+ * absolútnu pozíciu (knižnica si vnútorný kontajner prepisuje na position: relative).
+ */
+const fluidShell = css({
   position: 'absolute',
   inset: 0,
-  width: '100%',
-  height: '100%',
   zIndex: 3,
   mixBlendMode: 'screen',
   '@media (pointer: coarse)': { display: 'none' },
   _motionReduce: { display: 'none' },
+})
+
+const fluidInner = css({
+  width: '100%',
+  height: '100%',
 })
 </script>
 
@@ -239,6 +236,8 @@ const fluid = css({
         </div>
       </div>
     </div>
-    <div ref="fluidEl" :class="fluid" aria-hidden="true" />
+    <div :class="fluidShell" aria-hidden="true">
+      <div ref="fluidEl" :class="fluidInner" />
+    </div>
   </section>
 </template>
