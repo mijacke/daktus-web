@@ -154,8 +154,9 @@ const ctas = css({
         </BlueprintFrame>
         <BlueprintFrame tag="tlačidlá" :built="built.ctas">
           <div :class="ctas">
-            <AppButton v-magnet href="/kontakt" arrow>Prebrať projekt</AppButton>
-            <AppButton v-magnet href="/projekty" variant="ghost">Pozrieť prácu</AppButton>
+            <!-- Ťah smerom von z dvojice: kurzor v medzere ich rozostúpi, nikdy nezlepí. -->
+            <AppButton v-magnet.left href="/kontakt" arrow>Prebrať projekt</AppButton>
+            <AppButton v-magnet.right href="/projekty" variant="ghost">Pozrieť prácu</AppButton>
           </div>
         </BlueprintFrame>
       </div>
