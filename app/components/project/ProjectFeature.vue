@@ -102,7 +102,7 @@ const chipRow = css({
 
 <template>
   <article :class="[block, 'group']">
-    <div :class="cover({ tone, flip })" data-cursor="view">
+    <div :class="cover({ tone, flip })" data-cursor="view" :data-cursor-solid="tone === 'navy' ? undefined : ''">
       <div :class="coverInner">
         <slot />
       </div>

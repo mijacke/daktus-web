@@ -24,7 +24,7 @@ const shell = cva({
   },
   variants: {
     expanded: {
-      false: { top: '26%', width: 'min(600px, 90%)' },
+      false: { top: '14%', width: 'min(600px, 90%)' },
       true: { top: '5%', width: '96%' },
     },
   },

@@ -38,7 +38,7 @@ const card = css({
 
 const cover = cva({
   base: {
-    height: 'clamp(300px, 30vw, 500px)',
+    height: 'clamp(280px, 26vw, 420px)',
     borderRadius: '18px',
     overflow: 'hidden',
     border: '1px solid',
@@ -115,6 +115,7 @@ const chipRow = css({
       :built="built"
       :content-class="coverFill"
       :data-cursor="state === 'active' ? undefined : 'view'"
+      :data-cursor-solid="tone === 'navy' ? undefined : ''"
       @click="state !== 'active' && $emit('select')"
     >
       <div :class="coverScale">
