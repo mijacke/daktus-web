@@ -64,6 +64,9 @@ const nav = css({
 })
 
 const logo = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '10px',
   fontFamily: 'display',
   fontWeight: 800,
   fontSize: '22px',
@@ -101,7 +104,10 @@ const navLink = css({
 
 <template>
   <nav :class="[nav, { 'scrolled': scrolled, 'over-dark': overDark }]">
-    <NuxtLink :class="logo" to="/">Daktus</NuxtLink>
+    <NuxtLink :class="logo" to="/">
+      <LogoMark :size="24" />
+      <span>Daktus</span>
+    </NuxtLink>
     <div :class="links">
       <NuxtLink v-for="link in NAV_LINKS" :key="link.href" :class="navLink" :to="link.href" active-class="cur">
         {{ link.label }}
