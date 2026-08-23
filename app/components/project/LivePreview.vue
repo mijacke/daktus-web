@@ -62,7 +62,7 @@ const shell = cva({
     device: {
       mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
       imac: { bottom: '3%', height: '94%', width: '88%' },
-      iphone: { bottom: '-2px', height: '86%', width: 'min(60%, 220px)' },
+      iphone: { bottom: '3%', height: '86%', width: 'min(60%, 220px)' },
     },
     tone: {
       light: {
@@ -154,8 +154,8 @@ const body = cva({
       iphone: {
         background: 'var(--dev-phone)',
         borderColor: 'var(--dev-ring)',
-        borderRadius: '38px 38px 0 0',
-        padding: '9px 9px 0',
+        borderRadius: '38px',
+        padding: '9px',
         boxShadow: '{shadows.window}, inset 0 0 4px 2px var(--dev-hi), inset 0 0 0 6px var(--dev-ring)',
       },
     },
@@ -180,7 +180,7 @@ const screenArea = cva({
     device: {
       mac: { borderRadius: '6px' },
       imac: { borderRadius: '3px' },
-      iphone: { borderRadius: '29px 29px 0 0' },
+      iphone: { borderRadius: '29px' },
     },
   },
 })
