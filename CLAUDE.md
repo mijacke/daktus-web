@@ -26,7 +26,7 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), animácie GSAP + Lenis, 
 - Vetvy pomenúvaj `feat/...`, `fix/...`, `chore/...`.
 - Commit správy: angličtina, imperatív, stručne (napr. „Add hero animation").
 - Deploy: merge do `master` → produkcia (Netlify), každý PR → deploy preview. Build konfigurácia je v `netlify.toml`.
-- Detaily v [CONTRIBUTING.md](CONTRIBUTING.md).
+- Detaily v [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## Príkazy
 

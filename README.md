@@ -20,7 +20,7 @@ npm run dev    # http://localhost:3000
 
 ## Vývoj
 
-Vetva `master` je chránená — každá zmena ide cez pull request. Na PR beží CI (lint, typecheck a testy, keď pribudnú) a Netlify vytvorí deploy preview. Detaily v [CONTRIBUTING.md](CONTRIBUTING.md), pravidlá pre AI agentov v [CLAUDE.md](CLAUDE.md).
+Vetva `master` je chránená — každá zmena ide cez pull request. Na PR beží CI (lint, typecheck a testy, keď pribudnú) a Netlify vytvorí deploy preview. Detaily v [CONTRIBUTING.md](.github/CONTRIBUTING.md), pravidlá pre AI agentov v [CLAUDE.md](CLAUDE.md).
 
 ## Deploy
 
