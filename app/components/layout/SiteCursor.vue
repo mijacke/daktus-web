@@ -52,7 +52,7 @@ onMounted(() => {
   const onTick = (_time: number, deltaTime: number) => {
     // clamp: po dlhom spánku tickeru guľka dobehne plynulo, žiadny skok
     const frames = Math.min(deltaTime / (1000 / 60), 2)
-    const ease = 1 - (1 - 0.11) ** frames
+    const ease = 1 - (1 - 0.16) ** frames
     const dx = (targetX - x) * ease
     const dy = (targetY - y) * ease
     x += dx
