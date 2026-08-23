@@ -1,0 +1,30 @@
+# Závislosti
+node_modules/
+
+# Nuxt
+.nuxt/
+.output/
+dist/
+.data/
+
+# Prostredie
+.env
+.env.*
+!.env.example
+
+# Logy
+*.log
+
+# OS / editory
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Netlify
+.netlify/
+
+# Graphify (projektová mapa sa generuje lokálne)
+graphify-out/
