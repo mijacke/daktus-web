@@ -36,6 +36,7 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), štýly Panda CSS (TypeS
 - Commit správy: angličtina, imperatív, stručne (napr. „Add hero animation").
 - Deploy: merge do `master` → produkcia (Netlify), každý PR → deploy preview. Build konfigurácia je v `netlify.toml`.
 - Po každej zmene závislostí regeneruj lockfile načisto (`rm -rf node_modules package-lock.json && npm install`) a over `npm ci` pred pushom — inkrementálny update npm locku rozbíja wasm optional podstrom (`@emnapi/*`) a CI potom padá na EUSAGE.
+- Nikdy nemaž/nereinštaluj `node_modules`, kým beží dev server — nitro stratí súbory a padá na „Could not resolve entry module … nitro-dev". Najprv dev zastav.
 - Detaily v [CONTRIBUTING.md](.github/CONTRIBUTING.md).
 
 ## Príkazy
