@@ -1,5 +1,6 @@
-# Statický build Nuxt 4 — výstup nuxt generate ide do .output/public.
+# Statický build Nuxt 4. Na Netlify CI Nitro auto-detekuje prostredie (netlify preset)
+# a výstup píše do dist; lokálne nuxt generate vytvára dist ako symlink na .output/public.
 # Verzia Node sa berie z .nvmrc.
 [build]
   command = "npm run generate"
-  publish = ".output/public"
+  publish = "dist"
