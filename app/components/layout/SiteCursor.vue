@@ -130,6 +130,9 @@ const ballStyle = css({
   borderRadius: 'full',
   background: 'white',
   mixBlendMode: 'difference',
+  // podklad sa najprv odfarbí, difference potom invertuje len svetlosť —
+  // nad fotkami žiadne farebné negatívy, len čierno-biely efekt
+  backdropFilter: 'grayscale(1)',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
