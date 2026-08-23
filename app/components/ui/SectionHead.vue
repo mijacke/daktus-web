@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
-defineProps<{
+withDefaults(defineProps<{
   eyebrow: string
   title: string
-}>()
+  /** Podnadpis pod hlavným nadpisom sekcie. */
+  note?: string
+}>(), { note: undefined })
 
 const root = ref<HTMLElement | null>(null)
 const inView = useInView(root)
@@ -55,6 +57,16 @@ const heading = css({
   '[data-dark] &': { color: 'dark.fg' },
 })
 
+const noteText = css({
+  maxWidth: '46ch',
+  fontSize: 'clamp(15px, 1.1vw, 17px)',
+  lineHeight: 1.55,
+  color: 'dim',
+  margin: '20px 0 0',
+  textWrap: 'pretty',
+  '[data-dark] &': { color: 'dark.dim' },
+})
+
 const revealLine = css({ display: 'block', overflow: 'hidden' })
 
 const revealInner = css({
@@ -76,6 +88,7 @@ const revealInner = css({
       <h2 :class="heading">
         <span :class="revealLine"><span :class="revealInner">{{ title }}</span></span>
       </h2>
+      <p v-if="note" :class="noteText">{{ note }}</p>
     </div>
     <slot />
   </div>

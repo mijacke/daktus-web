@@ -6,77 +6,74 @@ interface Service {
   icon: ServiceIconName
   title: string
   text: string
-  delay: 0 | 1 | 2 | 3
+  index: 1 | 2 | 3 | 4
 }
 
 const SERVICES: Service[] = [
   {
     icon: 'web',
-    title: 'Tvorba webstránok',
-    text: 'Prezentačné weby, landing pages a e‑shopy. Rýchle, prístupné a stavané na mieru.',
-    delay: 0,
+    title: 'Webstránky a e‑shopy',
+    text: 'Prezentačné weby, landing pages a e‑shopy. Rýchle, prehľadné a postavené presne na mieru.',
+    index: 1,
   },
   {
     icon: 'software',
-    title: 'Vývoj softvéru',
-    text: 'CRM, rezervačné systémy a interné nástroje presne podľa vašich procesov.',
-    delay: 1,
+    title: 'Softvér na mieru',
+    text: 'CRM, rezervačné systémy a interné nástroje, ktoré kopírujú vaše procesy — nie naopak.',
+    index: 2,
   },
   {
     icon: 'desktop',
     title: 'Desktopové aplikácie',
-    text: 'Aplikácie pre Windows a macOS, ktoré zvládnu aj prácu offline.',
-    delay: 2,
+    text: 'Riešenia pre Windows a macOS, ktoré spoľahlivo fungujú aj bez pripojenia na internet.',
+    index: 3,
   },
   {
     icon: 'mobile',
     title: 'Mobilné aplikácie',
-    text: 'iOS a Android appky od návrhu po publikovanie v obchodoch.',
-    delay: 3,
+    text: 'iOS a Android — od návrhu cez vývoj až po vydanie v App Store a Google Play.',
+    index: 4,
   },
 ]
 
-const gridEl = ref<HTMLElement | null>(null)
-const gridIn = useInView(gridEl)
-const bandEl = ref<HTMLElement | null>(null)
-const bandIn = useInView(bandEl)
+const cardsEl = ref<HTMLElement | null>(null)
+const cardsIn = useInView(cardsEl)
 
-const grid = css({
-  display: 'grid',
-  gridTemplateColumns: 'repeat(4, 1fr)',
-  gap: '28px',
-  marginTop: '60px',
-  '@media (max-width: 1100px)': { gridTemplateColumns: 'repeat(2, 1fr)' },
-  '@media (max-width: 640px)': { gridTemplateColumns: '1fr' },
-})
-
-const noteAccent = css({
-  color: 'accent.deep',
-  fontWeight: 600,
+const cards = css({
+  display: 'flex',
+  alignItems: 'stretch',
+  gap: '16px',
+  marginTop: '56px',
+  '@media (max-width: 1100px)': { flexWrap: 'wrap' },
 })
 </script>
 
 <template>
   <section id="sluzby" :class="sectionBlock">
     <div :class="wrap">
-      <SectionHead eyebrow="Služby" title="Čo staviame">
+      <SectionHead
+        eyebrow="Služby"
+        title="Čo staviame"
+        note="Weby, e‑shopy aj softvér na mieru. Od prvého náčrtu po spustenie a údržbu — všetko pod jednou strechou."
+      >
         <NuxtLink :class="sectionLink" to="/sluzby">
           Viac o službách
           <span :class="sectionLinkIcon"><IconArrow /></span>
         </NuxtLink>
       </SectionHead>
 
-      <div ref="gridEl" :class="[grid, { in: gridIn }]">
-        <div v-for="service in SERVICES" :key="service.title" :class="fadeIn({ delay: service.delay })">
-          <ServiceCard :icon="service.icon" :title="service.title" :text="service.text" />
-        </div>
+      <div ref="cardsEl" :class="[cards, { in: cardsIn }]">
+        <ServiceCard
+          v-for="service in SERVICES"
+          :key="service.title"
+          :icon="service.icon"
+          :title="service.title"
+          :text="service.text"
+          :index="service.index"
+        />
       </div>
 
-      <div ref="bandEl" :class="[fadeIn(), { in: bandIn }]">
-        <CtaBand title="Férový cenník bez tajností" cta-label="Pozrieť cenník" cta-href="/cennik">
-          Orientačné ceny zverejnené. Na všetky balíky teraz <span :class="noteAccent">úvodná zľava 25&nbsp;%</span>.
-        </CtaBand>
-      </div>
+      <PriceBand />
     </div>
   </section>
 </template>

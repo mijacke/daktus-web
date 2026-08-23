@@ -5,7 +5,11 @@ export const colors = defineTokens.colors({
   // svetlý základ
   paper: { value: '#F3F3F0' },
   paper2: { value: '#EBEBE6' },
-  card: { value: '#FCFCFA' },
+  card: {
+    DEFAULT: { value: '#FCFCFA' },
+    /** Karta pod kurzorom — o odtieň svetlejšia než pokojný stav. */
+    lift: { value: '#FFFFFF' },
+  },
   ink: { value: '#101315' },
   dim: { value: '#6C7477' },
   hairline: {

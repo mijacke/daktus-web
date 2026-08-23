@@ -17,4 +17,6 @@ export const shadows = defineTokens.shadows({
   card: { value: '0 24px 60px rgba(16, 19, 21, 0.10)' },
   overlay: { value: '0 24px 60px rgba(16, 19, 21, 0.18)' },
   glow: { value: '0 14px 44px rgba(111, 168, 162, 0.35)' },
+  /** Kontaktný tieň karty, ktorá sa pod kurzorom rozťahuje. */
+  lift: { value: '0 22px 46px -28px rgba(16, 19, 21, 0.4)' },
 })
