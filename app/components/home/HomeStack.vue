@@ -13,7 +13,7 @@ const TECHS = [
 /** Kľudová priesvitnosť názvov — bublina ich pri prechode rozsvieti naplno. */
 const DIM = 0.34
 /** Sila lupy: sample = c · edge^(BETA − 1); vyššia hodnota = väčšie zväčšenie v strede. */
-const BETA = 1.45
+const BETA = 1.52
 /** Rozlíšenie displacement mapy (škáluje sa na veľkosť bubliny, netreba viac). */
 const MAP_SIZE = 256
 
@@ -29,10 +29,10 @@ const lensEl = ref<HTMLElement | null>(null)
 const feImageEl = ref<SVGElement | null>(null)
 const feDispEl = ref<SVGElement | null>(null)
 
-let lensTl: gsap.core.Timeline | null = null
 let wobble: gsap.core.Tween | null = null
 let tick: (() => void) | null = null
 let observer: ResizeObserver | null = null
+let cleanupFollow: (() => void) | null = null
 
 /**
  * Vygeneruje kruhovú displacement mapu (fisheye lupa) pre feDisplacementMap —
@@ -88,7 +88,7 @@ function buildRefraction(lens: HTMLElement) {
   feImage.setAttribute('width', String(size))
   feImage.setAttribute('height', String(size))
   feDisp.setAttribute('scale', String(maxShift))
-  lens.style.backdropFilter = 'url(#daktus-lens-filter) blur(1px) saturate(165%) brightness(1.14)'
+  lens.style.backdropFilter = 'url(#daktus-lens-filter) blur(0.8px) saturate(175%) brightness(1.2)'
 }
 
 onMounted(() => {
@@ -108,31 +108,49 @@ onMounted(() => {
     }))
   }
 
-  /** Pomalé plávanie bubliny naprieč gridom — diagonálne, bez zastavenia. */
-  function buildPath() {
-    lensTl?.kill()
-    const maxX = Math.max(0, lensWrap!.clientWidth - lens!.offsetWidth)
-    const maxY = Math.max(0, lensWrap!.clientHeight - lens!.offsetHeight)
-    lensTl = gsap.timeline({ repeat: -1, defaults: { ease: 'sine.inOut' } })
-      .set(lens, { x: maxX * 0.06, y: maxY * 0.25 })
-      .to(lens, { x: maxX * 0.94, y: maxY * 0.65, duration: 10 })
-      .to(lens, { x: maxX * 0.35, y: maxY * 0.9, duration: 9 })
-      .to(lens, { x: maxX * 0.72, y: maxY * 0.08, duration: 10 })
-      .to(lens, { x: maxX * 0.06, y: maxY * 0.25, duration: 9 })
-    if (!gridLive.value) lensTl.pause()
+  /** Kľudová pozícia bubliny v gride. */
+  function restPosition() {
+    return {
+      x: Math.max(0, lensWrap!.clientWidth - lens!.offsetWidth) * 0.62,
+      y: Math.max(0, lensWrap!.clientHeight - lens!.offsetHeight) * 0.3,
+    }
   }
 
   measure()
-  buildPath()
   buildRefraction(lens)
+  gsap.set(lens, restPosition())
   gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
   // jemné „želé" dýchanie, nech pôsobí tekuto
   wobble = gsap.to(lens, { scaleX: 1.035, scaleY: 0.965, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
 
+  // bublina stojí a fluidne nasleduje myš; po odídení sa vráti na svoje miesto
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const xTo = gsap.quickTo(lens, 'x', { duration: 1, ease: 'power3' })
+    const yTo = gsap.quickTo(lens, 'y', { duration: 1, ease: 'power3' })
+    const onMove = (event: MouseEvent) => {
+      const rect = lensWrap!.getBoundingClientRect()
+      const half = lens!.offsetWidth / 2
+      xTo(gsap.utils.clamp(-half * 0.5, lensWrap!.clientWidth - half * 1.5, event.clientX - rect.left - half))
+      yTo(gsap.utils.clamp(-half * 0.6, lensWrap!.clientHeight - half * 1.4, event.clientY - rect.top - half))
+    }
+    const onLeave = () => {
+      const rest = restPosition()
+      xTo(rest.x)
+      yTo(rest.y)
+    }
+    const host = sectionEl.value ?? lensWrap
+    host.addEventListener('mousemove', onMove, { passive: true })
+    host.addEventListener('mouseleave', onLeave)
+    cleanupFollow = () => {
+      host.removeEventListener('mousemove', onMove)
+      host.removeEventListener('mouseleave', onLeave)
+    }
+  }
+
   observer = new ResizeObserver(() => {
     measure()
-    buildPath()
     buildRefraction(lens)
+    gsap.set(lens, restPosition())
   })
   observer.observe(lensWrap)
 
@@ -148,15 +166,13 @@ onMounted(() => {
     }
   }
   gsap.ticker.add(tick)
-
-  watch(gridLive, visible => (visible ? lensTl?.play() : lensTl?.pause()))
 })
 
 onBeforeUnmount(() => {
-  lensTl?.kill()
   wobble?.kill()
   if (tick) gsap.ticker.remove(tick)
   observer?.disconnect()
+  cleanupFollow?.()
 })
 
 const section = css({
@@ -224,25 +240,39 @@ const lensPane = css({
   opacity: 0,
   // fallback pre prehliadače bez SVG backdrop filtrov — Chrome dostane refrakciu cez JS
   backdropFilter: 'blur(6px) saturate(160%) brightness(1.15)',
-  background: 'radial-gradient(120% 120% at 28% 22%, color-mix(in srgb, token(colors.dark.fg) 10%, transparent), transparent 46%), radial-gradient(140% 140% at 75% 85%, color-mix(in srgb, token(colors.accent) 7%, transparent), transparent 55%)',
+  background: 'radial-gradient(120% 120% at 28% 22%, color-mix(in srgb, token(colors.dark.fg) 14%, transparent), transparent 48%), radial-gradient(140% 140% at 75% 88%, color-mix(in srgb, token(colors.accent) 12%, transparent), transparent 58%)',
   boxShadow: `
-    inset 0 0 0 1.5px color-mix(in srgb, token(colors.dark.fg) 16%, transparent),
-    inset 3px 6px 18px color-mix(in srgb, token(colors.dark.fg) 18%, transparent),
-    inset -8px -14px 30px color-mix(in srgb, token(colors.dark.bg) 65%, transparent),
-    0 30px 80px color-mix(in srgb, token(colors.dark.bg) 60%, transparent)
+    inset 0 0 0 1px color-mix(in srgb, token(colors.dark.fg) 38%, transparent),
+    inset 0 0 0 2.5px color-mix(in srgb, token(colors.dark.fg) 10%, transparent),
+    inset 4px 8px 24px color-mix(in srgb, token(colors.dark.fg) 24%, transparent),
+    inset 0 -18px 34px color-mix(in srgb, token(colors.accent) 14%, transparent),
+    inset -10px -16px 38px color-mix(in srgb, token(colors.dark.bg) 60%, transparent),
+    0 34px 90px color-mix(in srgb, token(colors.dark.bg) 65%, transparent)
   `,
   willChange: 'transform',
+  _before: {
+    content: '""',
+    position: 'absolute',
+    top: '6%',
+    left: '14%',
+    width: '42%',
+    height: '26%',
+    borderRadius: 'full',
+    background: 'radial-gradient(closest-side, color-mix(in srgb, token(colors.dark.fg) 48%, transparent), transparent 72%)',
+    transform: 'rotate(-24deg)',
+    filter: 'blur(5px)',
+  },
   _after: {
     content: '""',
     position: 'absolute',
-    top: '9%',
-    left: '16%',
-    width: '38%',
-    height: '24%',
+    top: '12%',
+    left: '20%',
+    width: '14%',
+    height: '7%',
     borderRadius: 'full',
-    background: 'radial-gradient(closest-side, color-mix(in srgb, token(colors.dark.fg) 32%, transparent), transparent 75%)',
-    transform: 'rotate(-24deg)',
-    filter: 'blur(4px)',
+    background: 'color-mix(in srgb, token(colors.dark.fg) 75%, transparent)',
+    transform: 'rotate(-26deg)',
+    filter: 'blur(2px)',
   },
   _motionReduce: { display: 'none' },
 })
@@ -261,7 +291,7 @@ const filterDefs = css({
     <svg :class="filterDefs" aria-hidden="true">
       <filter id="daktus-lens-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feImage ref="feImageEl" result="map" preserveAspectRatio="none" />
-        <feDisplacementMap in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" ref="feDispEl" />
+        <feDisplacementMap ref="feDispEl" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" />
       </filter>
     </svg>
     <div :class="[wrap, content]">
