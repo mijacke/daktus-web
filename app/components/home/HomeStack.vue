@@ -4,10 +4,11 @@ import { css } from '~~/styled-system/css'
 
 /** Riadky bežia striedavo doľava/doprava ako marquee v hero. */
 const ROWS = [
-  ['Java', 'C#', '.NET', 'WordPress', 'HTML', 'React', 'Angular'],
-  ['Vue', 'Next.js', 'Node.js', 'Bootstrap', 'Prisma', 'Redux'],
-  ['GraphQL', 'REST API', 'Express', 'PostgreSQL', 'MySQL', 'MongoDB'],
-  ['MariaDB', 'AWS', 'Azure', 'DigitalOcean', 'Render', 'Websupport'],
+  ['TypeScript', 'JavaScript', 'Java', 'C#', '.NET', 'Python', 'Node.js'],
+  ['React', 'Next.js', 'Vue', 'Nuxt', 'Angular', 'Svelte', 'Astro'],
+  ['Tailwind CSS', 'GSAP', 'Vite', 'WordPress', 'Bootstrap', 'Redux', 'Prisma'],
+  ['PostgreSQL', 'MySQL', 'MongoDB', 'MariaDB', 'Redis', 'GraphQL', 'REST API'],
+  ['AWS', 'Azure', 'Docker', 'Kubernetes', 'DigitalOcean', 'Vercel', 'Netlify', 'Websupport'],
 ]
 
 /** Kľudová priesvitnosť názvov — sklo ich pri prechode rozsvieti naplno. */
@@ -205,8 +206,8 @@ const content = css({
 const rows = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: 'clamp(30px, 4.5vh, 56px)',
-  marginTop: 'clamp(60px, 8vh, 100px)',
+  gap: 'clamp(52px, 7.5vh, 92px)',
+  marginTop: 'clamp(70px, 9vh, 120px)',
 })
 
 const rowClip = css({
@@ -237,10 +238,15 @@ const tech = css({
   whiteSpace: 'nowrap',
 })
 
-const spark = css({
-  display: 'inline-flex',
-  color: 'accent',
-  opacity: 0.4,
+/** Oddeľovač v blueprint štýle — obrysový diamant namiesto hviezdičky. */
+const separator = css({
+  width: '7px',
+  height: '7px',
+  flexShrink: 0,
+  border: '1.5px solid',
+  borderColor: 'accent',
+  transform: 'rotate(45deg)',
+  opacity: 0.45,
 })
 
 /** Liquid glass blob — materiál podľa referenčných liquid-glass knižníc, v našich tokenoch. */
@@ -301,7 +307,7 @@ const filterDefs = css({
           <div v-for="copy in (copies[rowIndex] ?? 2)" :key="copy" :class="group">
             <template v-for="(name, index) in row" :key="index">
               <span :class="tech" data-tech>{{ name }}</span>
-              <span :class="spark"><IconSpark /></span>
+              <span :class="separator" />
             </template>
           </div>
         </div>
