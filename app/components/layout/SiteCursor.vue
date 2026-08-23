@@ -150,29 +150,15 @@ const ballStyle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  transitionProperty: 'width, height, background, opacity, mix-blend-mode, backdrop-filter',
-  // Odchod z karty: guľa sa scvrkáva stále tmavá; farba, blend aj filter sa
-  // prelejú do invertujúceho režimu až po scvrknutí (odložený prechod) —
-  // inak veľká guľa jednorazovo blikne na bielo/invertujúcu šošovku.
-  transitionDuration: '0.8s, 0.8s, 0.35s, 0.35s, 0s, 0s',
-  transitionDelay: '0s, 0s, 0.45s, 0s, 0.45s, 0.45s',
+  transitionProperty: 'width, height, opacity',
+  // pomalý mäkký rast/zmenšovanie na hranách kariet; fade guľky ostáva svižný
+  transitionDuration: '0.8s, 0.8s, 0.35s',
   transitionTimingFunction: 'out',
-  transitionBehavior: 'allow-discrete',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
-  '&.is-view': {
-    width: '86px',
-    height: '86px',
-    // nad projektmi žiadna inverzia — vždy tmavá priesvitná guľa,
-    // farby fotiek za ňou ostávajú skutočné
-    background: 'ink/80',
-    mixBlendMode: 'normal',
-    backdropFilter: 'none',
-    // pri príchode sa blend prepína hneď (guľa je ešte malá) a farba
-    // sa stmavuje počas celého rastu
-    transitionDuration: '0.8s, 0.8s, 0.8s, 0.35s, 0s, 0s',
-    transitionDelay: '0s',
-  },
+  // veľká guľa je tá istá sklenená invertujúca ako malá, len väčšia —
+  // žiadne prepínanie blendu, prechod je čisto veľkostný
+  '&.is-view': { width: '86px', height: '86px' },
   '&.is-hidden': { opacity: 0 },
 })
 
@@ -184,8 +170,9 @@ const innerStyle = css({
   opacity: 0,
   // odchod z karty: šípka zmizne hneď, nezmenšuje sa spolu s guľou
   transition: 'opacity 0.15s ease',
-  // príchod: objaví sa jemne, až keď guľa už rastie
-  '.is-view &': { opacity: 1, color: 'white', transitionDuration: '0.3s', transitionDelay: '0.12s' },
+  // príchod: objaví sa jemne, až keď guľa už rastie; tmavá šípka sa v
+  // invertujúcej guli vykreslí ako svetlá voči jej obsahu
+  '.is-view &': { opacity: 1, transitionDuration: '0.3s', transitionDelay: '0.12s' },
 })
 </script>
 
