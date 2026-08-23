@@ -14,7 +14,7 @@ defineProps<{
 }>()
 
 const root = ref<HTMLElement | null>(null)
-const inView = useInView(root, { threshold: 0.25, rootMargin: '0px' })
+const inView = useInView(root, { threshold: 0.15 })
 const reduced = useReducedMotion()
 const built = ref(false)
 let timer = 0
