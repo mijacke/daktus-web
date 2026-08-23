@@ -136,8 +136,8 @@ const demo = css({
   borderRadius: '16px',
   background: 'dark.panel',
   overflow: 'hidden',
-  minHeight: 'clamp(440px, 34vw, 560px)',
-  '@media (max-width: 1000px)': { minHeight: '560px' },
+  minHeight: 'clamp(540px, 34vw, 580px)',
+  '@media (max-width: 1000px)': { minHeight: '680px' },
 })
 
 const demoBar = css({
