@@ -40,6 +40,13 @@ export const colors = defineTokens.colors({
     paper: { value: '#EDEDE8' },
     paper2: { value: '#E2E2DB' },
   },
+  // rámy zariadení v živých náhľadoch projektov (iMac / iPhone)
+  device: {
+    aluminum: { value: '#E9EAE8' },
+    aluminum2: { value: '#D2D4D1' },
+    graphite: { value: '#26282C' },
+    island: { value: '#08090B' },
+  },
   // semafor v hlavičke náhľadového okna projektu — natívne macOS odtiene, čisto dekoratívne
   traffic: {
     red: { value: '#FF5F57' },
