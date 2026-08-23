@@ -6,7 +6,7 @@ Oficiálny web štúdia Daktus (daktus.sk).
 
 Nuxt 4 (Vue 3), štýly Panda CSS (TypeScript, design tokens — žiadne vanilla CSS), animácie GSAP a Lenis, Node.js 24 LTS (Nuxt 4 vyžaduje Node 22+).
 
-Aktuálne verzie k 23. 8. 2026: Nuxt 4.5.2, Vue 3.5.41, Panda CSS 1.12.0, GSAP 3.15.0, Lenis 1.3.26.
+Aktuálne verzie k 23. 8. 2026: Nuxt 4.5.2, Vue 3.5.41, TypeScript 6.0.3, Panda CSS 1.12.0, GSAP 3.15.0, Lenis 1.3.26.
 
 ## Lokálne spustenie
 
