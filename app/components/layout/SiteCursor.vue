@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 import { css } from '~~/styled-system/css'
 
 const ballEl = ref<HTMLElement | null>(null)
-const labelEl = ref<HTMLElement | null>(null)
+const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
 
@@ -12,56 +12,65 @@ let cleanup: (() => void) | null = null
 onMounted(() => {
   if (!window.matchMedia('(pointer: fine)').matches) return
   const ball = ballEl.value
-  const label = labelEl.value
-  if (!ball || !label) return
+  const inner = innerEl.value
+  if (!ball || !inner) return
 
-  gsap.set(ball, { xPercent: -50, yPercent: -50, x: window.innerWidth / 2, y: window.innerHeight / 2 })
-  const ballX = gsap.quickTo(ball, 'x', { duration: 0.55, ease: 'expo' })
-  const ballY = gsap.quickTo(ball, 'y', { duration: 0.55, ease: 'expo' })
-  const setRotate = gsap.quickSetter(ball, 'rotation', 'deg')
-  const setScaleX = gsap.quickSetter(ball, 'scaleX')
-  const setScaleY = gsap.quickSetter(ball, 'scaleY')
-  const setLabelRotate = gsap.quickSetter(label, 'rotation', 'deg')
+  // Pohyb rieši lerp v tickeri namiesto tweenov — tween stav sa po suspendnutí
+  // rAF (skryté/prekryté okno) rozbíja a guľka potom skáče namiesto animácie.
+  let x = window.innerWidth / 2
+  let y = window.innerHeight / 2
+  let targetX = x
+  let targetY = y
+  let stretch = 0
+  let angle = 0
+
+  gsap.set(ball, { xPercent: -50, yPercent: -50, x, y })
+  const setBall = gsap.quickSetter(ball, 'css') as (vars: gsap.TweenVars) => void
+  const setInner = gsap.quickSetter(inner, 'css') as (vars: gsap.TweenVars) => void
 
   const onMove = (event: MouseEvent) => {
-    ballX(event.clientX)
-    ballY(event.clientY)
+    targetX = event.clientX
+    targetY = event.clientY
   }
-  const onOver = (event: MouseEvent) => {
-    const target = event.target instanceof Element ? event.target : null
+  const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
     isLink.value = !view && !!target?.closest('a, button')
   }
+  const onOver = (event: MouseEvent) => {
+    evalTarget(event.target instanceof Element ? event.target : null)
+  }
+  const onClick = (event: MouseEvent) => {
+    // klik môže zmeniť data-cursor pod kurzorom (aktívna karta) — prehodnoť po re-renderi
+    const target = event.target instanceof Element ? event.target : null
+    nextTick(() => evalTarget(target))
+  }
 
-  // Elastický stretch podľa rýchlosti guľky (nie myši) — guľka je už vyhladená cez quickTo
-  let prevX = window.innerWidth / 2
-  let prevY = window.innerHeight / 2
-  let stretch = 0
-  let angle = 0
   const onTick = (_time: number, deltaTime: number) => {
-    const x = Number(gsap.getProperty(ball, 'x'))
-    const y = Number(gsap.getProperty(ball, 'y'))
-    const dx = x - prevX
-    const dy = y - prevY
-    prevX = x
-    prevY = y
-    if (Math.hypot(dx, dy) > 0.1) angle = (Math.atan2(dy, dx) * 180) / Math.PI
-    const speed = Math.hypot(dx, dy) / Math.max(deltaTime, 1)
+    // clamp: po dlhom spánku tickeru guľka dobehne plynulo, žiadny skok
+    const frames = Math.min(deltaTime / (1000 / 60), 2)
+    const ease = 1 - (1 - 0.11) ** frames
+    const dx = (targetX - x) * ease
+    const dy = (targetY - y) * ease
+    x += dx
+    y += dy
+    const dist = Math.hypot(dx, dy)
+    if (dist > 0.1) angle = (Math.atan2(dy, dx) * 180) / Math.PI
+    const speed = dist / Math.max(deltaTime, 1)
     const target = isView.value ? 0 : Math.min(speed * 0.35, 0.4)
     stretch += (target - stretch) * 0.2
-    setRotate(angle)
-    setScaleX(1 + stretch)
-    setScaleY(1 - stretch * 0.6)
-    setLabelRotate(-angle)
+    setBall({ x, y, rotation: angle, scaleX: 1 + stretch, scaleY: 1 - stretch * 0.6 })
+    setInner({ rotation: -angle })
   }
 
   document.addEventListener('mousemove', onMove, { passive: true })
   document.addEventListener('mouseover', onOver)
+  document.addEventListener('click', onClick)
   gsap.ticker.add(onTick)
   cleanup = () => {
     document.removeEventListener('mousemove', onMove)
     document.removeEventListener('mouseover', onOver)
+    document.removeEventListener('click', onClick)
     gsap.ticker.remove(onTick)
   }
 })
@@ -87,22 +96,22 @@ const ballStyle = css({
   transitionTimingFunction: 'out',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
-  '&.is-view': { width: '86px', height: '86px', background: 'accent', mixBlendMode: 'normal' },
+  '&.is-view': { width: '86px', height: '86px' },
 })
 
-const labelStyle = css({
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'dark.bg',
+const innerStyle = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'ink',
   opacity: 0,
   transition: 'opacity 0.2s ease',
-  whiteSpace: 'nowrap',
   '.is-view &': { opacity: 1 },
 })
 </script>
 
 <template>
   <div ref="ballEl" :class="[ballStyle, { 'is-link': isLink, 'is-view': isView }]" aria-hidden="true">
-    <span ref="labelEl" :class="labelStyle">Pozrieť</span>
+    <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>
   </div>
 </template>

@@ -1,6 +1,24 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
+const active = ref<number | null>(null)
+const gridEl = ref<HTMLElement | null>(null)
+
+const stateFor = (index: number) =>
+  active.value === null ? 'idle' : active.value === index ? 'active' : 'dimmed'
+
+const select = (index: number) => {
+  active.value = active.value === index ? null : index
+}
+
+const onDocClick = (event: MouseEvent) => {
+  if (active.value === null) return
+  if (event.target instanceof Element && !gridEl.value?.contains(event.target)) active.value = null
+}
+
+onMounted(() => document.addEventListener('click', onDocClick))
+onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
+
 const grid = css({
   display: 'grid',
   gridTemplateColumns: '1.15fr 0.85fr',
@@ -19,12 +37,14 @@ const grid = css({
           <span :class="sectionLinkIcon"><IconArrow /></span>
         </NuxtLink>
       </SectionHead>
-      <div :class="grid">
+      <div ref="gridEl" :class="grid">
         <ProjectCard
           name="Pauli Fotografka"
           description="Portfólio a rezervácie pre rodinnú fotografku"
           tone="blush"
           :chips="[{ label: 'Webstránka' }, { label: 'Naživo', accent: true }]"
+          :state="stateFor(0)"
+          @select="select(0)"
         >
           <MockupPauli />
         </ProjectCard>
@@ -33,6 +53,8 @@ const grid = css({
           description="Web pre špecialistov na nadrozmernú prepravu"
           tone="steel"
           :chips="[{ label: 'Webstránka' }, { label: 'Pred spustením', accent: true }]"
+          :state="stateFor(1)"
+          @select="select(1)"
         >
           <MockupAditrade />
         </ProjectCard>
