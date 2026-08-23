@@ -54,7 +54,7 @@ const shell = cva({
   },
   variants: {
     device: {
-      mac: { bottom: '-2px', height: '87%', width: 'min(600px, 90%)' },
+      mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
       imac: { bottom: '3%', height: '94%', width: '88%' },
       iphone: { bottom: '-2px', height: '86%', width: 'min(60%, 220px)' },
     },
@@ -81,7 +81,13 @@ const body = cva({
   },
   variants: {
     device: {
-      mac: { background: 'card', borderColor: 'ink/12', borderRadius: '12px 12px 0 0', padding: '0', boxShadow: 'window' },
+      mac: {
+        background: 'device.aluminum',
+        borderColor: 'device.aluminum2',
+        borderRadius: '14px',
+        padding: '0',
+        boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
+      },
       imac: {
         background: 'device.aluminum',
         borderColor: 'device.aluminum2',
@@ -90,21 +96,21 @@ const body = cva({
         boxShadow: '{shadows.window}, inset 0 0 0 1px token(colors.device.aluminum2)',
       },
       iphone: {
-        background: 'device.panel',
+        background: 'device.silver',
         borderColor: 'device.silver2',
         borderRadius: '38px 38px 0 0',
         padding: '9px 9px 0',
-        boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.55), inset 0 0 0 6px token(colors.device.silver)',
+        boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.6), inset 0 0 0 1px token(colors.device.silver2)',
       },
     },
   },
 })
 
-/** Kamera iMacu v hornom bezeli. */
+/** Kamera v hornom bezeli — majú ju MacBook aj iMac. */
 const camera = cva({
   base: {
     position: 'absolute',
-    top: '4px',
+    top: '3px',
     left: '50%',
     transform: 'translateX(-50%)',
     width: '5px',
@@ -118,7 +124,7 @@ const camera = cva({
   },
   variants: {
     device: {
-      mac: { opacity: 0 },
+      mac: { opacity: 1 },
       imac: { opacity: 1 },
       iphone: { opacity: 0 },
     },
@@ -163,7 +169,7 @@ const barWrap = cva({
   },
   variants: {
     device: {
-      mac: { height: '38px', opacity: 1, margin: '0', borderRadius: '0' },
+      mac: { height: '38px', opacity: 1, margin: '8px 8px 0', borderRadius: '4px 4px 0 0' },
       imac: { height: '38px', opacity: 1, margin: '12px 12px 0', borderRadius: '4px 4px 0 0' },
       iphone: { height: '0px', opacity: 0, margin: '0', borderRadius: '0' },
     },
@@ -178,18 +184,15 @@ const screen = cva({
     overflow: 'hidden',
     containerType: 'size',
     background: 'card',
-    borderStyle: 'solid',
-    borderColor: 'device.panel',
-    transitionProperty: 'margin, border-width',
+    transitionProperty: 'margin',
     transitionDuration: '0.7s',
     transitionTimingFunction: 'out',
   },
   variants: {
     device: {
-      // tenký čierny okraj displeja vo vnútri strieborného bezelu predáva iMac
-      mac: { margin: '0', borderWidth: '0' },
-      imac: { margin: '0 12px', borderWidth: '2px 2px 0' },
-      iphone: { margin: '0', borderWidth: '0' },
+      mac: { margin: '0 8px 10px' },
+      imac: { margin: '0 12px' },
+      iphone: { margin: '0' },
     },
   },
 })
@@ -305,6 +308,6 @@ const frame = cva({
       </div>
       <div :class="chin({ device })" aria-hidden="true" />
     </div>
-    <DeviceImacStand :visible="device === 'imac'" />
+    <DeviceFoot :device="device" />
   </div>
 </template>
