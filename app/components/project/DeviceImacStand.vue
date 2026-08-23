@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-/** Hliníkový stojan iMacu pod displejom — vysunie sa len v rozbalenom režime. */
+/**
+ * Stojan iMacu 24" — plochý hliníkový plech s podstavou, tieňovanie
+ * adaptované z devices.css (MIT, picturepan2). Vysunie sa len v imac režime.
+ */
 defineProps<{ visible: boolean }>()
 
 const wrap = cva({
@@ -15,25 +18,30 @@ const wrap = cva({
   variants: {
     visible: {
       false: { height: '0px', opacity: 0 },
-      true: { height: '58px', opacity: 1 },
+      true: { height: '52px', opacity: 1 },
     },
   },
 })
 
 const neck = css({
-  width: '78px',
+  width: '150px',
   height: '46px',
   margin: '0 auto',
-  background: 'linear-gradient(180deg, token(colors.device.aluminum2), token(colors.device.aluminum))',
-  clipPath: 'polygon(10% 0, 90% 0, 100% 100%, 0 100%)',
+  background: `linear-gradient(
+    180deg,
+    token(colors.device.aluminum4) 0%,
+    token(colors.device.aluminum3) 40%,
+    token(colors.device.aluminum3) 85%,
+    token(colors.white) 90%,
+    token(colors.device.aluminum4) 100%
+  )`,
 })
 
 const base = css({
-  width: '200px',
-  height: '12px',
+  width: '150px',
+  height: '6px',
   margin: '0 auto',
-  borderRadius: '6px 6px 0 0',
-  background: 'linear-gradient(180deg, token(colors.device.aluminum), token(colors.device.aluminum2))',
+  background: 'radial-gradient(circle at center, token(colors.device.aluminum2) 80%, token(colors.device.aluminum4) 100%)',
 })
 </script>
 

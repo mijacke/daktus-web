@@ -40,12 +40,18 @@ export const colors = defineTokens.colors({
     paper: { value: '#EDEDE8' },
     paper2: { value: '#E2E2DB' },
   },
-  // rámy zariadení v živých náhľadoch projektov (iMac / iPhone)
+  // rámy zariadení v živých náhľadoch projektov — odtiene adaptované
+  // z devices.css (MIT, picturepan2): iMac 24" silver a iPhone silver
   device: {
-    aluminum: { value: '#E9EAE8' },
-    aluminum2: { value: '#D2D4D1' },
-    graphite: { value: '#26282C' },
+    aluminum: { value: '#EDEEF0' },
+    aluminum2: { value: '#D4D5D7' },
+    aluminum3: { value: '#C9CACC' },
+    aluminum4: { value: '#8E8F91' },
+    silver: { value: '#E2E3E4' },
+    silver2: { value: '#C8C9CB' },
+    panel: { value: '#010101' },
     island: { value: '#08090B' },
+    lens: { value: '#6074BF' },
   },
   // semafor v hlavičke náhľadového okna projektu — natívne macOS odtiene, čisto dekoratívne
   traffic: {
