@@ -60,7 +60,11 @@ const grid = cva({
           :state="stateFor(0)"
           @select="select(0)"
         >
-          <MockupPauli />
+          <LivePreview
+            src="https://www.paulifotografka.sk/"
+            domain="paulifotografka.sk"
+            :expanded="active === 0"
+          />
         </ProjectCard>
         <ProjectCard
           name="Aditrade"

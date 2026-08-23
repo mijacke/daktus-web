@@ -43,13 +43,26 @@ const cover = cva({
     overflow: 'hidden',
     border: '1px solid',
     borderColor: 'ink/7',
+    transition: 'height 0.7s {easings.out}',
   },
   variants: {
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
       steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
     },
+    state: {
+      idle: {},
+      active: { height: 'clamp(380px, 40vw, 660px)' },
+      dimmed: {},
+    },
   },
+})
+
+/** Neaktívna karta: priehľadný štít nad obsahom — hover/klik patria karte, nie iframe. */
+const shield = css({
+  position: 'absolute',
+  inset: 0,
+  zIndex: 4,
 })
 
 const coverFill = css({
@@ -96,7 +109,7 @@ const chipRow = css({
 <template>
   <article ref="root" :class="[card, 'group']">
     <BlueprintFrame
-      :class="cover({ tone })"
+      :class="cover({ tone, state })"
       tag="projekt"
       :built="built"
       :content-class="coverFill"
@@ -106,6 +119,7 @@ const chipRow = css({
       <div :class="coverScale">
         <slot />
       </div>
+      <div v-if="state !== 'active'" :class="shield" aria-hidden="true" />
     </BlueprintFrame>
     <div :class="meta">
       <div>
