@@ -33,7 +33,8 @@ const copies = ref<number[]>(ROWS.map(() => 2))
 const rowTweens: (gsap.core.Tween | null)[] = ROWS.map(() => null)
 const rowWidths: number[] = ROWS.map(() => 0)
 let wobble: gsap.core.Tween | null = null
-let morph: gsap.core.Tween | null = null
+let spin: gsap.core.Tween | null = null
+let morphTweens: gsap.core.Tween[] = []
 let tick: (() => void) | null = null
 let observer: ResizeObserver | null = null
 let cleanupFollow: (() => void) | null = null
@@ -130,15 +131,34 @@ onMounted(() => {
     y: Math.max(0, host.clientHeight - lens.offsetHeight) * 0.45,
   })
   gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
-  // jemné „želé" dýchanie + pomalé morfovanie tvaru, nech pôsobí tekuto
-  wobble = gsap.to(lens, { scaleX: 1.02, scaleY: 0.98, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
-  morph = gsap.to(lens, {
-    borderRadius: '44% 56% 39% 61% / 61% 42% 58% 39%',
+  // náhodné želé škálovanie — pri každom opakovaní nový cieľ aj tempo
+  wobble = gsap.to(lens, {
+    scaleX: () => gsap.utils.random(0.96, 1.05),
+    scaleY: () => gsap.utils.random(0.96, 1.05),
+    duration: () => gsap.utils.random(2, 4),
     repeat: -1,
+    repeatRefresh: true,
     yoyo: true,
     ease: 'sine.inOut',
-    duration: 7,
   })
+  // pomalé kývavé otáčanie
+  spin = gsap.fromTo(lens, { rotation: -8 }, { rotation: 10, duration: 10, repeat: -1, yoyo: true, ease: 'sine.inOut' })
+  // každý roh blobu sa naťahuje nezávisle — 8 náhodne desynchronizovaných polomerov
+  const shape: Record<string, number> = { a: 58, b: 42, c: 55, d: 45, e: 48, f: 62, g: 40, h: 52 }
+  const applyShape = () => {
+    lens!.style.borderRadius = `${shape.a}% ${shape.b}% ${shape.c}% ${shape.d}% / ${shape.e}% ${shape.f}% ${shape.g}% ${shape.h}%`
+  }
+  morphTweens = Object.keys(shape).map((key, index) =>
+    gsap.to(shape, {
+      [key]: () => gsap.utils.random(30, 70),
+      duration: () => gsap.utils.random(2.5, 5.5),
+      delay: index * 0.4,
+      repeat: -1,
+      repeatRefresh: true,
+      ease: 'sine.inOut',
+      onUpdate: applyShape,
+    }),
+  )
 
   // blob sleduje myš globálne — mimo sekcie sa natlačí k najbližšiemu okraju či rohu
   if (window.matchMedia('(pointer: fine)').matches) {
@@ -181,8 +201,9 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   rowTweens.forEach(tween => tween?.kill())
+  morphTweens.forEach(tween => tween.kill())
   wobble?.kill()
-  morph?.kill()
+  spin?.kill()
   if (tick) gsap.ticker.remove(tick)
   observer?.disconnect()
   cleanupFollow?.()
