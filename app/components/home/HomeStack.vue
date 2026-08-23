@@ -32,8 +32,6 @@ const copies = ref<number[]>(ROWS.map(() => 2))
 
 const rowTweens: (gsap.core.Tween | null)[] = ROWS.map(() => null)
 const rowWidths: number[] = ROWS.map(() => 0)
-let wobble: gsap.core.Tween | null = null
-let spin: gsap.core.Tween | null = null
 let wander: gsap.core.Tween | null = null
 let shear: gsap.core.Tween | null = null
 let morphTweens: gsap.core.Tween[] = []
@@ -133,18 +131,6 @@ onMounted(() => {
     y: Math.max(0, host.clientHeight - lens.offsetHeight) * 0.45,
   })
   gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
-  // náhodné želé škálovanie — pri každom opakovaní nový cieľ aj tempo
-  wobble = gsap.to(lens, {
-    scaleX: () => gsap.utils.random(0.96, 1.05),
-    scaleY: () => gsap.utils.random(0.96, 1.05),
-    duration: () => gsap.utils.random(2, 4),
-    repeat: -1,
-    repeatRefresh: true,
-    yoyo: true,
-    ease: 'sine.inOut',
-  })
-  // pomalé kývavé otáčanie
-  spin = gsap.fromTo(lens, { rotation: -8 }, { rotation: 10, duration: 10, repeat: -1, yoyo: true, ease: 'sine.inOut' })
   // autonómne blúdenie do strán — náhodný offset navrstvený na sledovanie myši
   wander = gsap.to(lens, {
     xPercent: () => gsap.utils.random(-45, 45),
@@ -182,8 +168,8 @@ onMounted(() => {
 
   // blob sleduje myš globálne — mimo sekcie sa natlačí k najbližšiemu okraju či rohu
   if (window.matchMedia('(pointer: fine)').matches) {
-    const xTo = gsap.quickTo(lens, 'x', { duration: 1, ease: 'power3' })
-    const yTo = gsap.quickTo(lens, 'y', { duration: 1, ease: 'power3' })
+    const xTo = gsap.quickTo(lens, 'x', { duration: 1.35, ease: 'power2' })
+    const yTo = gsap.quickTo(lens, 'y', { duration: 1.35, ease: 'power2' })
     const onMove = (event: MouseEvent) => {
       const rect = host!.getBoundingClientRect()
       const halfW = lens!.offsetWidth / 2
@@ -201,12 +187,41 @@ onMounted(() => {
   })
   observer.observe(host)
 
+  // slizová dynamika: blob sa naťahuje v smere vlastného pohybu a po zastavení sa rozleje späť
+  let lastX = 0
+  let lastY = 0
+  let smoothSpeed = 0
+  let currentRot = 0
+  let initialized = false
+
   tick = () => {
-    if (!rowsLive.value) return
     const hostRect = host!.getBoundingClientRect()
-    const lensX = Number(gsap.getProperty(lens, 'x')) + lens!.offsetWidth / 2
-    const lensY = Number(gsap.getProperty(lens, 'y')) + lens!.offsetHeight / 2
-    const radius = lens!.offsetWidth * 0.42
+    const lensRect = lens!.getBoundingClientRect()
+    const lensX = lensRect.left - hostRect.left + lensRect.width / 2
+    const lensY = lensRect.top - hostRect.top + lensRect.height / 2
+
+    if (!initialized) {
+      lastX = lensX
+      lastY = lensY
+      initialized = true
+    }
+    const vx = lensX - lastX
+    const vy = lensY - lastY
+    lastX = lensX
+    lastY = lensY
+    const speed = Math.hypot(vx, vy)
+    smoothSpeed += (speed - smoothSpeed) * 0.12
+    if (speed > 0.6) {
+      const target = Math.atan2(vy, vx) * (180 / Math.PI)
+      const delta = ((target - currentRot + 540) % 360) - 180
+      currentRot += delta * 0.1
+    }
+    const stretch = 1 + Math.min(smoothSpeed * 0.016, 0.6)
+    const squash = Math.max(1 - smoothSpeed * 0.009, 0.7)
+    gsap.set(lens, { rotation: currentRot, scaleX: stretch, scaleY: squash })
+
+    if (!rowsLive.value) return
+    const radius = lensRect.width * 0.5
     for (const el of spans) {
       const rect = el.getBoundingClientRect()
       const dx = rect.left - hostRect.left + rect.width / 2 - lensX
@@ -222,8 +237,6 @@ onMounted(() => {
 onBeforeUnmount(() => {
   rowTweens.forEach(tween => tween?.kill())
   morphTweens.forEach(tween => tween.kill())
-  wobble?.kill()
-  spin?.kill()
   wander?.kill()
   shear?.kill()
   if (tick) gsap.ticker.remove(tick)
