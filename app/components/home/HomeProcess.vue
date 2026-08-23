@@ -108,7 +108,8 @@ const stepText = css({
   fontSize: '13.5px',
   lineHeight: 1.55,
   color: 'dark.dim',
-  opacity: 0.75,
+  transition: 'color 0.3s ease',
+  '.active &': { color: 'dark.fg/72' },
 })
 
 const stepBar = css({
@@ -131,9 +132,6 @@ const stepBarFill = css({
 
 const demo = css({
   position: 'relative',
-  border: '1px solid',
-  borderColor: 'dark.hairline',
-  borderRadius: '16px',
   background: 'dark.panel',
   overflow: 'hidden',
   minHeight: 'clamp(440px, 34vw, 560px)',
@@ -212,18 +210,20 @@ const scene = css({
           </button>
         </div>
 
-        <div ref="demoEl" :class="demo">
-          <div :class="demoBar">
-            <span :class="demoDots"><i /><i /><i /></span>
-            <span :class="demoUrl">vas-projekt.sk</span>
-            <span :class="demoSpacer" />
+        <ProcessMacFrame>
+          <div ref="demoEl" :class="demo">
+            <div :class="demoBar">
+              <span :class="demoDots"><i /><i /><i /></span>
+              <span :class="demoUrl">vas-projekt.sk</span>
+              <span :class="demoSpacer" />
+            </div>
+            <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
+            <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
+            <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
+            <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
+            <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
           </div>
-          <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
-          <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
-          <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
-          <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest /></div>
-          <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
-        </div>
+        </ProcessMacFrame>
       </div>
     </div>
   </section>

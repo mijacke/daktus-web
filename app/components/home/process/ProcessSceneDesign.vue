@@ -1,20 +1,49 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
+/** Drôtený model sa po chvíli „vyfarbí" — z čiarkovaných obrysov plné tvary. */
 const skeleton = cva({
   base: {
     border: '1.5px dashed',
     borderColor: 'dark.fg/25',
     borderRadius: '8px',
     background: 'dark.fg/3',
+    transitionProperty: 'background-color, border-color',
+    transitionDuration: '0.8s',
+    transitionTimingFunction: 'ease',
+    transitionDelay: '1.1s',
+    _motionReduce: { transition: 'none' },
   },
   variants: {
     kind: {
-      title: { height: '26px', width: '55%' },
-      line: { height: '12px', width: '85%', marginTop: '12px' },
-      lineShort: { height: '12px', width: '70%', marginTop: '8px' },
-      block: { height: '88px', marginTop: '16px' },
-      pill: { height: '32px', width: '118px', borderRadius: 'full' },
+      title: {
+        height: '26px',
+        width: '55%',
+        '.scene-on &': { background: 'dark.fg/28', borderColor: 'transparent' },
+      },
+      line: {
+        height: '12px',
+        width: '85%',
+        marginTop: '12px',
+        '.scene-on &': { background: 'dark.fg/16', borderColor: 'transparent' },
+      },
+      lineShort: {
+        height: '12px',
+        width: '70%',
+        marginTop: '8px',
+        '.scene-on &': { background: 'dark.fg/16', borderColor: 'transparent' },
+      },
+      block: {
+        height: '88px',
+        marginTop: '16px',
+        '.scene-on &': { background: 'accent/26', borderColor: 'transparent' },
+      },
+      pill: {
+        height: '32px',
+        width: '118px',
+        borderRadius: 'full',
+        '.scene-on &': { background: 'accent/60', borderColor: 'transparent' },
+      },
     },
   },
 })

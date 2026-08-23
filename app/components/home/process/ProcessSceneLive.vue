@@ -1,11 +1,32 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
-const META = [
-  { label: 'SSL aktívne', delay: 75 },
-  { label: 'Zálohy zapnuté', delay: 90 },
-  { label: 'Monitoring 24/7', delay: 105 },
+/** Deploy log — riadky nabehnú postupne, posledný rozsvieti doménu naživo. */
+const LOG = [
+  { text: '$ npm run generate', tone: 'cmd', delay: 15 },
+  { text: '✓ 5 stránok vygenerovaných', tone: 'ok', delay: 35 },
+  { text: '→ nahrávam na produkciu…', tone: 'plain', delay: 55 },
+  { text: '✓ DNS a SSL certifikát aktívne', tone: 'ok', delay: 75 },
+  { text: '✓ vas-projekt.sk je naživo', tone: 'accent', delay: 100 },
 ] as const
+
+const META = [
+  { label: 'Zálohy zapnuté', delay: 130 },
+  { label: 'Monitoring 24/7', delay: 140 },
+] as const
+
+const logLine = css({
+  fontFamily: 'mono',
+  fontSize: '12.5px',
+  lineHeight: 2.1,
+  whiteSpace: 'nowrap',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  color: 'dark.fg/60',
+  '&[data-tone="cmd"]': { color: 'dark.fg/85' },
+  '&[data-tone="ok"]': { color: 'dark.fg/60', _firstLetter: { color: 'accent' } },
+  '&[data-tone="accent"]': { color: 'accent', fontWeight: 700 },
+})
 
 const liveWrap = css({
   height: '100%',
@@ -13,7 +34,7 @@ const liveWrap = css({
   flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '18px',
+  gap: '16px',
   textAlign: 'center',
 })
 
@@ -44,22 +65,10 @@ const liveTitle = css({
   color: 'dark.fg',
 })
 
-const livePill = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '9px',
-  height: '38px',
-  paddingInline: '18px',
-  borderRadius: 'full',
-  border: '1px solid',
-  borderColor: 'dark.fg/16',
-  fontSize: '13.5px',
-  color: 'dark.fg',
-})
-
-const pillIcon = css({
-  display: 'inline-flex',
-  color: 'accent',
+const liveNote = css({
+  fontSize: '13px',
+  color: 'dark.dim',
+  maxWidth: '210px',
 })
 
 const liveMeta = css({
@@ -84,21 +93,26 @@ const metaChip = css({
 </script>
 
 <template>
-  <div :class="liveWrap">
-    <span :class="[liveDot, sceneItem({ delay: 20 })]" />
-    <div :class="[liveTitle, sceneItem({ delay: 35 })]">Naživo</div>
-    <span :class="[livePill, sceneItem({ delay: 55 })]">
-      <span :class="pillIcon">
-        <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M8 1.5v13M8 1.5 3.5 6M8 1.5 12.5 6" />
-        </svg>
-      </span>
-      vas-projekt.sk je nasadený
-    </span>
-    <div :class="liveMeta">
-      <span v-for="item in META" :key="item.label" :class="[metaChip, sceneItem({ delay: item.delay })]">
-        {{ item.label }}
-      </span>
+  <div :class="sceneGrid">
+    <ProcessPanel title="Nasadenie">
+      <div
+        v-for="item in LOG"
+        :key="item.text"
+        :class="[logLine, sceneItem({ delay: item.delay })]"
+        :data-tone="item.tone"
+      >
+        {{ item.text }}
+      </div>
+    </ProcessPanel>
+    <div :class="liveWrap">
+      <span :class="[liveDot, sceneItem({ delay: 110 })]" />
+      <div :class="[liveTitle, sceneItem({ delay: 120 })]">Naživo</div>
+      <div :class="[liveNote, sceneItem({ delay: 130 })]">Spustením sa staráme ďalej — meranie, zálohy a údržba.</div>
+      <div :class="liveMeta">
+        <span v-for="item in META" :key="item.label" :class="[metaChip, sceneItem({ delay: item.delay })]">
+          {{ item.label }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
