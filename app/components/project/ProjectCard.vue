@@ -114,7 +114,7 @@ const chipRow = css({
       tag="projekt"
       :built="built"
       :content-class="coverFill"
-      :data-cursor="state === 'active' ? undefined : 'view'"
+      :data-cursor="state === 'active' ? 'none' : 'view'"
       :data-cursor-solid="tone === 'navy' ? undefined : ''"
       @click="state !== 'active' && $emit('select')"
     >
