@@ -24,4 +24,4 @@
 
 - Pred pushom spusti `npm run lint` a `npm run typecheck` (keď scaffold existuje).
 - Nové funkcionality sprevádzaj testami, hneď ako bude test setup k dispozícii.
-- Pre AI agentov platia pravidlá v [CLAUDE.md](CLAUDE.md).
+- Pre AI agentov platia pravidlá v [CLAUDE.md](../CLAUDE.md).

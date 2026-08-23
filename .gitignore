@@ -8,20 +8,15 @@ dist
 .data/
 
 # Prostredie
-.env
-.env.*
+.env*
 !.env.example
 
 # Logy
 *.log
 
-# OS / editory
+# macOS / editory
 .DS_Store
-Thumbs.db
-.idea/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
+.vscode/
 
 # Netlify
 .netlify/
