@@ -17,4 +17,6 @@ export const shadows = defineTokens.shadows({
   card: { value: '0 24px 60px rgba(16, 19, 21, 0.10)' },
   overlay: { value: '0 24px 60px rgba(16, 19, 21, 0.18)' },
   glow: { value: '0 14px 44px rgba(111, 168, 162, 0.35)' },
+  /** Náhľadové okno projektu — kontaktný tieň pri hrane + mäkký rozptyl ako pri natívnom macOS okne. */
+  window: { value: '0 1px 2px rgba(16, 19, 21, 0.10), 0 30px 70px rgba(16, 19, 21, 0.22)' },
 })
