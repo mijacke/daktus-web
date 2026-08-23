@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Kým v repe nie je Node projekt (pred Nuxt scaffoldom), kontroly sa preskočia.
+      - uses: actions/setup-node@v7
+        if: hashFiles('package-lock.json') != ''
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install
+        if: hashFiles('package-lock.json') != ''
+        run: npm ci
+
+      - name: Lint
+        if: hashFiles('package-lock.json') != ''
+        run: npm run lint --if-present
+
+      - name: Typecheck
+        if: hashFiles('package-lock.json') != ''
+        run: npm run typecheck --if-present
+
+      - name: Tests
+        if: hashFiles('package-lock.json') != ''
+        run: npm run test --if-present
