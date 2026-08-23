@@ -29,8 +29,9 @@ export const colors = defineTokens.colors({
   },
   // dekoratívne podklady mockupov projektov
   cover: {
-    blush: { value: '#EFDCD3' },
-    blush2: { value: '#E4CCC0' },
+    // béžová presne podľa webu paulifotografka.sk (cream-200 → cream-300)
+    blush: { value: '#F5F0E8' },
+    blush2: { value: '#EBE3D5' },
     steel: { value: '#D8E2E8' },
     steel2: { value: '#C6D4DC' },
     paper: { value: '#EDEDE8' },

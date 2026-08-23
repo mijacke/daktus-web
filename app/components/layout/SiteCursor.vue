@@ -141,7 +141,14 @@ const ballStyle = css({
   transitionTimingFunction: 'out',
   '@media (pointer: coarse)': { display: 'none' },
   '&.is-link': { width: '48px', height: '48px' },
-  '&.is-view': { width: '86px', height: '86px' },
+  '&.is-view': {
+    width: '86px',
+    height: '86px',
+    // nad projektmi otáča len svetlosť (čierna↔biela), odtiene fotiek ostávajú
+    background: 'transparent',
+    mixBlendMode: 'normal',
+    backdropFilter: 'invert(1) hue-rotate(180deg)',
+  },
   '&.is-hidden': { opacity: 0 },
 })
 
@@ -152,7 +159,8 @@ const innerStyle = css({
   color: 'ink',
   opacity: 0,
   transition: 'opacity 0.2s ease',
-  '.is-view &': { opacity: 1 },
+  // šípka sa v „lens" guli invertuje voči jej obsahu, aby bola vždy čitateľná
+  '.is-view &': { opacity: 1, color: 'white', mixBlendMode: 'difference' },
 })
 </script>
 
