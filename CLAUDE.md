@@ -28,12 +28,12 @@ Web štúdia Daktus (daktus.sk). Stack: Nuxt 4 (Vue 3), animácie GSAP + Lenis, 
 - Deploy: merge do `master` → produkcia (Netlify), každý PR → deploy preview. Build konfigurácia je v `netlify.toml`.
 - Detaily v [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Príkazy (po pridaní Nuxt scaffoldu)
+## Príkazy
 
-- `npm run dev` — lokálny vývoj
-- `npm run generate` — statický build (nasadzuje Netlify)
-- `npm run lint`, `npm run typecheck`, `npm run test` — rovnaké kontroly ako v CI (`.github/workflows/ci.yml`)
+- `npm run dev` — lokálny vývoj (http://localhost:3000)
+- `npm run generate` — statický build do `.output/public` (nasadzuje Netlify)
+- `npm run lint`, `npm run typecheck` — rovnaké kontroly ako v CI (`.github/workflows/ci.yml`); `npm run test` pribudne s test setupom
 
 ## Aktuálny stav
 
-Na produkcii je dočasná coming-soon stránka (`index.html` v koreni repa). Nuxt scaffold ju nahradí — pri tom aktualizuj `netlify.toml`, CI skripty a túto sekciu.
+Nuxt 4 scaffold je hotový, dočasnú coming-soon stránku renderuje `app/app.vue`. TypeScript je zámerne na 5.x (vue-tsc zatiaľ oficiálne nepodporuje TS 7/tsgo — over cez Context7, kým povýšiš). Ostrý dizajn stránok (Domov, Projekty, Služby, Cenník, Kontakt) sa bude prenášať z prototypu v ďalších PR.
