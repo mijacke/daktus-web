@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { gsap } from 'gsap'
+import WebGLFluidEnhanced from 'webgl-fluid-enhanced'
 import { css } from '~~/styled-system/css'
+import { token } from '~~/styled-system/tokens'
 
 /** Riadky bežia striedavo doľava/doprava ako marquee v hero. */
 const ROWS = [
@@ -11,88 +13,37 @@ const ROWS = [
   ['AWS', 'Azure', 'Docker', 'Kubernetes', 'DigitalOcean', 'Vercel', 'Netlify', 'Websupport'],
 ]
 
-/** Kľudová priesvitnosť názvov — sklo ich pri prechode rozsvieti naplno. */
+/** Kľudová priesvitnosť názvov — kurzor ich pri prechode rozsvieti naplno. */
 const DIM = 0.34
-/** Šírka neutrálneho stredu mapy (podiel menšej strany) — refrakcia žije len v okrajovom páse. */
-const EDGE_INSET = 0.07
-/** Zmäkčenie prechodu medzi stredom a okrajovým pásom (px v mape). */
-const MAP_BLUR = 12
-/** Blur skla nad pozadím (px) — nízky, nech stred ostáva číry ako pri Apple Liquid Glass. */
-const GLASS_BLUR = 1.5
 /** Rýchlosť marquee riadkov v px/s. */
 const ROW_SPEED = 30
+/** Dosah rozsvecovania okolo kurzora (px). */
+const GLOW_RADIUS = 340
 
 const sectionEl = ref<HTMLElement | null>(null)
 const rowsEl = ref<HTMLElement | null>(null)
 const rowsIn = useInView(rowsEl)
 const rowsLive = useInView(rowsEl, { once: false, threshold: 0 })
-const lensEl = ref<HTMLElement | null>(null)
-const feImageEl = ref<SVGElement | null>(null)
+const fluidEl = ref<HTMLElement | null>(null)
 const copies = ref<number[]>(ROWS.map(() => 2))
 
 const rowTweens: (gsap.core.Tween | null)[] = ROWS.map(() => null)
 const rowWidths: number[] = ROWS.map(() => 0)
-let wander: gsap.core.Tween | null = null
-let shear: gsap.core.Tween | null = null
-let morphTweens: gsap.core.Tween[] = []
 let tick: (() => void) | null = null
 let observer: ResizeObserver | null = null
-let cleanupFollow: (() => void) | null = null
-
-/**
- * Displacement mapa podľa liquid-glass knižníc: červený ramp kóduje posun X,
- * modrý posun Y (spojené cez „difference"), rozmazaný sivý vnútorný ovál
- * neutralizuje stred — láme sa len okrajový pás, presne ako Apple Liquid Glass.
- */
-function buildRefraction(lens: HTMLElement) {
-  const feImage = feImageEl.value
-  if (!feImage || !('chrome' in window)) return
-
-  const width = Math.round(lens.offsetWidth)
-  const height = Math.round(lens.offsetHeight)
-  if (!width || !height) return
-  const map = document.createElement('canvas')
-  map.width = width
-  map.height = height
-  const ctx = map.getContext('2d')
-  if (!ctx) return
-
-  const rampX = ctx.createLinearGradient(0, 0, width, 0)
-  rampX.addColorStop(0, 'rgb(0, 0, 0)')
-  rampX.addColorStop(1, 'rgb(255, 0, 0)')
-  ctx.fillStyle = rampX
-  ctx.fillRect(0, 0, width, height)
-
-  ctx.globalCompositeOperation = 'difference'
-  const rampY = ctx.createLinearGradient(0, 0, 0, height)
-  rampY.addColorStop(0, 'rgb(0, 0, 0)')
-  rampY.addColorStop(1, 'rgb(0, 0, 255)')
-  ctx.fillStyle = rampY
-  ctx.fillRect(0, 0, width, height)
-
-  ctx.globalCompositeOperation = 'source-over'
-  ctx.filter = `blur(${MAP_BLUR}px)`
-  ctx.fillStyle = 'rgb(128, 128, 128)'
-  const inset = Math.min(width, height) * EDGE_INSET
-  ctx.beginPath()
-  ctx.ellipse(width / 2, height / 2, width / 2 - inset, height / 2 - inset, 0, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.filter = 'none'
-
-  feImage.setAttribute('href', map.toDataURL())
-  feImage.setAttribute('width', String(width))
-  feImage.setAttribute('height', String(height))
-  lens.style.backdropFilter = `url(#daktus-liquid-filter) blur(${GLASS_BLUR}px) saturate(160%) brightness(1.16)`
-}
+let cleanupMouse: (() => void) | null = null
+let fluidSim: WebGLFluidEnhanced | null = null
 
 onMounted(() => {
   const host = sectionEl.value
   const rowsBox = rowsEl.value
-  const lens = lensEl.value
-  if (!host || !rowsBox || !lens) return
+  const fluidBox = fluidEl.value
+  if (!host || !rowsBox || !fluidBox) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
   let spans: HTMLElement[] = []
+  let mouseX = -10000
+  let mouseY = -10000
 
   function refreshSpots() {
     spans = Array.from(rowsBox!.querySelectorAll<HTMLElement>('[data-tech]'))
@@ -124,109 +75,61 @@ onMounted(() => {
 
   refreshSpots()
   buildRows()
-  buildRefraction(lens)
   document.fonts?.ready.then(buildRows)
-  gsap.set(lens, {
-    x: Math.max(0, host.clientWidth - lens.offsetWidth) * 0.68,
-    y: Math.max(0, host.clientHeight - lens.offsetHeight) * 0.45,
-  })
-  gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
-  // autonómne blúdenie do strán — náhodný offset navrstvený na sledovanie myši
-  wander = gsap.to(lens, {
-    xPercent: () => gsap.utils.random(-45, 45),
-    yPercent: () => gsap.utils.random(-22, 22),
-    duration: () => gsap.utils.random(3, 6),
-    repeat: -1,
-    repeatRefresh: true,
-    ease: 'sine.inOut',
-  })
-  // náhodné skosenie — organický shear, nech tvar nepôsobí geometricky
-  shear = gsap.to(lens, {
-    skewX: () => gsap.utils.random(-6, 6),
-    skewY: () => gsap.utils.random(-4, 4),
-    duration: () => gsap.utils.random(3, 5),
-    repeat: -1,
-    repeatRefresh: true,
-    ease: 'sine.inOut',
-  })
-  // každý roh blobu sa naťahuje nezávisle — 8 náhodne desynchronizovaných polomerov
-  const shape: Record<string, number> = { a: 58, b: 42, c: 55, d: 45, e: 48, f: 62, g: 40, h: 52 }
-  const applyShape = () => {
-    lens!.style.borderRadius = `${shape.a}% ${shape.b}% ${shape.c}% ${shape.d}% / ${shape.e}% ${shape.f}% ${shape.g}% ${shape.h}%`
-  }
-  morphTweens = Object.keys(shape).map((key, index) =>
-    gsap.to(shape, {
-      [key]: () => gsap.utils.random(28, 72),
-      duration: () => gsap.utils.random(2.5, 5.5),
-      delay: index * 0.4,
-      repeat: -1,
-      repeatRefresh: true,
-      ease: 'sine.inOut',
-      onUpdate: applyShape,
-    }),
-  )
 
-  // blob sleduje myš globálne — mimo sekcie sa natlačí k najbližšiemu okraju či rohu
-  if (window.matchMedia('(pointer: fine)').matches) {
-    const xTo = gsap.quickTo(lens, 'x', { duration: 1.35, ease: 'power2' })
-    const yTo = gsap.quickTo(lens, 'y', { duration: 1.35, ease: 'power2' })
-    const onMove = (event: MouseEvent) => {
-      const rect = host!.getBoundingClientRect()
-      const halfW = lens!.offsetWidth / 2
-      const halfH = lens!.offsetHeight / 2
-      xTo(gsap.utils.clamp(-halfW, host!.clientWidth - halfW, event.clientX - rect.left - halfW))
-      yTo(gsap.utils.clamp(-halfH, host!.clientHeight - halfH, event.clientY - rect.top - halfH))
-    }
-    window.addEventListener('mousemove', onMove, { passive: true })
-    cleanupFollow = () => window.removeEventListener('mousemove', onMove)
-  }
-
-  observer = new ResizeObserver(() => {
-    buildRows()
-    buildRefraction(lens)
-  })
+  observer = new ResizeObserver(buildRows)
   observer.observe(host)
 
-  // slizová dynamika: blob sa naťahuje v smere vlastného pohybu a po zastavení sa rozleje späť
-  let lastX = 0
-  let lastY = 0
-  let smoothSpeed = 0
-  let currentRot = 0
-  let initialized = false
+  // fluid simulácia v štýle lusion.co — myš zanecháva tekutú stopu (len presný pointer)
+  const finePointer = window.matchMedia('(pointer: fine)').matches
+  if (finePointer) {
+    fluidSim = new WebGLFluidEnhanced(fluidBox)
+    fluidSim.setConfig({
+      colorPalette: [token('colors.accent'), token('colors.accent.deep')],
+      colorful: false,
+      transparent: true,
+      brightness: 0.35,
+      simResolution: 128,
+      dyeResolution: 1024,
+      densityDissipation: 3.2,
+      velocityDissipation: 0.5,
+      curl: 26,
+      splatRadius: 0.12,
+      splatForce: 3800,
+      hover: true,
+      bloom: true,
+      bloomIntensity: 0.3,
+      bloomThreshold: 0.6,
+      sunrays: true,
+      sunraysWeight: 0.4,
+    })
+    fluidSim.start()
+    fluidSim.multipleSplats(2)
 
+    const onMove = (event: MouseEvent) => {
+      const rect = host!.getBoundingClientRect()
+      mouseX = event.clientX - rect.left
+      mouseY = event.clientY - rect.top
+    }
+    window.addEventListener('mousemove', onMove, { passive: true })
+    cleanupMouse = () => window.removeEventListener('mousemove', onMove)
+
+    // mimo viewportu simuláciu pozastav
+    watch(rowsLive, (visible) => {
+      if (visible) fluidSim?.start()
+      else fluidSim?.stop()
+    })
+  }
+
+  // rozsvecovanie názvov v okolí kurzora — číta živé pozície aj počas behu marquee
   tick = () => {
-    const hostRect = host!.getBoundingClientRect()
-    const lensRect = lens!.getBoundingClientRect()
-    const lensX = lensRect.left - hostRect.left + lensRect.width / 2
-    const lensY = lensRect.top - hostRect.top + lensRect.height / 2
-
-    if (!initialized) {
-      lastX = lensX
-      lastY = lensY
-      initialized = true
-    }
-    const vx = lensX - lastX
-    const vy = lensY - lastY
-    lastX = lensX
-    lastY = lensY
-    const speed = Math.hypot(vx, vy)
-    smoothSpeed += (speed - smoothSpeed) * 0.12
-    if (speed > 0.6) {
-      const target = Math.atan2(vy, vx) * (180 / Math.PI)
-      const delta = ((target - currentRot + 540) % 360) - 180
-      currentRot += delta * 0.1
-    }
-    const stretch = 1 + Math.min(smoothSpeed * 0.016, 0.6)
-    const squash = Math.max(1 - smoothSpeed * 0.009, 0.7)
-    gsap.set(lens, { rotation: currentRot, scaleX: stretch, scaleY: squash })
-
     if (!rowsLive.value) return
-    const radius = lensRect.width * 0.5
+    const hostRect = host!.getBoundingClientRect()
     for (const el of spans) {
       const rect = el.getBoundingClientRect()
-      const dx = rect.left - hostRect.left + rect.width / 2 - lensX
-      const dy = rect.top - hostRect.top + rect.height / 2 - lensY
-      const t = Math.max(0, 1 - Math.hypot(dx, dy) / radius)
+      const dx = rect.left - hostRect.left + rect.width / 2 - mouseX
+      const dy = rect.top - hostRect.top + rect.height / 2 - mouseY
+      const t = Math.max(0, 1 - Math.hypot(dx, dy) / GLOW_RADIUS)
       const eased = t * t * (3 - 2 * t)
       gsap.set(el, { opacity: DIM + (1 - DIM) * eased })
     }
@@ -236,12 +139,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   rowTweens.forEach(tween => tween?.kill())
-  morphTweens.forEach(tween => tween.kill())
-  wander?.kill()
-  shear?.kill()
   if (tick) gsap.ticker.remove(tick)
   observer?.disconnect()
-  cleanupFollow?.()
+  cleanupMouse?.()
+  fluidSim?.stop()
+  fluidSim = null
 })
 
 const section = css({
@@ -305,53 +207,21 @@ const separator = css({
   opacity: 0.45,
 })
 
-/** Liquid glass blob — materiál podľa referenčných liquid-glass knižníc, v našich tokenoch. */
-const lensPane = css({
+/** Fluid stopa za kurzorom — WebGL simulácia cez celú sekciu. */
+const fluid = css({
   position: 'absolute',
-  top: 0,
-  left: 0,
+  inset: 0,
+  width: '100%',
+  height: '100%',
   zIndex: 3,
-  width: 'clamp(460px, 46vw, 780px)',
-  aspectRatio: '1.5 / 1',
-  borderRadius: '58% 42% 55% 45% / 48% 62% 40% 52%',
-  pointerEvents: 'none',
-  opacity: 0,
-  // fallback pre prehliadače bez SVG backdrop filtrov — Chrome dostane refrakciu cez JS
-  backdropFilter: 'blur(6px) saturate(150%) brightness(1.08)',
-  background: 'linear-gradient(180deg, color-mix(in srgb, token(colors.dark.bg) 8%, transparent), color-mix(in srgb, token(colors.dark.bg) 18%, transparent))',
-  boxShadow: `
-    0 24px 60px color-mix(in srgb, token(colors.dark.bg) 72%, transparent),
-    inset 0 1px 1px color-mix(in srgb, token(colors.dark.fg) 50%, transparent),
-    inset 0 -8px 20px color-mix(in srgb, token(colors.dark.fg) 6%, transparent),
-    inset 0 0 0 1px color-mix(in srgb, token(colors.dark.fg) 13%, transparent)
-  `,
-  willChange: 'transform',
+  mixBlendMode: 'screen',
+  '@media (pointer: coarse)': { display: 'none' },
   _motionReduce: { display: 'none' },
-})
-
-const filterDefs = css({
-  position: 'absolute',
-  width: 0,
-  height: 0,
-  overflow: 'hidden',
 })
 </script>
 
 <template>
   <section id="technologie" ref="sectionEl" :class="section" data-dark>
-    <svg :class="filterDefs" aria-hidden="true">
-      <filter id="daktus-liquid-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
-        <feImage ref="feImageEl" result="map" preserveAspectRatio="none" />
-        <feDisplacementMap in="SourceGraphic" in2="map" scale="-90" xChannelSelector="R" yChannelSelector="B" result="dispR" />
-        <feColorMatrix in="dispR" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="chanR" />
-        <feDisplacementMap in="SourceGraphic" in2="map" scale="-96" xChannelSelector="R" yChannelSelector="B" result="dispG" />
-        <feColorMatrix in="dispG" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="chanG" />
-        <feDisplacementMap in="SourceGraphic" in2="map" scale="-102" xChannelSelector="R" yChannelSelector="B" result="dispB" />
-        <feColorMatrix in="dispB" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="chanB" />
-        <feBlend in="chanR" in2="chanG" mode="screen" result="blendRG" />
-        <feBlend in="blendRG" in2="chanB" mode="screen" />
-      </filter>
-    </svg>
     <div :class="[wrap, content]">
       <SectionHead eyebrow="Technológie" title="Náš stack">
         <span :class="sectionNote">Vyberáme technológiu podľa projektu, nie naopak.</span>
@@ -369,6 +239,6 @@ const filterDefs = css({
         </div>
       </div>
     </div>
-    <span ref="lensEl" :class="lensPane" aria-hidden="true" />
+    <div ref="fluidEl" :class="fluid" aria-hidden="true" />
   </section>
 </template>
