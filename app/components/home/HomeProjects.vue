@@ -14,10 +14,10 @@ const grid = css({
   <section id="projekty" :class="sectionBlock">
     <div :class="wrap">
       <SectionHead eyebrow="Projekty" title="Vybraná práca">
-        <a :class="sectionLink" href="/projekty">
+        <NuxtLink :class="sectionLink" to="/projekty">
           Všetky projekty
           <span :class="sectionLinkIcon"><IconArrow /></span>
-        </a>
+        </NuxtLink>
       </SectionHead>
       <div :class="grid">
         <ProjectCard

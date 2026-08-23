@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import type { ServiceIconName } from '~/components/ServiceIcon.vue'
+import type { ServiceIconName } from '~/components/icons/ServiceIcon.vue'
 
 defineProps<{
   icon: ServiceIconName

@@ -17,6 +17,9 @@ onMounted(() => {
   window.addEventListener('resize', update)
 })
 
+// nová stránka = nová výška dokumentu
+useNuxtApp().hook('page:finish', () => nextTick(update))
+
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', update)
   window.removeEventListener('resize', update)

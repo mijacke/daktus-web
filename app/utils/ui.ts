@@ -12,6 +12,11 @@ export const sectionBlock = css({
   paddingTop: 'clamp(88px, 11vh, 150px)',
 })
 
+/** Spodné odsadenie posledného bloku podstránky (band pred footerom). */
+export const pageBottom = css({
+  marginBottom: 'clamp(60px, 8vh, 100px)',
+})
+
 /** Šípkový odkaz v hlavičke sekcie („Všetky projekty" a pod.). */
 export const sectionLink = css({
   display: 'inline-flex',

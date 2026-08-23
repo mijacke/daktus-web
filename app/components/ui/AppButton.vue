@@ -2,10 +2,12 @@
 import { cva } from '~~/styled-system/css'
 
 const props = withDefaults(defineProps<{
-  href: string
+  /** Interná routa — bez nej sa vyrenderuje <button> (napr. submit formulára). */
+  href?: string
+  type?: 'button' | 'submit'
   variant?: 'main' | 'ghost' | 'accent' | 'pill'
   arrow?: boolean
-}>(), { variant: 'main', arrow: false })
+}>(), { href: undefined, type: 'button', variant: 'main', arrow: false })
 
 const button = cva({
   base: {
@@ -15,6 +17,7 @@ const button = cva({
     borderRadius: 'full',
     fontWeight: 600,
     whiteSpace: 'nowrap',
+    cursor: 'pointer',
     transitionProperty: 'background, color, border-color, box-shadow',
     transitionDuration: '0.3s',
   },
@@ -69,8 +72,12 @@ const arrowSize = { main: 15, ghost: 15, accent: 16, pill: 14 }[props.variant]
 </script>
 
 <template>
-  <a :class="button({ variant })" :href="href">
+  <NuxtLink v-if="href" :class="button({ variant })" :to="href">
     <slot />
     <IconArrow v-if="arrow" :size="arrowSize" />
-  </a>
+  </NuxtLink>
+  <button v-else :class="button({ variant })" :type="type">
+    <slot />
+    <IconArrow v-if="arrow" :size="arrowSize" />
+  </button>
 </template>
