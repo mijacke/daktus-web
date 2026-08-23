@@ -6,6 +6,7 @@ const ballEl = ref<HTMLElement | null>(null)
 const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
+const isSolid = ref(false)
 const isHidden = ref(false)
 const isAway = ref(false)
 const isOut = ref(false)
@@ -46,6 +47,8 @@ onMounted(() => {
   const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
+    // svetlé kryty si vyžiadajú pevnú čiernu guľu — difference by tam pôsobil sivo
+    isSolid.value = !!view && view.hasAttribute('data-cursor-solid')
     isLink.value = !view && !!target?.closest('a, button')
     // vnútri iframe sa mousemove nešíri — guľka by zamrzla na okraji, radšej zmizne
     isHidden.value = !!target?.closest('iframe')
@@ -159,6 +162,8 @@ const ballStyle = css({
   // veľká guľa je tá istá sklenená invertujúca ako malá, len väčšia —
   // žiadne prepínanie blendu, prechod je čisto veľkostný
   '&.is-view': { width: '86px', height: '86px' },
+  // solid: nad svetlým krytom neinvertuje, stojí ako plná čierna guľa
+  '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink', backdropFilter: 'none' },
   '&.is-hidden': { opacity: 0 },
 })
 
@@ -173,13 +178,15 @@ const innerStyle = css({
   // príchod: objaví sa jemne, až keď guľa už rastie; tmavá šípka sa v
   // invertujúcej guli vykreslí ako svetlá voči jej obsahu
   '.is-view &': { opacity: 1, transitionDuration: '0.3s', transitionDelay: '0.12s' },
+  // v plnej čiernej guli sa šípka neinvertuje — potrebuje svetlú farbu priamo
+  '.is-view.is-solid &': { color: 'paper' },
 })
 </script>
 
 <template>
   <div
     ref="ballEl"
-    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-hidden': isHidden || isAway || isOut }]"
+    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-solid': isSolid, 'is-hidden': isHidden || isAway || isOut }]"
     aria-hidden="true"
   >
     <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>

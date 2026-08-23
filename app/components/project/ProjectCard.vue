@@ -9,7 +9,7 @@ interface ProjectChip {
 withDefaults(defineProps<{
   name: string
   description: string
-  tone: 'blush' | 'steel'
+  tone: 'blush' | 'steel' | 'navy'
   chips: ProjectChip[]
   state?: 'idle' | 'active' | 'dimmed'
 }>(), { state: 'idle' })
@@ -38,7 +38,7 @@ const card = css({
 
 const cover = cva({
   base: {
-    height: 'clamp(300px, 30vw, 500px)',
+    height: 'clamp(280px, 26vw, 420px)',
     borderRadius: '18px',
     overflow: 'hidden',
     border: '1px solid',
@@ -49,6 +49,7 @@ const cover = cva({
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
       steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
+      navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
     },
     state: {
       idle: {},
@@ -114,6 +115,7 @@ const chipRow = css({
       :built="built"
       :content-class="coverFill"
       :data-cursor="state === 'active' ? undefined : 'view'"
+      :data-cursor-solid="tone === 'navy' ? undefined : ''"
       @click="state !== 'active' && $emit('select')"
     >
       <div :class="coverScale">
