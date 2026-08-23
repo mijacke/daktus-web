@@ -10,12 +10,14 @@ const TECHS = [
   'AWS', 'Azure', 'DigitalOcean', 'Render', 'Websupport',
 ]
 
-/** Kľudová priesvitnosť názvov — bublina ich pri prechode rozsvieti naplno. */
+/** Kľudová priesvitnosť názvov — sklo ich pri prechode rozsvieti naplno. */
 const DIM = 0.34
-/** Sila lupy: sample = c · edge^(BETA − 1); vyššia hodnota = väčšie zväčšenie v strede. */
-const BETA = 1.52
-/** Rozlíšenie displacement mapy (škáluje sa na veľkosť bubliny, netreba viac). */
-const MAP_SIZE = 256
+/** Šírka neutrálneho stredu mapy (podiel menšej strany) — refrakcia žije len v okrajovom páse. */
+const EDGE_INSET = 0.07
+/** Zmäkčenie prechodu medzi stredom a okrajovým pásom (px v mape). */
+const MAP_BLUR = 12
+/** Blur skla nad pozadím (px) — nízky, nech stred ostáva číry ako pri Apple Liquid Glass. */
+const GLASS_BLUR = 1.5
 
 const sectionEl = ref<HTMLElement | null>(null)
 const canvasEl = ref<HTMLCanvasElement | null>(null)
@@ -27,7 +29,6 @@ const gridLive = useInView(gridEl, { once: false, threshold: 0 })
 const lensWrapEl = ref<HTMLElement | null>(null)
 const lensEl = ref<HTMLElement | null>(null)
 const feImageEl = ref<SVGElement | null>(null)
-const feDispEl = ref<SVGElement | null>(null)
 
 let wobble: gsap.core.Tween | null = null
 let tick: (() => void) | null = null
@@ -35,60 +36,50 @@ let observer: ResizeObserver | null = null
 let cleanupFollow: (() => void) | null = null
 
 /**
- * Vygeneruje kruhovú displacement mapu (fisheye lupa) pre feDisplacementMap —
- * rovnaká technika ako známe liquid-glass knižnice, len bez závislosti.
+ * Displacement mapa podľa liquid-glass knižníc: červený ramp kóduje posun X,
+ * modrý posun Y (spojené cez „difference"), rozmazaný sivý vnútorný obdĺžnik
+ * neutralizuje stred — láme sa len okrajový pás, presne ako Apple Liquid Glass.
  */
 function buildRefraction(lens: HTMLElement) {
   const feImage = feImageEl.value
-  const feDisp = feDispEl.value
-  if (!feImage || !feDisp || !('chrome' in window)) return
+  if (!feImage || !('chrome' in window)) return
 
-  const size = lens.offsetWidth
-  if (!size) return
-  const canvas = document.createElement('canvas')
-  canvas.width = MAP_SIZE
-  canvas.height = MAP_SIZE
-  const ctx = canvas.getContext('2d')
+  const width = Math.round(lens.offsetWidth)
+  const height = Math.round(lens.offsetHeight)
+  if (!width || !height) return
+  const map = document.createElement('canvas')
+  map.width = width
+  map.height = height
+  const ctx = map.getContext('2d')
   if (!ctx) return
 
-  const raw = new Float32Array(MAP_SIZE * MAP_SIZE * 2)
-  let maxShift = 0
-  for (let y = 0; y < MAP_SIZE; y++) {
-    for (let x = 0; x < MAP_SIZE; x++) {
-      const u = x / MAP_SIZE
-      const v = y / MAP_SIZE
-      const cx = u - 0.5
-      const cy = v - 0.5
-      const edge = Math.hypot(cx, cy) * 2
-      let dx = 0
-      let dy = 0
-      if (edge < 1 && edge > 0) {
-        const factor = edge ** (BETA - 1)
-        dx = cx * (factor - 1) * size
-        dy = cy * (factor - 1) * size
-      }
-      const i = (y * MAP_SIZE + x) * 2
-      raw[i] = dx
-      raw[i + 1] = dy
-      maxShift = Math.max(maxShift, Math.abs(dx), Math.abs(dy))
-    }
-  }
-  if (!maxShift) return
+  const rampX = ctx.createLinearGradient(0, 0, width, 0)
+  rampX.addColorStop(0, 'rgb(0, 0, 0)')
+  rampX.addColorStop(1, 'rgb(255, 0, 0)')
+  ctx.fillStyle = rampX
+  ctx.fillRect(0, 0, width, height)
 
-  const image = ctx.createImageData(MAP_SIZE, MAP_SIZE)
-  for (let p = 0; p < MAP_SIZE * MAP_SIZE; p++) {
-    image.data[p * 4] = ((raw[p * 2]! / maxShift) * 0.5 + 0.5) * 255
-    image.data[p * 4 + 1] = ((raw[p * 2 + 1]! / maxShift) * 0.5 + 0.5) * 255
-    image.data[p * 4 + 2] = 128
-    image.data[p * 4 + 3] = 255
-  }
-  ctx.putImageData(image, 0, 0)
+  ctx.globalCompositeOperation = 'difference'
+  const rampY = ctx.createLinearGradient(0, 0, 0, height)
+  rampY.addColorStop(0, 'rgb(0, 0, 0)')
+  rampY.addColorStop(1, 'rgb(0, 0, 255)')
+  ctx.fillStyle = rampY
+  ctx.fillRect(0, 0, width, height)
 
-  feImage.setAttribute('href', canvas.toDataURL())
-  feImage.setAttribute('width', String(size))
-  feImage.setAttribute('height', String(size))
-  feDisp.setAttribute('scale', String(maxShift))
-  lens.style.backdropFilter = 'url(#daktus-lens-filter) blur(0.8px) saturate(175%) brightness(1.2)'
+  ctx.globalCompositeOperation = 'source-over'
+  ctx.filter = `blur(${MAP_BLUR}px)`
+  ctx.fillStyle = 'rgb(128, 128, 128)'
+  const inset = Math.min(width, height) * EDGE_INSET
+  const radius = Math.max(0, Math.min(width, height) / 2 - inset)
+  ctx.beginPath()
+  ctx.roundRect(inset, inset, width - inset * 2, height - inset * 2, radius)
+  ctx.fill()
+  ctx.filter = 'none'
+
+  feImage.setAttribute('href', map.toDataURL())
+  feImage.setAttribute('width', String(width))
+  feImage.setAttribute('height', String(height))
+  lens.style.backdropFilter = `url(#daktus-liquid-filter) blur(${GLASS_BLUR}px) saturate(160%) brightness(1.16)`
 }
 
 onMounted(() => {
@@ -108,7 +99,7 @@ onMounted(() => {
     }))
   }
 
-  /** Kľudová pozícia bubliny v gride. */
+  /** Kľudová pozícia skla v gride. */
   function restPosition() {
     return {
       x: Math.max(0, lensWrap!.clientWidth - lens!.offsetWidth) * 0.62,
@@ -121,17 +112,18 @@ onMounted(() => {
   gsap.set(lens, restPosition())
   gsap.to(lens, { autoAlpha: 1, duration: 1.2, delay: 0.4 })
   // jemné „želé" dýchanie, nech pôsobí tekuto
-  wobble = gsap.to(lens, { scaleX: 1.035, scaleY: 0.965, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
+  wobble = gsap.to(lens, { scaleX: 1.025, scaleY: 0.975, repeat: -1, yoyo: true, ease: 'sine.inOut', duration: 2.6 })
 
-  // bublina stojí a fluidne nasleduje myš; po odídení sa vráti na svoje miesto
+  // sklo stojí a fluidne nasleduje myš; po odídení sa vráti na svoje miesto
   if (window.matchMedia('(pointer: fine)').matches) {
     const xTo = gsap.quickTo(lens, 'x', { duration: 1, ease: 'power3' })
     const yTo = gsap.quickTo(lens, 'y', { duration: 1, ease: 'power3' })
     const onMove = (event: MouseEvent) => {
       const rect = lensWrap!.getBoundingClientRect()
-      const half = lens!.offsetWidth / 2
-      xTo(gsap.utils.clamp(-half * 0.5, lensWrap!.clientWidth - half * 1.5, event.clientX - rect.left - half))
-      yTo(gsap.utils.clamp(-half * 0.6, lensWrap!.clientHeight - half * 1.4, event.clientY - rect.top - half))
+      const halfW = lens!.offsetWidth / 2
+      const halfH = lens!.offsetHeight / 2
+      xTo(gsap.utils.clamp(-halfW * 0.5, lensWrap!.clientWidth - halfW * 1.5, event.clientX - rect.left - halfW))
+      yTo(gsap.utils.clamp(-halfH * 0.8, lensWrap!.clientHeight - halfH * 1.2, event.clientY - rect.top - halfH))
     }
     const onLeave = () => {
       const rest = restPosition()
@@ -158,7 +150,7 @@ onMounted(() => {
     if (!gridLive.value) return
     const lensX = Number(gsap.getProperty(lens, 'x')) + lens!.offsetWidth / 2
     const lensY = Number(gsap.getProperty(lens, 'y')) + lens!.offsetHeight / 2
-    const radius = lens!.offsetWidth * 0.62
+    const radius = lens!.offsetWidth * 0.55
     for (const spot of spots) {
       const t = Math.max(0, 1 - Math.hypot(spot.x - lensX, spot.y - lensY) / radius)
       const eased = t * t * (3 - 2 * t)
@@ -228,52 +220,26 @@ const tech = css({
   '@media (max-width: 640px)': { whiteSpace: 'normal' },
 })
 
-/** Veľká okrúhla liquid-glass bublina — lupa s reálnou refrakciou (feDisplacementMap). */
+/** Liquid glass tabuľa — materiál podľa referenčných liquid-glass knižníc, v našich tokenoch. */
 const lensPane = css({
   position: 'absolute',
   top: 0,
   left: 0,
-  width: 'clamp(260px, 26vw, 430px)',
-  aspectRatio: '1',
-  borderRadius: 'full',
+  width: 'clamp(340px, 34vw, 560px)',
+  aspectRatio: '16 / 9',
+  borderRadius: '40px',
   pointerEvents: 'none',
   opacity: 0,
   // fallback pre prehliadače bez SVG backdrop filtrov — Chrome dostane refrakciu cez JS
-  backdropFilter: 'blur(6px) saturate(160%) brightness(1.15)',
-  background: 'radial-gradient(120% 120% at 28% 22%, color-mix(in srgb, token(colors.dark.fg) 14%, transparent), transparent 48%), radial-gradient(140% 140% at 75% 88%, color-mix(in srgb, token(colors.accent) 12%, transparent), transparent 58%)',
+  backdropFilter: 'blur(6px) saturate(150%) brightness(1.08)',
+  background: 'linear-gradient(180deg, color-mix(in srgb, token(colors.dark.bg) 8%, transparent), color-mix(in srgb, token(colors.dark.bg) 18%, transparent))',
   boxShadow: `
-    inset 0 0 0 1px color-mix(in srgb, token(colors.dark.fg) 38%, transparent),
-    inset 0 0 0 2.5px color-mix(in srgb, token(colors.dark.fg) 10%, transparent),
-    inset 4px 8px 24px color-mix(in srgb, token(colors.dark.fg) 24%, transparent),
-    inset 0 -18px 34px color-mix(in srgb, token(colors.accent) 14%, transparent),
-    inset -10px -16px 38px color-mix(in srgb, token(colors.dark.bg) 60%, transparent),
-    0 34px 90px color-mix(in srgb, token(colors.dark.bg) 65%, transparent)
+    0 24px 60px color-mix(in srgb, token(colors.dark.bg) 72%, transparent),
+    inset 0 1px 1px color-mix(in srgb, token(colors.dark.fg) 50%, transparent),
+    inset 0 -8px 20px color-mix(in srgb, token(colors.dark.fg) 6%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, token(colors.dark.fg) 13%, transparent)
   `,
   willChange: 'transform',
-  _before: {
-    content: '""',
-    position: 'absolute',
-    top: '6%',
-    left: '14%',
-    width: '42%',
-    height: '26%',
-    borderRadius: 'full',
-    background: 'radial-gradient(closest-side, color-mix(in srgb, token(colors.dark.fg) 48%, transparent), transparent 72%)',
-    transform: 'rotate(-24deg)',
-    filter: 'blur(5px)',
-  },
-  _after: {
-    content: '""',
-    position: 'absolute',
-    top: '12%',
-    left: '20%',
-    width: '14%',
-    height: '7%',
-    borderRadius: 'full',
-    background: 'color-mix(in srgb, token(colors.dark.fg) 75%, transparent)',
-    transform: 'rotate(-26deg)',
-    filter: 'blur(2px)',
-  },
   _motionReduce: { display: 'none' },
 })
 
@@ -289,9 +255,16 @@ const filterDefs = css({
   <section id="technologie" ref="sectionEl" :class="section" data-dark>
     <canvas ref="canvasEl" :class="stars" aria-hidden="true" />
     <svg :class="filterDefs" aria-hidden="true">
-      <filter id="daktus-lens-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
+      <filter id="daktus-liquid-filter" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB">
         <feImage ref="feImageEl" result="map" preserveAspectRatio="none" />
-        <feDisplacementMap ref="feDispEl" in="SourceGraphic" in2="map" xChannelSelector="R" yChannelSelector="G" />
+        <feDisplacementMap in="SourceGraphic" in2="map" scale="-90" xChannelSelector="R" yChannelSelector="B" result="dispR" />
+        <feColorMatrix in="dispR" type="matrix" values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0" result="chanR" />
+        <feDisplacementMap in="SourceGraphic" in2="map" scale="-96" xChannelSelector="R" yChannelSelector="B" result="dispG" />
+        <feColorMatrix in="dispG" type="matrix" values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0" result="chanG" />
+        <feDisplacementMap in="SourceGraphic" in2="map" scale="-102" xChannelSelector="R" yChannelSelector="B" result="dispB" />
+        <feColorMatrix in="dispB" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0" result="chanB" />
+        <feBlend in="chanR" in2="chanG" mode="screen" result="blendRG" />
+        <feBlend in="blendRG" in2="chanB" mode="screen" />
       </filter>
     </svg>
     <div :class="[wrap, content]">
