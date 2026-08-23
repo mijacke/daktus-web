@@ -29,6 +29,9 @@ const cols = css({
 const brand = css({ maxWidth: '340px' })
 
 const brandLogo = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '10px',
   fontFamily: 'display',
   fontWeight: 800,
   fontSize: '22px',
@@ -111,7 +114,10 @@ const legal = css({
     <div :class="wrap">
       <div :class="cols">
         <div :class="brand">
-          <div :class="brandLogo">Daktus</div>
+          <div :class="brandLogo">
+            <LogoMark :size="24" />
+            <span>Daktus</span>
+          </div>
           <p :class="brandNote">Webdizajn a vývoj digitálnych produktov. Navrhujeme, kódujeme a staráme sa.</p>
         </div>
         <div :class="groups">
