@@ -63,6 +63,7 @@ const grid = cva({
           name="Aditrade"
           description="Web pre špecialistov na nadrozmernú prepravu"
           tone="navy"
+          badge="Vo vývoji"
           :state="stateFor(1)"
           @select="select(1)"
         >

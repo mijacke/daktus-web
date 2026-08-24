@@ -2,16 +2,18 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Živé programovanie: scroll v kroku prepisuje hodnotu `velkost` zo 100
- * na 50 a tlačidlo v náhľade sa z celej šírky stĺpca (ako boxy nad ním)
- * stiahne na bežné CTA. Kód → produkt, naživo.
+ * Živé programovanie: kým je karta otvorená, hodnota `velkost` sama plynulo
+ * pulzuje medzi 100 a 50 a tlačidlo v náhľade sa z celej šírky stĺpca
+ * sťahuje na bežné CTA a späť. Kód → produkt, naživo.
  */
 const props = withDefaults(defineProps<{
-  /** Priebeh kroku 0 – 100 zo scroll pinu; bez pinu ostáva pôvodná hodnota. */
-  editT?: number
-}>(), { editT: 0 })
+  /** Scéna je otvorená — beží slučka prepisovania hodnoty. */
+  running?: boolean
+}>(), { running: false })
 
-const clampedT = computed(() => Math.min(100, Math.max(0, props.editT)))
+const editT = useSceneRun(toRef(props, 'running'), { duration: 2.4, loop: true })
+
+const clampedT = computed(() => Math.min(100, Math.max(0, editT.value)))
 /** Hodnota v kóde plynie spojito: 100 → 50 podľa scrollu. */
 const size = computed(() => Math.round(100 - clampedT.value / 2))
 /** Šírka tlačidla kopíruje hodnotu v kóde: velkost 100 = celá šírka, 50 = bežné CTA. */
@@ -119,7 +121,6 @@ const editValue = css({
   fontWeight: 700,
 })
 
-/** Naozaj funkčné — dá sa stlačiť, pekne pruží a nič sa nestane. Klasika. */
 const previewButton = css({
   display: 'inline-flex',
   alignItems: 'center',

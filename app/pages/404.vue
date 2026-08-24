@@ -3,8 +3,6 @@
  * Statická 404 pre Netlify — prerenderovaná s plným obsahom, servíruje ju
  * redirect pravidlo v netlify.toml pre všetky neznáme cesty.
  */
-definePageMeta({ layout: false })
-
 useHead({
   title: '404 — Daktus',
   meta: [{ name: 'robots', content: 'noindex' }],

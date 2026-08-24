@@ -11,11 +11,14 @@ const PARALLAX_SHIFT = 26
 const TILT_MAX = 5
 
 const rootEl = ref<HTMLElement | null>(null)
+const motionEl = ref<HTMLElement | null>(null)
 const reduced = useReducedMotion()
 let cleanup: (() => void) | null = null
 
 onMounted(() => {
-  const host = rootEl.value
+  // parallax a tilt žijú na vnútornom obale — vstupná CSS transition na stage
+  // by inak rozmazávala každý per-frame zápis quickTo
+  const host = motionEl.value
   if (!host || reduced.value) return
   if (!window.matchMedia('(pointer: fine)').matches) return
 
@@ -110,9 +113,10 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
 
 <template>
   <div ref="rootEl" :class="stage" aria-hidden="true" data-cursor="mega">
-    <div :class="float">
-      <div :class="sway">
-        <div :class="jump">
+    <div ref="motionEl">
+      <div :class="float">
+        <div :class="sway">
+          <div :class="jump">
           <svg :class="mark" viewBox="0 0 210 226" fill="none">
         <defs>
           <linearGradient id="clay-sage" x1="0" y1="0" x2="1" y2="1">
@@ -155,9 +159,10 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
           </g>
         </g>
           </svg>
+          </div>
         </div>
       </div>
+      <span :class="ground" />
     </div>
-    <span :class="ground" />
   </div>
 </template>

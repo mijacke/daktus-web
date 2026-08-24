@@ -45,6 +45,24 @@ export const sectionNote = css({
   '[data-dark] &': { color: 'dark.dim' },
 })
 
+/** Plastelínová nálepka — pootočený akcentový štítok vo vete alebo pri nadpise. */
+export const clayBadge = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  letterSpacing: '0.02em',
+  fontSize: '13px',
+  color: 'dark.bg',
+  background: 'accent',
+  borderRadius: '9px',
+  padding: '5px 13px',
+  transform: 'rotate(-2.5deg)',
+  boxShadow: '0 4px 12px color-mix(in srgb, token(colors.ink) 18%, transparent)',
+  verticalAlign: 'middle',
+  marginInline: '4px',
+})
+
 /**
  * Klipovací obal reveal riadku nadpisu. Namiesto overflow: hidden klipuje
  * cez clip-path so záporným presahom hore/dole — diakritika nad verzálkami

@@ -6,7 +6,9 @@ withDefaults(defineProps<{
   description: string
   tone: 'blush' | 'navy'
   state?: 'idle' | 'active' | 'dimmed'
-}>(), { state: 'idle' })
+  /** Stavová clay nálepka pri názve (napr. „Vo vývoji"). */
+  badge?: string
+}>(), { state: 'idle', badge: undefined })
 
 defineEmits<{ select: [] }>()
 
@@ -111,7 +113,10 @@ const metaNote = css({
     </BlueprintFrame>
     <div :class="meta">
       <div>
-        <div :class="metaName">{{ name }}</div>
+        <div :class="metaName">
+          {{ name }}
+          <span v-if="badge" :class="clayBadge">{{ badge }}</span>
+        </div>
         <div :class="metaNote">{{ description }}</div>
       </div>
     </div>

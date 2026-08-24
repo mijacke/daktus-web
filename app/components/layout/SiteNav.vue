@@ -8,6 +8,8 @@ const NAV_LINKS = [
   { label: 'Kontakt', href: '/kontakt' },
 ]
 
+const scrollTopOnHome = useScrollTopLink()
+
 const scrolled = ref(false)
 const overDark = ref(false)
 let darkSections: Element[] = []
@@ -112,7 +114,7 @@ const navLink = css({
 
 <template>
   <nav :class="[nav, { 'scrolled': scrolled, 'over-dark': overDark }]">
-    <NuxtLink :class="logo" to="/" data-logo>
+    <NuxtLink :class="logo" to="/" data-logo @click="scrollTopOnHome">
       <span :class="logoMark"><LogoMark :size="24" /></span>
       <span>Daktus</span>
     </NuxtLink>
