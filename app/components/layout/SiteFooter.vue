@@ -15,6 +15,7 @@ const scrollTopOnHome = useScrollTopLink()
 const SOCIALS = [
   { label: 'Instagram', href: '/' },
   { label: 'LinkedIn', href: '/' },
+  { label: 'GitHub', href: 'https://github.com/mijacke' },
 ]
 
 const footer = css({
@@ -197,6 +198,7 @@ const legal = css({
               :key="item.label"
               :class="groupLink"
               :to="item.href"
+              :target="item.href.startsWith('http') ? '_blank' : undefined"
             >{{ item.label }}</NuxtLink>
           </div>
         </div>

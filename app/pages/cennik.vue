@@ -134,8 +134,7 @@ const priceNote = css({
     </div>
 
     <p :class="priceNote">
-      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 48 hodín,
-      bez skrytých položiek.
+      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 48 hodín.
     </p>
 
     <PriceExtras />

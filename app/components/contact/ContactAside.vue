@@ -7,7 +7,11 @@ const STEPS = [
   'Keď si plesneme, púšťame sa do návrhu a vývoja.',
 ]
 
-const SOCIALS = ['Instagram', 'LinkedIn', 'GitHub']
+const SOCIALS = [
+  { label: 'Instagram', href: '#' },
+  { label: 'LinkedIn', href: '#' },
+  { label: 'GitHub', href: 'https://github.com/mijacke' },
+]
 
 const aside = css({
   display: 'flex',
@@ -22,11 +26,22 @@ const box = css({
 })
 
 const label = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '9px',
   fontSize: '12.5px',
   fontWeight: 600,
   letterSpacing: '0.16em',
   textTransform: 'uppercase',
   color: 'dim',
+  _before: { content: '""', width: '18px', height: '2px', background: 'accent' },
+})
+
+const mailRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+  marginTop: '14px',
 })
 
 const mail = css({
@@ -39,7 +54,6 @@ const mail = css({
   borderBottom: '2px solid',
   borderColor: 'accent/50',
   paddingBottom: '6px',
-  marginTop: '14px',
 })
 
 const step = css({
@@ -89,7 +103,10 @@ const socialChip = css({
   <div :class="aside">
     <div :class="box">
       <div :class="label">Radšej priamo e‑mailom?</div>
-      <a :class="mail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
+      <div :class="mailRow">
+        <ClayGlyph name="obalka" :size="40" />
+        <a :class="mail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
+      </div>
     </div>
     <div :class="box">
       <div :class="label">Ako to prebieha</div>
@@ -101,7 +118,14 @@ const socialChip = css({
     <div :class="box">
       <div :class="label">Sledujte nás</div>
       <div :class="socials">
-        <a v-for="social in SOCIALS" :key="social" :class="socialChip" href="#">{{ social }}</a>
+        <a
+          v-for="social in SOCIALS"
+          :key="social.label"
+          :class="socialChip"
+          :href="social.href"
+          :target="social.href.startsWith('http') ? '_blank' : undefined"
+          :rel="social.href.startsWith('http') ? 'noopener' : undefined"
+        >{{ social.label }}</a>
       </div>
     </div>
   </div>
