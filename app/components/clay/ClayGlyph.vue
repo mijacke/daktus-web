@@ -1,11 +1,9 @@
-<script lang="ts">
+<script setup lang="ts">
+import { css } from '~~/styled-system/css'
+
 export type ClayGlyphName
   = | 'lupa' | 'ceruzka' | 'zatvorky' | 'stit' | 'raketa'
     | 'globus' | 'monitor' | 'telefon' | 'fajka'
-</script>
-
-<script setup lang="ts">
-import { css } from '~~/styled-system/css'
 
 /**
  * Knižnica plastelínových glyfov — rovnaká kuchyňa ako hero logomark:
