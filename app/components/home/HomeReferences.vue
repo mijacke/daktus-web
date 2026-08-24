@@ -59,7 +59,7 @@ const card = cva({
     transitionProperty: 'transform, box-shadow',
     transitionDuration: '0.45s',
     transitionTimingFunction: 'out',
-    _hover: { transform: 'rotate(0deg) translateY(-4px)', boxShadow: '0 18px 44px rgba(16, 19, 21, 0.09)' },
+    _hover: { transform: 'rotate(0deg) translateY(-4px)', boxShadow: '0 18px 44px color-mix(in srgb, token(colors.ink) 9%, transparent)' },
     _motionReduce: { transform: 'none', transition: 'none' },
   },
   variants: {

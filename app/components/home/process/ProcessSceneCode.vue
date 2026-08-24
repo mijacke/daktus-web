@@ -119,7 +119,6 @@ const editValue = css({
   fontWeight: 700,
 })
 
-/** Naozaj funkčné — dá sa stlačiť, pekne pruží a nič sa nestane. Klasika. */
 const previewButton = css({
   display: 'inline-flex',
   alignItems: 'center',

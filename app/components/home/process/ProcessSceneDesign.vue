@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { css } from '~~/styled-system/css'
+import { css, cva } from '~~/styled-system/css'
 
 /**
  * Dizajn — pozeráte dizajnérovi cez plece: bodkované plátno, artboard
@@ -55,12 +55,22 @@ const board = css({
   _motionReduce: { transition: 'none' },
 })
 
-const handle = css({
-  position: 'absolute',
-  width: '7px',
-  height: '7px',
-  borderRadius: '2px',
-  background: 'accent',
+const handle = cva({
+  base: {
+    position: 'absolute',
+    width: '7px',
+    height: '7px',
+    borderRadius: '2px',
+    background: 'accent',
+  },
+  variants: {
+    corner: {
+      tl: { top: '-10px', left: '-10px' },
+      tr: { top: '-10px', right: '-10px' },
+      bl: { bottom: '-10px', left: '-10px' },
+      br: { bottom: '-10px', right: '-10px' },
+    },
+  },
 })
 
 const nav = css({
@@ -182,10 +192,10 @@ const slider2 = css({
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
         <div :class="board" :style="{ transform: `scale(${boardScale})` }">
-          <span :class="handle" style="top: -10px; left: -10px;" />
-          <span :class="handle" style="top: -10px; right: -10px;" />
-          <span :class="handle" style="bottom: -10px; left: -10px;" />
-          <span :class="handle" style="bottom: -10px; right: -10px;" />
+          <span :class="handle({ corner: 'tl' })" />
+          <span :class="handle({ corner: 'tr' })" />
+          <span :class="handle({ corner: 'bl' })" />
+          <span :class="handle({ corner: 'br' })" />
           <div :class="[nav, sceneItem({ delay: 25 })]">
             <span :class="navLogo" /><span :class="navMenu"><i /><i /><i /></span>
           </div>

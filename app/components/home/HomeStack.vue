@@ -4,7 +4,6 @@ import WebGLFluidEnhanced from 'webgl-fluid-enhanced'
 import { css } from '~~/styled-system/css'
 import { token } from '~~/styled-system/tokens'
 
-/** Riadky bežia striedavo doľava/doprava ako marquee v hero. */
 const ROWS = [
   ['TypeScript', 'JavaScript', 'Java', 'C#', '.NET', 'Python', 'Node.js'],
   ['React', 'Next.js', 'Vue', 'Nuxt', 'Angular', 'Svelte', 'Astro'],
@@ -18,7 +17,6 @@ const CORE = new Set(['TypeScript', 'Vue', 'Nuxt', 'Node.js'])
 
 /** Kľudová priesvitnosť názvov — kurzor ich pri prechode rozsvieti naplno. */
 const DIM = 0.34
-/** Kľudová priesvitnosť jadra stacku. */
 const CORE_DIM = 0.78
 /** Rýchlosť marquee riadkov v px/s. */
 const ROW_SPEED = 30
