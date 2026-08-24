@@ -1,4 +1,15 @@
-import { cva } from '~~/styled-system/css'
+import { css, cva } from '~~/styled-system/css'
+
+/**
+ * Náprotivok sceneItem pre scroll pin — prvok neodhaľuje čas, ale prah
+ * priebehu kroku (trieda `on` podľa deployT/testT a pod.).
+ */
+export const sceneReveal = css({
+  opacity: 0,
+  transform: 'translateY(9px)',
+  transition: 'opacity 0.4s ease, transform 0.5s {easings.out}',
+  '&.on': { opacity: 1, transform: 'none' },
+})
 
 /**
  * Položka scény procesu — objaví sa s odstupom, keď je scéna aktívna

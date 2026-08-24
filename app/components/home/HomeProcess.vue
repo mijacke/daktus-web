@@ -211,7 +211,7 @@ const scene = css({
                 <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
                 <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign :resize-t="pinned ? fillFor(1) : 0" /></div>
                 <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode :edit-t="pinned ? fillFor(2) : 0" /></div>
-                <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
+                <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" :test-t="pinned ? fillFor(3) : -1" /></div>
                 <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive :deploy-t="pinned ? fillFor(4) : -1" /></div>
               </div>
             </DeviceShell>

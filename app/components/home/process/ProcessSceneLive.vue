@@ -25,14 +25,15 @@ const typing = computed(() => driven.value && t.value >= 2 && t.value < 18)
 /** Percento nahrávania na produkciu — plní sa medzi riadkom nahrávania a CDN. */
 const uploadPct = computed(() => Math.round(Math.min(1, Math.max(0, (t.value - 26) / 36)) * 100))
 
-const META = [
-  { label: 'Zálohy zapnuté', delay: 135, at: 90 },
-  { label: 'Monitoring 24/7', delay: 140, at: 95 },
+const STATUS = [
+  { label: 'zálohy', value: 'denne' },
+  { label: 'monitoring', value: '24/7' },
+  { label: 'SSL', value: 'aktívne' },
 ] as const
 
 /** Riadok/blok scény: pri pine ho odhalí prah scrollu, inak časový sceneItem. */
-function reveal(delay: 15 | 35 | 55 | 75 | 90 | 105 | 115 | 135 | 140, at: number) {
-  return driven.value ? [revealed, { on: t.value >= at }] : [sceneItem({ delay })]
+function reveal(delay: 15 | 35 | 55 | 75 | 90 | 105 | 115 | 135, at: number) {
+  return driven.value ? [sceneReveal, { on: t.value >= at }] : [sceneItem({ delay })]
 }
 
 /** Log dostáva širší stĺpec — displej MacBooku medzitým narástol. */
@@ -55,14 +56,6 @@ const logLine = css({
   '&[data-tone="cmd"]': { color: 'dark.fg/85' },
   '&[data-tone="ok"]': { color: 'dark.fg/60', _firstLetter: { color: 'accent' } },
   '&[data-tone="accent"]': { color: 'accent', fontWeight: 700 },
-})
-
-/** Náprotivok sceneItem pre pin — miesto času odhaľuje prah scrollu. */
-const revealed = css({
-  opacity: 0,
-  transform: 'translateY(9px)',
-  transition: 'opacity 0.4s ease, transform 0.5s {easings.out}',
-  '&.on': { opacity: 1, transform: 'none' },
 })
 
 /** Kurzor za písaným príkazom. */
@@ -207,24 +200,22 @@ const pageImg = css({
 
 const pageCta = css({ width: '40px', height: '10px', borderRadius: 'full', background: 'ink/80', marginTop: '9px' })
 
-const liveMeta = css({
+/** Status pod NAŽIVO oknom — mono riadok s pulzujúcimi bodkami, reč logu. */
+const statusLine = css({
   display: 'flex',
-  gap: '10px',
-  flexWrap: 'wrap',
   justifyContent: 'center',
+  gap: 'clamp(14px, 2vw, 26px)',
+  flexWrap: 'wrap',
+  fontFamily: 'mono',
+  fontSize: '11.5px',
+  color: 'dark.dim',
 })
 
-const metaChip = css({
+const statusItem = css({
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '7px',
-  height: '30px',
-  paddingInline: '14px',
-  borderRadius: 'full',
-  background: 'accent/12',
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'accent',
+  gap: '8px',
+  '& b': { fontWeight: 400, color: 'dark.fg' },
 })
 </script>
 
@@ -261,9 +252,9 @@ const metaChip = css({
           <div :class="pageCta" />
         </div>
       </div>
-      <div :class="liveMeta">
-        <span v-for="item in META" :key="item.label" :class="[metaChip, reveal(item.delay, item.at)]">
-          {{ item.label }}
+      <div :class="[statusLine, reveal(135, 90)]">
+        <span v-for="item in STATUS" :key="item.label" :class="statusItem">
+          <span :class="liveDot" />{{ item.label }} <b>{{ item.value }}</b>
         </span>
       </div>
     </div>
