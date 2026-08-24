@@ -177,7 +177,7 @@ const legal = css({
             <span>Daktus</span>
           </NuxtLink>
           <p :class="brandNote">Webdizajn a vývoj digitálnych produktov. Navrhujeme, kódujeme a staráme sa.</p>
-          <a :class="brandMail" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
+          <a :class="brandMail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
           <div :class="avail"><span :class="availDot" />Prijímame nové projekty</div>
         </div>
         <div :class="groups">
@@ -187,7 +187,7 @@ const legal = css({
           </div>
           <div :class="group">
             <span :class="groupLabel">Kontakt</span>
-            <a :class="[groupLink, groupLinkAccent]" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
+            <a :class="[groupLink, groupLinkAccent]" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
             <NuxtLink :class="groupLink" to="/">daktus.sk</NuxtLink>
           </div>
           <div :class="group">

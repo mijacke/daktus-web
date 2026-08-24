@@ -89,7 +89,7 @@ const socialChip = css({
   <div :class="aside">
     <div :class="box">
       <div :class="label">Radšej priamo e‑mailom?</div>
-      <a :class="mail" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
+      <a :class="mail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
     </div>
     <div :class="box">
       <div :class="label">Ako to prebieha</div>
