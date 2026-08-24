@@ -9,9 +9,10 @@ const MENU = [
   { label: 'Kontakt', href: '/kontakt' },
 ]
 
+// kým profily nie sú založené, odkazy vedú na homepage — potom doplniť URL
 const SOCIALS = [
-  { label: 'Instagram', href: 'https://www.instagram.com/daktus.sk' },
-  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/daktus' },
+  { label: 'Instagram', href: '/' },
+  { label: 'LinkedIn', href: '/' },
 ]
 
 const footer = css({
@@ -189,14 +190,12 @@ const legal = css({
           </div>
           <div :class="group">
             <span :class="groupLabel">Sledujte nás</span>
-            <a
+            <NuxtLink
               v-for="item in SOCIALS"
               :key="item.label"
               :class="groupLink"
-              :href="item.href"
-              target="_blank"
-              rel="noopener"
-            >{{ item.label }}</a>
+              :to="item.href"
+            >{{ item.label }}</NuxtLink>
           </div>
         </div>
       </div>
