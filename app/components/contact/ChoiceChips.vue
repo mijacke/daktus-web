@@ -1,11 +1,18 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
+
+/** Možnosť výberu — clay glyf robí z chipu malú vizitku služby. */
+export interface ChipOption {
+  label: string
+  glyph?: ClayGlyphName
+}
 
 defineProps<{
   label: string
   /** name radio skupiny — pod týmto kľúčom príde hodnota do Netlify Forms. */
   name: string
-  options: string[]
+  options: ChipOption[]
 }>()
 
 const model = defineModel<string>({ required: true })
@@ -34,6 +41,7 @@ const chips = css({
 const chip = css({
   display: 'inline-flex',
   alignItems: 'center',
+  gap: '9px',
   height: '46px',
   paddingInline: '22px',
   borderRadius: 'full',
@@ -46,9 +54,8 @@ const chip = css({
   transitionDuration: '0.3s',
   _hover: { borderColor: 'accent' },
   '&:has(input:checked)': {
-    background: 'ink',
-    color: 'paper',
-    borderColor: 'ink',
+    background: 'accent/14',
+    borderColor: 'accent',
   },
   '&:has(input:focus-visible)': {
     outline: '2px solid',
@@ -64,9 +71,10 @@ const hiddenInput = css({ srOnly: true })
   <fieldset :class="group">
     <legend :class="groupLabel">{{ label }}</legend>
     <div :class="chips">
-      <label v-for="option in options" :key="option" :class="chip">
-        <input v-model="model" :class="hiddenInput" type="radio" :name="name" :value="option">
-        {{ option }}
+      <label v-for="option in options" :key="option.label" :class="chip">
+        <input v-model="model" :class="hiddenInput" type="radio" :name="name" :value="option.label">
+        <ClayGlyph v-if="option.glyph" :name="option.glyph" :size="20" />
+        {{ option.label }}
       </label>
     </div>
   </fieldset>

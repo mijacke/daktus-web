@@ -6,6 +6,15 @@ useSeoMeta({
   description: 'Popíšte nám v pár vetách, čo chystáte. Ozveme sa do 24 hodín s návrhom ďalších krokov — nezáväzne a zadarmo.',
 })
 
+/** Formulár žije v karte ako tehličky cenníka — stránka tým dostane kotvu. */
+const formPanel = css({
+  background: 'card',
+  border: '1px solid',
+  borderColor: 'hairline',
+  borderRadius: '20px',
+  padding: 'clamp(28px, 3.5vw, 52px)',
+})
+
 const grid = css({
   display: 'grid',
   gridTemplateColumns: '1.4fr 1fr',
@@ -24,7 +33,9 @@ const grid = css({
     />
 
     <div :class="grid">
-      <ContactForm />
+      <div :class="formPanel">
+        <ContactForm />
+      </div>
       <ContactAside />
     </div>
   </main>
