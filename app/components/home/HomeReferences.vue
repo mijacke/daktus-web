@@ -20,7 +20,6 @@ const REFERENCES = [
     tilt: 'left',
     delay: 1,
     markDelay: 1,
-    closeDelay: 3,
   },
   {
     quote: 'Od prvej skice bolo vidieť, že rozumejú, čo naša firma potrebuje. Nový web pôsobí dôveryhodne aj pre veľkých partnerov.',
@@ -32,7 +31,6 @@ const REFERENCES = [
     tilt: 'right',
     delay: 2,
     markDelay: 2,
-    closeDelay: 4,
   },
 ] as const
 
@@ -87,8 +85,6 @@ const mark = cva({
     markDelay: {
       1: { animationDelay: '0.35s' },
       2: { animationDelay: '0.5s' },
-      3: { animationDelay: '0.6s' },
-      4: { animationDelay: '0.75s' },
     },
   },
 })
@@ -107,24 +103,13 @@ const buzz = cva({
   variants: {
     phase: {
       1: { animationDelay: '0s' },
-      2: { animationDelay: '-1.1s' },
-      3: { animationDelay: '-2.1s' },
-      4: { animationDelay: '-3.2s' },
+      2: { animationDelay: '-2.1s' },
     },
   },
 })
 
-/** Otváracie úvodzovky — tesne nad prvým riadkom citátu. */
-const markOpen = css({ marginBottom: '4px' })
-
-/** Zatváracie úvodzovky — ten istý glyf otočený, hneď za posledným riadkom. */
-const markClose = css({
-  alignSelf: 'flex-end',
-  display: 'inline-flex',
-  transform: 'rotate(180deg)',
-  marginTop: '2px',
-  marginBottom: '14px',
-})
+/** Jedna veľká otváracia úvodzovka nad citátom. */
+const markOpen = css({ marginBottom: '14px' })
 
 const quote = css({
   fontSize: 'clamp(15.5px, 1.2vw, 17px)',
@@ -187,17 +172,10 @@ const projLink = css({
           <article :class="card({ tilt: item.tilt })">
             <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
               <span :class="buzz({ phase: item.markDelay })">
-                <ClayGlyph name="uvodzovky" :size="24" />
+                <ClayGlyph name="uvodzovky" :size="34" />
               </span>
             </span>
             <p :class="quote">{{ item.quote }}</p>
-            <span :class="markClose" aria-hidden="true">
-              <span :class="mark({ markDelay: item.closeDelay })">
-                <span :class="buzz({ phase: item.closeDelay })">
-                  <ClayGlyph name="uvodzovky" :size="24" />
-                </span>
-              </span>
-            </span>
             <div :class="foot">
               <div :class="clientName">
                 {{ item.name }}
