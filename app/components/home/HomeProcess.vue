@@ -57,13 +57,17 @@ const section = css({
 const list = css({
   display: 'flex',
   flexDirection: 'column',
-  gap: '12px',
+  gap: '16px',
   marginTop: 'clamp(28px, 4vh, 48px)',
 })
 
 /** Rámy v natívnych proporciách, centrované — nenaťahujú sa na šírku karty. */
 const shellWrap = cva({
-  base: { marginTop: 'clamp(16px, 2.4vh, 28px)', marginInline: 'auto' },
+  base: {
+    marginTop: 'clamp(28px, 4.5vh, 52px)',
+    marginBottom: 'clamp(10px, 2vh, 24px)',
+    marginInline: 'auto',
+  },
   variants: {
     device: {
       mac: { width: 'min(900px, 100%)' },

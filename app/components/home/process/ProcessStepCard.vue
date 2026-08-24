@@ -20,7 +20,8 @@ const card = cva({
   base: {
     borderRadius: '18px',
     border: '1px solid transparent',
-    padding: 'clamp(18px, 2.2vh, 26px) clamp(20px, 2.6vw, 36px)',
+    // vysoké riadky ako na cuberte — scroll cez sekciu má mať tempo, nie šprint
+    padding: 'clamp(38px, 6vh, 64px) clamp(24px, 3vw, 48px)',
     transitionProperty: 'background-color, border-color',
     transitionDuration: '0.5s',
     background: 'dark.fg/4',
@@ -42,7 +43,7 @@ const stepNo = cva({
   base: {
     fontFamily: 'display',
     fontWeight: 800,
-    fontSize: 'clamp(14px, 1.3vw, 19px)',
+    fontSize: 'clamp(15px, 1.5vw, 22px)',
     color: 'dark.dim',
     transition: 'color 0.4s ease',
   },
@@ -57,7 +58,7 @@ const stepTitle = css({
   fontFamily: 'display',
   fontWeight: 800,
   textTransform: 'uppercase',
-  fontSize: 'clamp(22px, 2.4vw, 38px)',
+  fontSize: 'clamp(28px, 3.4vw, 56px)',
   lineHeight: 1.05,
   letterSpacing: '-0.015em',
   margin: 0,
@@ -84,17 +85,17 @@ const bodyClip = css({
 })
 
 const stepText = css({
-  fontSize: '14.5px',
+  fontSize: '15px',
   color: 'dark.dim',
   maxWidth: '560px',
-  margin: 'clamp(10px, 1.6vh, 18px) 0 0',
+  margin: 'clamp(18px, 3vh, 30px) 0 0',
 })
 </script>
 
 <template>
   <article :class="card({ open })">
     <div :class="head">
-      <ClayGlyph :name="glyph" :size="36" on-dark />
+      <ClayGlyph :name="glyph" :size="44" on-dark />
       <span :class="stepNo({ open })">{{ no }}</span>
       <h3 :class="stepTitle">{{ title }}</h3>
     </div>
