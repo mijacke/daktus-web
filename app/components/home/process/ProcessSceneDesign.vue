@@ -15,12 +15,14 @@ const props = withDefaults(defineProps<{
 
 const rootEl = ref<HTMLElement | null>(null)
 const boardEl = ref<HTMLElement | null>(null)
+const cursorEl = ref<HTMLElement | null>(null)
+const ringEl = ref<HTMLElement | null>(null)
 const paperEl = ref<HTMLElement | null>(null)
 const mintEl = ref<HTMLElement | null>(null)
 
-const { scale, linePaper, pressed, cursorStyle } = useDesignSceneLoop(
+const { linePaper } = useDesignSceneLoop(
   toRef(props, 'running'),
-  { root: rootEl, board: boardEl, paper: paperEl, mint: mintEl },
+  { root: rootEl, board: boardEl, cursor: cursorEl, ring: ringEl, paper: paperEl, mint: mintEl },
 )
 
 const root = css({
@@ -56,10 +58,10 @@ const board = css({
   outline: '1.5px dashed',
   outlineColor: 'accent',
   outlineOffset: '6px',
-  // origin vľavo hore = pravý dolný roh (s kurzorom) sa hýbe najviac
+  // origin vľavo hore = pravý dolný roh (s kurzorom) sa hýbe najviac;
+  // transform píše výhradne GSAP — CSS transition by mu ťahy rozmazávala
   transformOrigin: 'top left',
-  transition: 'transform 2.6s ease-in-out, outline-color 0.4s ease',
-  _motionReduce: { transition: 'none' },
+  transition: 'outline-color 0.4s ease',
   '&.line-paper': { outlineColor: 'paper' },
 })
 
@@ -109,16 +111,31 @@ const img = css({
 
 const cta = css({ width: '44px', height: '11px', borderRadius: 'full', background: 'ink/80', marginTop: '10px' })
 
-/** Putujúci kurzor — roh artboardu ↔ paleta; polohy sa merajú za behu. */
-const cursor = css({
+/**
+ * Putujúci kurzor — roh artboardu ↔ paleta. Obal hýbe GSAP; vstupný
+ * sceneItem žije na vnútornom SVG, nech jeho `forwards` transform
+ * neprebíja polohu obalu.
+ */
+const cursorHolder = css({
   position: 'absolute',
   left: 0,
   top: 0,
   zIndex: 3,
   pointerEvents: 'none',
-  transitionProperty: 'transform',
   willChange: 'transform',
-  _motionReduce: { transition: 'none' },
+})
+
+/** Prstenec klik efektu — rozpŕskne ho GSAP od hrotu kurzora. */
+const clickRing = css({
+  position: 'absolute',
+  left: '-7px',
+  top: '-7px',
+  width: '18px',
+  height: '18px',
+  borderRadius: 'full',
+  border: '1.5px solid',
+  borderColor: 'accent',
+  opacity: 0,
 })
 
 const cursorPath = css({ fill: 'ink', stroke: 'paper' })
@@ -153,8 +170,6 @@ const swatch = cva({
     width: '20px',
     height: '20px',
     borderRadius: '6px',
-    transition: 'transform 0.15s ease',
-    '&.pressed': { transform: 'scale(0.8)' },
   },
   variants: {
     tone: {
@@ -220,7 +235,7 @@ const slider2 = css({
   <div ref="rootEl" :class="root">
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
-        <div ref="boardEl" :class="[board, { 'line-paper': linePaper }]" :style="{ transform: `scale(${scale})` }">
+        <div ref="boardEl" :class="[board, { 'line-paper': linePaper }]">
           <span :class="handle({ corner: 'tl' })" />
           <span :class="handle({ corner: 'tr' })" />
           <span :class="handle({ corner: 'bl' })" />
@@ -239,8 +254,8 @@ const slider2 = css({
       <span :class="[railLabel, sceneItem({ delay: 130 })]">Paleta</span>
       <div :class="[swatches, sceneItem({ delay: 130 })]">
         <i :class="swatch({ tone: 'ink' })" />
-        <i ref="mintEl" :class="[swatch({ tone: 'mint' }), { pressed: pressed === 'mint' }]" />
-        <i ref="paperEl" :class="[swatch({ tone: 'paper' }), { pressed: pressed === 'paper' }]" />
+        <i ref="mintEl" :class="swatch({ tone: 'mint' })" />
+        <i ref="paperEl" :class="swatch({ tone: 'paper' })" />
       </div>
       <span :class="[railLabel, sceneItem({ delay: 140 })]">Typografia</span>
       <div :class="sceneItem({ delay: 140 })">
@@ -251,8 +266,11 @@ const slider2 = css({
       <div :class="[slider, sceneItem({ delay: 150 })]" />
       <div :class="[slider2, sceneItem({ delay: 160 })]" />
     </div>
-    <svg :class="[cursor, sceneItem({ delay: 115 })]" :style="cursorStyle" width="17" height="19" viewBox="0 0 14 16" aria-hidden="true">
-      <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
-    </svg>
+    <div ref="cursorEl" :class="cursorHolder" aria-hidden="true">
+      <span ref="ringEl" :class="clickRing" />
+      <svg :class="sceneItem({ delay: 115 })" width="17" height="19" viewBox="0 0 14 16">
+        <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
+      </svg>
+    </div>
   </div>
 </template>

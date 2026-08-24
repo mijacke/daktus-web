@@ -1,44 +1,34 @@
+import { gsap } from 'gsap'
+
 import type { Ref } from 'vue'
 
 interface DesignSceneLoopElements {
   /** Koreň scény — voči nemu sa merajú polohy kurzora. */
   root: Ref<HTMLElement | null>
-  /** Artboard s transform-origin top-left, ktorý dýcha mierkou. */
+  /** Artboard s transform-origin top-left, ktorý kurzor zmenšuje a zväčšuje. */
   board: Ref<HTMLElement | null>
-  /** Biely swatch v palete. */
+  /** Obal kurzora — polohu aj stlačenie mu píše výhradne GSAP. */
+  cursor: Ref<HTMLElement | null>
+  /** Prstenec klik efektu vnútri obalu kurzora. */
+  ring: Ref<HTMLElement | null>
+  /** Biely a mintový swatch v palete. */
   paper: Ref<HTMLElement | null>
-  /** Mintový swatch v palete. */
   mint: Ref<HTMLElement | null>
 }
 
 const SCALE_MIN = 0.92
-const BREATH_MS = 2600
 
 /**
- * Slučka scény Dizajn: kurzor drží pravý dolný roh artboardu a donekonečna
- * ho zmenšuje a zväčšuje; po troch cykloch si odskočí do palety, klikom
- * prepne farbu rámu výberu (mint ↔ biela) a vráti sa k rohu. Polohy sa
- * merajú za behu, takže sedia na každom breakpointe.
+ * Slučka scény Dizajn ako GSAP timeline (repeat -1): kurzor klikne na roh
+ * artboardu, ťahom ho zmenší, pustí, ťahom vráti, odletí do palety, klikom
+ * (s prstencom) prepne rám výberu na bielu, ďalšie kolo späť na mint.
+ * Polohy sa merajú pri štarte, takže sedia na každom breakpointe.
  */
 export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopElements) {
   const reduced = useReducedMotion()
-  const scale = ref(1)
   const linePaper = ref(false)
-  const pressed = ref<'paper' | 'mint' | null>(null)
-  const cursorStyle = ref<Record<string, string>>({})
-  let timers: number[] = []
-
-  function schedule(fn: () => void, ms: number) {
-    timers.push(window.setTimeout(fn, ms))
-  }
-
-  function move(x: number, y: number, seconds: number, ease: string) {
-    cursorStyle.value = {
-      transform: `translate(${Math.round(x)}px, ${Math.round(y)}px)`,
-      transitionDuration: `${seconds}s`,
-      transitionTimingFunction: ease,
-    }
-  }
+  let tl: gsap.core.Timeline | null = null
+  let delayTimer = 0
 
   /** Roh artboardu pri cieľovej mierke — origin top-left, ľavý horný roh stojí. */
   function cornerPoint(target: number) {
@@ -53,7 +43,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     }
   }
 
-  function swatchPoint(swatch: HTMLElement) {
+  function swatchCenter(swatch: HTMLElement) {
     const root = els.root.value
     if (!root) return null
     const rootRect = root.getBoundingClientRect()
@@ -61,52 +51,75 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     return { x: rect.left - rootRect.left + rect.width / 2 - 2, y: rect.top - rootRect.top + rect.height / 2 - 2 }
   }
 
-  /** Dýchanie: mierka hore-dole s kurzorom na rohu; po troch cykloch výlet. */
-  function breathe(step: number) {
-    const target = step % 2 === 0 ? SCALE_MIN : 1
-    scale.value = target
-    const corner = cornerPoint(target)
-    if (corner) move(corner.x, corner.y, BREATH_MS / 1000, 'ease-in-out')
-    if (step >= 5) schedule(paletteTrip, BREATH_MS)
-    else schedule(() => breathe(step + 1), BREATH_MS)
+  /** Klik: prstenec sa rozpŕskne od hrotu, prípadný swatch pruží. */
+  function clickFx(swatch?: HTMLElement | null) {
+    const ring = els.ring.value
+    if (ring) gsap.fromTo(ring, { scale: 0.4, opacity: 0.9 }, { scale: 2.1, opacity: 0, duration: 0.55, ease: 'power2.out' })
+    if (swatch) gsap.fromTo(swatch, { scale: 0.72 }, { scale: 1, duration: 0.45, ease: 'back.out(3)' })
   }
 
-  /** Výlet do palety: klik prepne rám výberu na bielu, nabudúce späť na mint. */
-  function paletteTrip() {
-    const toPaper = !linePaper.value
-    const swatch = toPaper ? els.paper.value : els.mint.value
-    const point = swatch && swatchPoint(swatch)
-    if (!point) {
-      breathe(0)
-      return
+  function build() {
+    const cursor = els.cursor.value
+    const board = els.board.value
+    const corner = cornerPoint(1)
+    const cornerSmall = cornerPoint(SCALE_MIN)
+    const paperAt = els.paper.value && swatchCenter(els.paper.value)
+    const mintAt = els.mint.value && swatchCenter(els.mint.value)
+    if (!cursor || !board || !corner || !cornerSmall || !paperAt || !mintAt) return
+
+    gsap.set(cursor, { x: corner.x, y: corner.y })
+    tl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.inOut' } })
+
+    /** Klik na roh a ťah — artboard nasleduje kurzor na cieľovú mierku. */
+    const drag = (to: { x: number, y: number }, scale: number) => {
+      tl!.to(cursor, { scale: 0.82, duration: 0.12 })
+      tl!.add(() => clickFx())
+      tl!.to(cursor, { x: to.x, y: to.y, duration: 1.5 }, '+=0.05')
+      tl!.to(board, { scale, duration: 1.5 }, '<')
+      tl!.to(cursor, { scale: 1, duration: 0.18 })
+      tl!.to({}, { duration: 0.45 })
     }
-    move(point.x, point.y, 0.9, 'cubic-bezier(0.22, 1, 0.36, 1)')
-    schedule(() => {
-      pressed.value = toPaper ? 'paper' : 'mint'
-      linePaper.value = toPaper
-      schedule(() => (pressed.value = null), 260)
-      schedule(() => {
-        const corner = cornerPoint(1)
-        if (corner) move(corner.x, corner.y, 0.9, 'cubic-bezier(0.22, 1, 0.36, 1)')
-        schedule(() => breathe(0), 950)
-      }, 700)
-    }, 950)
+
+    /** Výlet hore doprava do palety, klik na swatch, návrat k rohu. */
+    const paletteClick = (at: { x: number, y: number }, swatch: HTMLElement | null, toPaper: boolean) => {
+      tl!.to(cursor, { x: at.x, y: at.y, duration: 0.9, ease: 'power3.out' })
+      tl!.to(cursor, { scale: 0.82, duration: 0.1 })
+      tl!.add(() => {
+        clickFx(swatch)
+        linePaper.value = toPaper
+      })
+      tl!.to(cursor, { scale: 1, duration: 0.16 }, '+=0.1')
+      tl!.to({}, { duration: 0.4 })
+      tl!.to(cursor, { x: corner.x, y: corner.y, duration: 0.9, ease: 'power3.out' })
+      tl!.to({}, { duration: 0.35 })
+    }
+
+    drag(cornerSmall, SCALE_MIN)
+    drag(corner, 1)
+    paletteClick(paperAt, els.paper.value, true)
+    drag(cornerSmall, SCALE_MIN)
+    drag(corner, 1)
+    paletteClick(mintAt, els.mint.value, false)
   }
 
   function stop() {
-    timers.forEach(timer => clearTimeout(timer))
-    timers = []
+    clearTimeout(delayTimer)
+    tl?.kill()
+    tl = null
   }
 
   function start() {
     stop()
-    scale.value = 1
     // meraj až po dorolovaní karty (~1,05 s) — počas rozbaľovania je geometria v pohybe
-    schedule(() => {
-      const corner = cornerPoint(1)
-      if (corner) move(corner.x, corner.y, 0, 'ease')
+    delayTimer = window.setTimeout(() => {
+      if (reduced.value) {
+        const corner = cornerPoint(1)
+        const cursor = els.cursor.value
+        if (corner && cursor) gsap.set(cursor, { x: corner.x, y: corner.y })
+        return
+      }
+      build()
     }, 1150)
-    if (!reduced.value) schedule(() => breathe(0), 1500)
   }
 
   // bez immediate — meranie polôh patrí až klientovi po otvorení karty
@@ -114,5 +127,5 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
 
   onBeforeUnmount(stop)
 
-  return { scale, linePaper, pressed, cursorStyle }
+  return { linePaper }
 }
