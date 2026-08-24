@@ -27,8 +27,9 @@ const wide = useMediaQuery('(min-width: 1001px)', { initial: true })
 const device = computed(() => (wide.value ? 'mac' : 'iphone'))
 
 /**
- * Kroky otvára scroll, žiadny pin: aktívna je karta, ktorá pretne stredné
- * pásmo viewportu (16 % výšky) — dopredu aj dozadu, tempo si určuje čitateľ.
+ * Kroky otvára scroll, žiadny pin: aktívna je posledná karta, ktorá vošla do
+ * stredného pásma viewportu (60 % výšky) — široké pásmo prepína o kus skôr,
+ * než karta dôjde do stredu, dopredu aj dozadu. Tempo si určuje čitateľ.
  */
 const active = ref(0)
 const cardEls: (HTMLElement | null)[] = []
@@ -41,7 +42,7 @@ onMounted(() => {
       const index = cardEls.indexOf(entry.target as HTMLElement)
       if (index !== -1) active.value = index
     }
-  }, { rootMargin: '-42% 0px -42% 0px' })
+  }, { rootMargin: '-20% 0px -20% 0px' })
   cardEls.forEach(el => el && observer?.observe(el))
 })
 
