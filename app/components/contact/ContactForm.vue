@@ -209,7 +209,7 @@ const honeypot = css({ display: 'none' })
     </div>
     <p v-if="status === 'error'" :class="errorNote">
       Správu sa nepodarilo odoslať. Skúste to znova, alebo nám napíšte priamo na
-      <a :class="errorLink" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>.
+      <a :class="errorLink" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>.
     </p>
   </form>
 </template>
