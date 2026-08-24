@@ -72,23 +72,27 @@ const card = cva({
   },
 })
 
-/** Miesené úvodzovky — vstupujú s prekmitom, keď sekcia nabehne. */
+/**
+ * Miesené úvodzovky — vstúpia s prekmitom a potom sa ako hmota v hero raz
+ * za čas krátko zatrasú hore dole. Dvojica delayov = vstup, trasenie; fázy
+ * sú rozhodené, nech sa štyri úvodzovky netrasú naraz.
+ */
 const mark = cva({
   base: {
     display: 'inline-flex',
     opacity: 0,
     '.in &': {
-      animation: 'clayPop 0.7s {easings.out} forwards',
+      animation: 'clayPop 0.7s {easings.out} forwards, clayShiver 7.2s ease-in-out infinite',
       _motionReduce: { animation: 'none' },
     },
     _motionReduce: { opacity: 1 },
   },
   variants: {
     markDelay: {
-      1: { animationDelay: '0.35s' },
-      2: { animationDelay: '0.5s' },
-      3: { animationDelay: '0.6s' },
-      4: { animationDelay: '0.75s' },
+      1: { animationDelay: '0.35s, 1.6s' },
+      2: { animationDelay: '0.5s, 2.5s' },
+      3: { animationDelay: '0.6s, 3.4s' },
+      4: { animationDelay: '0.75s, 4.3s' },
     },
   },
 })

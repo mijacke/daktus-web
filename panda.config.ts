@@ -73,6 +73,14 @@ export default defineConfig({
           '60%': { transform: 'scale(1.06)', opacity: '1' },
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
+        // občasné zatrasenie hmoty — krátky poskok hore dole, potom pokoj
+        clayShiver: {
+          '0%, 62%, 84%, 100%': { transform: 'translateY(0)' },
+          '66%': { transform: 'translateY(-14%) rotate(-2.4deg)' },
+          '70%': { transform: 'translateY(6%) rotate(1.8deg)' },
+          '74%': { transform: 'translateY(-8%)' },
+          '79%': { transform: 'translateY(3%)' },
+        },
       },
     },
   },
