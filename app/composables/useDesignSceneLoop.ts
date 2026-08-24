@@ -20,9 +20,10 @@ const SCALE_MIN = 0.92
 
 /**
  * Slučka scény Dizajn ako GSAP timeline (repeat -1): kurzor klikne na roh
- * artboardu, ťahom ho zmenší, pustí, ťahom vráti, odletí do palety, klikom
- * (s prstencom) prepne rám výberu na bielu, ďalšie kolo späť na mint.
- * Polohy sa merajú pri štarte, takže sedia na každom breakpointe.
+ * artboardu, ťahom ho zmenší, pustí, ťahom vráti, odletí do palety a klikne
+ * (s prstencom). Výber začína nabielo, prvý klik je mint (prefarbí rám aj
+ * menu mini stránky), ďalšie kolo biela — a tak dookola. Polohy sa merajú
+ * pri štarte, takže sedia na každom breakpointe.
  */
 export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopElements) {
   const reduced = useReducedMotion()
@@ -82,7 +83,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
       tl!.to({}, { duration: 0.45 })
     }
 
-    /** Výlet hore doprava do palety, klik na swatch, návrat k rohu. */
+    /** Výlet hore doprava do palety, klik na swatch (mint ↔ biela), návrat k rohu. */
     const paletteClick = (at: { x: number, y: number }, swatch: HTMLElement | null, toPaper: boolean) => {
       tl!.to(cursor, { x: at.x, y: at.y, duration: 0.9, ease: 'power3.out' })
       tl!.to(cursor, { scale: 0.82, duration: 0.1 })
@@ -98,11 +99,11 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
 
     drag(cornerSmall, SCALE_MIN)
     drag(corner, 1)
-    paletteClick(paperAt, els.paper.value, true)
+    paletteClick(mintAt, els.mint.value, false)
     drag(cornerSmall, SCALE_MIN)
     drag(corner, 1)
-    paletteClick(mintAt, els.mint.value, false)
-    // repeat -1 opakuje celé kolo: biela ↔ mint sa striedajú donekonečna
+    paletteClick(paperAt, els.paper.value, true)
+    // repeat -1 opakuje celé kolo: začína sa nabielo, klik mint ↔ biela donekonečna
   }
 
   function stop() {
@@ -116,6 +117,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
 
   function start() {
     stop()
+    tone.value = null
     // meraj až po dorolovaní karty (~1,05 s) — počas rozbaľovania je geometria v pohybe
     delayTimer = window.setTimeout(() => {
       if (reduced.value) {

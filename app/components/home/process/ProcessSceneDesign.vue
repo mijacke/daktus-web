@@ -56,13 +56,13 @@ const board = css({
   borderRadius: '8px',
   padding: '15px',
   outline: '1.5px dashed',
-  outlineColor: 'accent',
+  outlineColor: 'paper',
   outlineOffset: '6px',
   // origin vľavo hore = pravý dolný roh (s kurzorom) sa hýbe najviac;
   // transform píše výhradne GSAP — CSS transition by mu ťahy rozmazávala
   transformOrigin: 'top left',
   transition: 'outline-color 0.4s ease',
-  '&.line-paper': { outlineColor: 'paper' },
+  '&.line-mint': { outlineColor: 'accent' },
 })
 
 /** Mini stránka v artboarde — reálny obsah v Archivo 800, žiadny skeleton. */
@@ -253,7 +253,7 @@ const slider2 = css({
   <div ref="rootEl" :class="root">
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
-        <div ref="boardEl" :class="[board, { 'line-paper': tone === 'paper' }]">
+        <div ref="boardEl" :class="[board, { 'line-mint': tone === 'mint' }]">
           <div :class="[nav, sceneItem({ delay: 25 })]">
             <span :class="miniLogo">Daktus</span>
             <span :class="[miniMenu, { 'menu-mint': tone === 'mint' }]"><span>Domov</span><span>Služby</span><span>Kontakt</span></span>
