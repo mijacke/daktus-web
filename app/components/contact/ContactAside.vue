@@ -2,7 +2,7 @@
 import { css } from '~~/styled-system/css'
 
 const STEPS = [
-  'Mário sa vám ozve do 24 hodín a dohodnete si krátky úvodný hovor.',
+  'Ozveme sa do 24 hodín a dohodneme krátky úvodný hovor.',
   'Do 48 hodín dostanete návrh riešenia s cenou a termínom.',
   'Keď si plesneme, púšťame sa do návrhu a vývoja.',
 ]
