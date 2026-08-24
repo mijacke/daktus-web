@@ -53,8 +53,9 @@ const frameStyle = computed(() => {
 })
 
 /**
- * Plášť náhľadu. Variant tone nastavuje farebné premenné celej edície —
- * rám, brada, prstenec telefónu aj stojan ich len čítajú cez var().
+ * Plášť náhľadu — rozmery a morfovanie medzi zariadeniami. Farebné premenné
+ * edície dodáva zdieľaný deviceTone (utils/device.ts) — rám, brada, prstenec
+ * telefónu aj stojan ich len čítajú cez var().
  */
 const shell = cva({
   base: {
@@ -72,42 +73,6 @@ const shell = cva({
       mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
       imac: { bottom: '3%', height: '94%', width: '88%' },
       iphone: { bottom: '-8%', height: '104%', width: 'min(64%, 245px)' },
-    },
-    tone: {
-      light: {
-        '--dev-bezel': 'token(colors.device.aluminum)',
-        '--dev-edge': 'token(colors.device.aluminum2)',
-        '--dev-chin': 'token(colors.device.aluminum2)',
-        '--dev-phone': 'token(colors.device.silver)',
-        '--dev-ring': 'token(colors.device.silver2)',
-        '--dev-hi': 'rgba(255, 255, 255, 0.6)',
-        '--dev-foot1': 'token(colors.device.silver)',
-        '--dev-foot2': 'token(colors.device.silver2)',
-        '--dev-foot3': 'token(colors.device.aluminum4)',
-        '--dev-neck-a': 'token(colors.device.aluminum4)',
-        '--dev-neck-b': 'token(colors.device.aluminum3)',
-        '--dev-neck-hi': 'token(colors.white)',
-        '--dev-base-a': 'token(colors.device.aluminum2)',
-        '--dev-base-b': 'token(colors.device.aluminum4)',
-        '--dev-screen': 'token(colors.card)',
-      },
-      dark: {
-        '--dev-bezel': 'token(colors.device.dark)',
-        '--dev-edge': 'token(colors.device.dark2)',
-        '--dev-chin': 'token(colors.device.dark3)',
-        '--dev-phone': 'token(colors.device.island)',
-        '--dev-ring': 'token(colors.device.dark2)',
-        '--dev-hi': 'rgba(255, 255, 255, 0.14)',
-        '--dev-foot1': 'token(colors.device.dark4)',
-        '--dev-foot2': 'token(colors.device.island)',
-        '--dev-foot3': 'token(colors.device.island)',
-        '--dev-neck-a': 'token(colors.device.island)',
-        '--dev-neck-b': 'token(colors.device.dark4)',
-        '--dev-neck-hi': 'token(colors.device.dark5)',
-        '--dev-base-a': 'token(colors.device.dark3)',
-        '--dev-base-b': 'token(colors.device.island)',
-        '--dev-screen': 'token(colors.device.island)',
-      },
     },
   },
 })
@@ -349,7 +314,7 @@ const frame = css({
 </script>
 
 <template>
-  <div :class="shell({ device, tone: dark ? 'dark' : 'light' })">
+  <div :class="[shell({ device }), deviceTone({ tone: dark ? 'dark' : 'light' })]">
     <div :class="phoneButtons({ device })" aria-hidden="true" />
     <div :class="body({ device })">
       <div :class="camera({ device })" aria-hidden="true" />

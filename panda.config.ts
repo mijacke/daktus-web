@@ -18,9 +18,38 @@ export default defineConfig({
           from: { width: '0%' },
           to: { width: '100%' },
         },
+        floaty: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-11px)' },
+        },
+        floatShadow: {
+          '0%, 100%': { transform: 'translateX(-50%) scaleX(1)', opacity: '1' },
+          '50%': { transform: 'translateX(-50%) scaleX(0.86)', opacity: '0.65' },
+        },
+        // občasný zákmit do strán — krátke rozhojdanie doprava-doľava, potom pokoj
+        claySway: {
+          '0%, 54%, 74%, 100%': { transform: 'rotate(0deg)' },
+          '58%': { transform: 'rotate(3.1deg)' },
+          '63%': { transform: 'rotate(-2.7deg)' },
+          '67%': { transform: 'rotate(1.7deg)' },
+          '71%': { transform: 'rotate(-0.8deg)' },
+        },
+        // občasný pružný poskok plastelíny — squash pred výskokom, stretch vo vzduchu
+        clayJump: {
+          '0%, 86%, 100%': { transform: 'none' },
+          '88%': { transform: 'scale(1.09, 0.86) translateY(3.5%)' },
+          '91%': { transform: 'scale(0.93, 1.1) translateY(-11%)' },
+          '94%': { transform: 'scale(1.07, 0.9) translateY(2.5%)' },
+          '96.5%': { transform: 'scale(0.98, 1.04) translateY(-2.5%)' },
+          '98.5%': { transform: 'scale(1.02, 0.98)' },
+        },
         pulse: {
           from: { transform: 'scale(0.6)', opacity: '1' },
           to: { transform: 'scale(1.6)', opacity: '0' },
+        },
+        caretBlink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
         },
       },
     },

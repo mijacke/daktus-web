@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { css } from '~~/styled-system/css'
+import { css, cva } from '~~/styled-system/css'
 
 const STEPS = [
   { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.' },
@@ -9,220 +9,257 @@ const STEPS = [
   { no: '05', title: 'Nasadenie', text: 'Spustenie, meranie a dlhodobá starostlivosť.' },
 ]
 
-/** Dĺžka jedného kroku autoplayu (drží sa jej aj fillBar animácia nižšie). */
-const STEP_DURATION = 3800
+/** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
+const PIN_QUERY = '(min-width: 1001px) and (prefers-reduced-motion: no-preference)'
 
 const active = ref(0)
-const runId = ref(0)
+const progress = ref(0)
+const pinned = ref(false)
+/** Desktop má vždy MacBook, mobil iPhone — rovnaké rámy ako Vybraná práca. */
+const device = ref<'mac' | 'iphone'>('mac')
+const sectionEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
-const demoEl = ref<HTMLElement | null>(null)
-const running = useInView(demoEl, { threshold: 0.25, once: false })
-const reduced = useReducedMotion()
-let timer = 0
+let media: MediaQueryList | null = null
 
-function schedule() {
-  clearTimeout(timer)
-  runId.value++
-  if (reduced.value) return
-  timer = window.setTimeout(() => {
-    active.value = (active.value + 1) % STEPS.length
-    schedule()
-  }, STEP_DURATION)
+function measure() {
+  const host = sectionEl.value
+  if (!host || !pinned.value) return
+  const scrollable = host.offsetHeight - window.innerHeight
+  if (scrollable <= 0) return
+  const raw = -host.getBoundingClientRect().top / scrollable
+  const clamped = Math.min(0.999, Math.max(0, raw))
+  if (Math.abs(clamped - progress.value) < 0.002) return
+  progress.value = clamped
+  active.value = Math.min(STEPS.length - 1, Math.floor(clamped * STEPS.length))
 }
 
-watch(running, (visible) => {
-  if (visible) {
-    active.value = 0
-    schedule()
-  }
-  else {
-    clearTimeout(timer)
-  }
+function applyMode() {
+  pinned.value = media?.matches ?? false
+  device.value = window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
+  measure()
+}
+
+onMounted(() => {
+  media = window.matchMedia(PIN_QUERY)
+  media.addEventListener('change', applyMode)
+  window.addEventListener('scroll', measure, { passive: true })
+  window.addEventListener('resize', applyMode, { passive: true })
+  applyMode()
 })
 
-function select(index: number) {
-  active.value = index
-  schedule()
+onBeforeUnmount(() => {
+  media?.removeEventListener('change', applyMode)
+  window.removeEventListener('scroll', measure)
+  window.removeEventListener('resize', applyMode)
+})
+
+/** Naplnenie pruhu kroku — pri pine podľa scrollu, inak plný aktívny. */
+function fillFor(index: number) {
+  if (!pinned.value) return index === active.value ? 100 : 0
+  const part = progress.value * STEPS.length - index
+  return Math.round(Math.min(1, Math.max(0, part)) * 100)
 }
 
-onBeforeUnmount(() => clearTimeout(timer))
+/** Klik na krok: pri pine odscrolluje stránku do jeho úseku, inak prepne rovno. */
+function select(index: number) {
+  const host = sectionEl.value
+  if (pinned.value && host) {
+    const scrollable = host.offsetHeight - window.innerHeight
+    const top = window.scrollY + host.getBoundingClientRect().top
+    window.scrollTo({ top: top + ((index + 0.5) / STEPS.length) * scrollable, behavior: 'smooth' })
+  }
+  else {
+    active.value = index
+  }
+}
 
 const section = css({
   background: 'dark.bg',
   color: 'dark.fg',
   marginTop: 'clamp(90px, 12vh, 150px)',
   padding: 'clamp(88px, 11vh, 140px) 0 clamp(80px, 10vh, 120px)',
+  [`@media ${PIN_QUERY}`]: {
+    // dĺžka scrollu = päť krokov; javisko vnútri sa prilepí na viewport
+    height: '380vh',
+    padding: 0,
+  },
 })
 
-const stage = css({
-  display: 'grid',
-  gridTemplateColumns: 'minmax(320px, 430px) 1fr',
-  gap: 'clamp(36px, 4vw, 70px)',
-  marginTop: '60px',
-  alignItems: 'start',
-  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr' },
+// nadpis sekcie začína vľavo hore ako v ostatných sekciách; žiadny flex,
+// nech wrap vnútri drží plnú šírku sekcie
+const sticky = css({
+  [`@media ${PIN_QUERY}`]: {
+    position: 'sticky',
+    top: 0,
+    minHeight: '100svh',
+    paddingTop: 'clamp(56px, 8vh, 104px)',
+    paddingBottom: '30px',
+  },
 })
 
-const rail = css({
+/** Nadpis aktívneho kroku — „01 Analýza" v strede, kroky sa v ňom prelínajú. */
+const stepHead = css({
+  position: 'relative',
+  height: 'clamp(92px, 10vh, 116px)',
+  marginTop: 'clamp(16px, 2.4vh, 32px)',
+})
+
+const stepItem = css({
+  position: 'absolute',
+  inset: 0,
   display: 'flex',
   flexDirection: 'column',
+  alignItems: 'center',
+  gap: '9px',
+  textAlign: 'center',
+  opacity: 0,
+  transform: 'translateY(14px)',
+  transition: 'opacity 0.45s ease, transform 0.55s {easings.out}',
+  pointerEvents: 'none',
+  '&.on': { opacity: 1, transform: 'none' },
+  _motionReduce: { transition: 'none' },
 })
 
-const step = css({
-  textAlign: 'left',
-  background: 'none',
-  border: 0,
-  borderTop: '1px solid',
-  borderColor: 'dark.hairline',
-  padding: '19px 6px 21px 0',
-  display: 'grid',
-  gridTemplateColumns: '46px 1fr',
-  rowGap: '6px',
-  cursor: 'pointer',
-  color: 'inherit',
-  '&:last-child': { borderBottom: '1px solid {colors.dark.hairline}' },
+const stepTitleRow = css({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '16px',
 })
 
 const stepNo = css({
   fontFamily: 'display',
   fontWeight: 800,
-  fontSize: '15px',
-  color: 'dark.dim',
-  transition: 'color 0.3s ease',
-  paddingTop: '2px',
-  '.active &': { color: 'accent' },
+  fontSize: 'clamp(15px, 1.4vw, 20px)',
+  color: 'accent',
 })
 
 const stepTitle = css({
   fontFamily: 'display',
-  fontWeight: 700,
-  fontSize: '20px',
-  color: 'dark.dim',
-  transition: 'color 0.3s ease',
-  '.active &': { color: 'dark.fg' },
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  fontSize: 'clamp(26px, 2.6vw, 42px)',
+  lineHeight: 1,
+  letterSpacing: '-0.015em',
 })
 
 const stepText = css({
-  gridColumn: 2,
-  fontSize: '13.5px',
-  lineHeight: 1.55,
+  fontSize: '14px',
   color: 'dark.dim',
-  opacity: 0.75,
+  maxWidth: '560px',
 })
 
-const stepBar = css({
-  gridColumn: 2,
-  height: '2px',
-  background: 'dark.fg/12',
+/** Priebeh krokov — päť klikateľných pruhov, aktívny sa plní scrollom. */
+const dotsRow = css({
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '9px',
+  marginTop: '4px',
+})
+
+const dot = css({
+  width: '36px',
+  height: '3px',
   borderRadius: 'full',
+  background: 'dark.fg/14',
   overflow: 'hidden',
-  marginTop: '10px',
+  border: 0,
+  padding: 0,
+  cursor: 'pointer',
 })
 
-const stepBarFill = css({
+const dotFill = css({
   display: 'block',
   height: '100%',
-  width: 0,
   background: 'accent',
-  '.active &': { animation: 'fillBar 3800ms linear forwards' },
-  _motionReduce: { animation: 'none' },
+  transition: 'width 0.15s linear',
+  _motionReduce: { transition: 'none' },
 })
 
-const demo = css({
-  position: 'relative',
-  border: '1px solid',
-  borderColor: 'dark.hairline',
-  borderRadius: '16px',
-  background: 'dark.panel',
-  overflow: 'hidden',
-  minHeight: 'clamp(440px, 34vw, 560px)',
-  '@media (max-width: 1000px)': { minHeight: '560px' },
+/** Rámy v natívnych proporciách, centrované — nenaťahujú sa na šírku sekcie. */
+const shellWrap = cva({
+  base: { marginTop: 'clamp(20px, 3.2vh, 40px)', marginInline: 'auto' },
+  variants: {
+    device: {
+      mac: { width: 'min(900px, 100%)' },
+      iphone: { width: 'min(340px, 92%)' },
+    },
+  },
 })
 
-const demoBar = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  height: '44px',
-  paddingInline: '16px',
-  borderBottom: '1px solid',
-  borderColor: 'dark.fg/9',
-  position: 'relative',
-  zIndex: 2,
-  background: 'dark.panel',
+/**
+ * Výška displeja podľa devices.css MacBook Pro (2022): displej 600 × 386,
+ * pomer 1,554. Pri šírke shellu 900 px (displej 882) je natívna výška
+ * obrazovky 568 px vrátane 38 px lišty → demo 530 px; kratšie viewporty
+ * to stiahne pin.
+ */
+const demo = cva({
+  base: {
+    position: 'relative',
+    background: 'dark.panel',
+    overflow: 'hidden',
+  },
+  variants: {
+    device: {
+      mac: { height: 'clamp(300px, calc(100svh - 460px), 530px)' },
+      iphone: { minHeight: '480px' },
+    },
+  },
 })
-
-const demoDots = css({
-  display: 'inline-flex',
-  gap: '5px',
-  '& i': { width: '9px', height: '9px', borderRadius: 'full', background: 'dark.fg/16' },
-})
-
-const demoUrl = css({
-  flex: 1,
-  maxWidth: '320px',
-  marginInline: 'auto',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: '24px',
-  borderRadius: 'full',
-  background: 'dark.fg/6',
-  fontSize: '11px',
-  color: 'dark.dim',
-})
-
-const demoSpacer = css({ width: '34px' })
 
 const scene = css({
   position: 'absolute',
-  inset: '44px 0 0 0',
+  inset: 0,
   opacity: 0,
   transform: 'scale(0.985)',
   transition: 'opacity 0.5s ease, transform 0.6s {easings.out}',
   pointerEvents: 'none',
-  padding: 'clamp(22px, 2.4vw, 40px)',
+  padding: 'clamp(20px, 2.2vw, 36px)',
   '&.scene-on': { opacity: 1, transform: 'none' },
 })
 </script>
 
 <template>
-  <section id="proces" :class="section" data-dark>
-    <div :class="wrap">
-      <SectionHead eyebrow="Proces" title="Ako vzniká produkt">
-        <span :class="sectionNote">Sledujte to naživo. Presne týmito krokmi prejde aj váš projekt.</span>
-      </SectionHead>
+  <section id="proces" ref="sectionEl" :class="section" data-dark>
+    <div :class="sticky">
+      <div :class="wrap">
+        <SectionHead eyebrow="Proces" title="Ako vzniká produkt" />
 
-      <div ref="stageEl" :class="[stage, fadeIn(), { in: stageIn }]">
-        <div :class="rail">
-          <button
-            v-for="(item, index) in STEPS"
-            :key="item.no"
-            type="button"
-            :class="[step, { active: index === active }]"
-            @click="select(index)"
-          >
-            <span :class="stepNo">{{ item.no }}</span>
-            <span :class="stepTitle">{{ item.title }}</span>
-            <span :class="stepText">{{ item.text }}</span>
-            <span :class="stepBar">
-              <i :key="index === active ? runId : `idle-${index}`" :class="stepBarFill" />
-            </span>
-          </button>
-        </div>
-
-        <div ref="demoEl" :class="demo">
-          <div :class="demoBar">
-            <span :class="demoDots"><i /><i /><i /></span>
-            <span :class="demoUrl">vas-projekt.sk</span>
-            <span :class="demoSpacer" />
+        <div ref="stageEl" :class="[fadeIn(), { in: stageIn }]">
+          <div :class="stepHead" aria-live="polite">
+            <div v-for="(item, index) in STEPS" :key="item.no" :class="[stepItem, { on: index === active }]">
+              <div :class="stepTitleRow">
+                <span :class="stepNo">{{ item.no }}</span>
+                <span :class="stepTitle">{{ item.title }}</span>
+              </div>
+              <span :class="stepText">{{ item.text }}</span>
+            </div>
           </div>
-          <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
-          <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
-          <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
-          <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest /></div>
-          <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
+
+          <div :class="dotsRow">
+            <button
+              v-for="(item, index) in STEPS"
+              :key="item.no"
+              type="button"
+              :class="dot"
+              :aria-label="`Krok ${item.no}: ${item.title}`"
+              @click="select(index)"
+            >
+              <i :class="dotFill" :style="{ width: `${fillFor(index)}%` }" />
+            </button>
+          </div>
+
+          <div :class="shellWrap({ device })">
+            <DeviceShell :device="device" url="vas-projekt.sk" dark>
+              <div :class="demo({ device })">
+                <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
+                <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
+                <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
+                <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
+                <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
+              </div>
+            </DeviceShell>
+          </div>
         </div>
       </div>
     </div>
