@@ -3,8 +3,9 @@ import { css, cva } from '~~/styled-system/css'
 
 /**
  * Referencie — dve karty položené na stole medzi O nás a CTA: vety klientov,
- * meno a odkaz na živý projekt. Plastelína vstupuje mieseným glyfom
- * úvodzoviek, karty ležia mierne pootočené a hover ich vyrovná.
+ * meno a odkaz na živý projekt. Rovnaké svetlé pozadie ako okolité sekcie,
+ * sekciu odlišujú karty. Plastelína vstupuje mieseným glyfom úvodzoviek,
+ * karty ležia mierne pootočené a hover ich vyrovná.
  * POZOR: citáty sú zatiaľ ilustračné — pred nasadením na produkciu ich
  * musia nahradiť skutočné vety so súhlasom klientov.
  */
@@ -35,15 +36,6 @@ const REFERENCES = [
 
 const gridEl = ref<HTMLElement | null>(null)
 const gridIn = useInView(gridEl)
-
-/** Svetlý pás na paper2 — dorovnáva rytmus blokov 4 + 2 + 2 + 2. */
-const section = css({
-  background: 'paper2',
-  borderBlock: '1px solid',
-  borderColor: 'hairline.soft',
-  marginTop: 'clamp(90px, 12vh, 150px)',
-  padding: 'clamp(80px, 10vh, 130px) 0 clamp(76px, 9.5vh, 120px)',
-})
 
 const grid = css({
   display: 'grid',
@@ -148,7 +140,7 @@ const projLink = css({
 </script>
 
 <template>
-  <section id="referencie" :class="section">
+  <section id="referencie" :class="sectionBlock">
     <div :class="wrap">
       <SectionHead eyebrow="Referencie" title="Slovami klientov">
         <p :class="sectionNote">Dve vety od ľudí, ktorým sme web postavili. Nič viac k tomu netreba.</p>
