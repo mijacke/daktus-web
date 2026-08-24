@@ -6,7 +6,7 @@ const props = withDefaults(defineProps<{
   tagline: string
   brief: string
   solution: string
-  tone: 'blush' | 'sky' | 'mint'
+  tone: 'blush' | 'navy' | 'mint'
   flip?: boolean
   /** Rozbalený stav — okno sa morfuje z MacBooku na iMac a obal narastie. */
   state?: 'idle' | 'active'
@@ -54,7 +54,7 @@ const cover = cva({
   variants: {
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
-      sky: { background: 'linear-gradient(165deg, token(colors.cover.sky), token(colors.cover.sky2))' },
+      navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
       mint: { background: 'linear-gradient(165deg, token(colors.cover.mint), token(colors.cover.mint2))' },
     },
     state: {
@@ -123,7 +123,7 @@ const qaText = css({
     <div
       :class="cover({ tone, state, flip })"
       :data-cursor="state === 'active' ? 'none' : 'view'"
-      data-cursor-solid
+      :data-cursor-solid="tone === 'navy' ? undefined : ''"
       @click="state !== 'active' && $emit('select')"
     >
       <div :class="coverInner">
