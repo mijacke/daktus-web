@@ -64,7 +64,7 @@ const heading = css({
         <span :class="dash" />
         <span :class="label">{{ eyebrow }}</span>
       </div>
-      <h2 :class="heading">
+      <h2 :class="heading" data-cursor="mega">
         <span :class="revealLine"><span :class="revealInner()">{{ title }}</span></span>
       </h2>
     </div>

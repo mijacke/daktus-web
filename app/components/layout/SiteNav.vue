@@ -74,6 +74,14 @@ const logo = css({
   textTransform: 'uppercase',
 })
 
+/** Logomark je z plastelíny — hover ho stlačí a pružne vráti. */
+const logoMark = css({
+  display: 'inline-flex',
+  transformOrigin: '50% 100%',
+  '[data-logo]:hover &': { animation: 'claySquish 0.6s {easings.out}' },
+  _motionReduce: { animation: 'none' },
+})
+
 const links = css({
   display: 'flex',
   alignItems: 'center',
@@ -104,8 +112,8 @@ const navLink = css({
 
 <template>
   <nav :class="[nav, { 'scrolled': scrolled, 'over-dark': overDark }]">
-    <NuxtLink :class="logo" to="/">
-      <LogoMark :size="24" />
+    <NuxtLink :class="logo" to="/" data-logo>
+      <span :class="logoMark"><LogoMark :size="24" /></span>
       <span>Daktus</span>
     </NuxtLink>
     <div :class="links">

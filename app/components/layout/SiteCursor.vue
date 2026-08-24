@@ -6,6 +6,7 @@ const ballEl = ref<HTMLElement | null>(null)
 const innerEl = ref<HTMLElement | null>(null)
 const isLink = ref(false)
 const isView = ref(false)
+const isMega = ref(false)
 const isSolid = ref(false)
 const isHidden = ref(false)
 const isAway = ref(false)
@@ -47,9 +48,11 @@ onMounted(() => {
   const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
+    // nad veľkými nadpismi narastie guľa na maximum a invertuje ich farby
+    isMega.value = !view && !!target?.closest('[data-cursor="mega"]')
     // svetlé kryty si vyžiadajú pevnú čiernu guľu — difference by tam pôsobil sivo
     isSolid.value = !!view && view.hasAttribute('data-cursor-solid')
-    isLink.value = !view && !!target?.closest('a, button')
+    isLink.value = !view && !isMega.value && !!target?.closest('a, button')
     // rozbalený náhľad je na pozeranie, nie na klikanie — guľka ustúpi natívnemu kurzoru
     isHidden.value = !!target?.closest('[data-cursor="none"]')
   }
@@ -162,6 +165,8 @@ const ballStyle = css({
   // veľká guľa je tá istá sklenená invertujúca ako malá, len väčšia —
   // žiadne prepínanie blendu, prechod je čisto veľkostný
   '&.is-view': { width: '86px', height: '86px' },
+  // najväčšia guľa — nad veľkými nadpismi obracia farby celých glyfov
+  '&.is-mega': { width: '160px', height: '160px' },
   // solid: nad svetlým krytom neinvertuje — priesvitné tmavé sklo
   '&.is-view.is-solid': { mixBlendMode: 'normal', background: 'ink/35', backdropFilter: 'blur(3px)' },
   '&.is-hidden': { opacity: 0 },
@@ -186,7 +191,7 @@ const innerStyle = css({
 <template>
   <div
     ref="ballEl"
-    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-solid': isSolid, 'is-hidden': isHidden || isAway || isOut }]"
+    :class="[ballStyle, { 'is-link': isLink, 'is-view': isView, 'is-mega': isMega, 'is-solid': isSolid, 'is-hidden': isHidden || isAway || isOut }]"
     aria-hidden="true"
   >
     <span ref="innerEl" :class="innerStyle"><IconArrow :size="30" /></span>
