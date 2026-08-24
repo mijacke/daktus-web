@@ -18,7 +18,6 @@ withDefaults(defineProps<{
   audience: string
   features: string[]
   firstWeek: string
-  chips: string[]
   /** Zariadenie na ľavej strane riadku. */
   flip?: boolean
   /** Blok žije v tmavom páse — glyf prepne ink detail na svetlú hmotu. */
@@ -51,7 +50,14 @@ const block = cva({
   },
 })
 
+const headRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'clamp(14px, 1.4vw, 20px)',
+})
+
 const glyphBox = css({
+  flexShrink: 0,
   width: '56px',
   height: '56px',
   borderRadius: '15px',
@@ -68,7 +74,7 @@ const heading = css({
   letterSpacing: '-0.015em',
   textTransform: 'uppercase',
   lineHeight: 1.05,
-  margin: '22px 0 0',
+  margin: 0,
   '[data-dark] &': { color: 'dark.fg' },
 })
 
@@ -140,13 +146,6 @@ const featureIcon = css({
   '[data-dark] &': { color: 'accent' },
 })
 
-const chipRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  flexWrap: 'wrap',
-  marginTop: 'clamp(26px, 3vh, 36px)',
-})
 
 /** Javisko zariadenia — panel, na ktorom mini zariadenie stojí zväčšené. */
 const stage = css({
@@ -208,8 +207,10 @@ const deviceBox = cva({
 <template>
   <article ref="rootEl" :class="[block({ flip }), { in: inView }]" data-svc>
     <div :class="fadeIn()">
-      <div :class="glyphBox"><ClayGlyph :name="glyph" :size="34" :on-dark="dark" /></div>
-      <h2 :class="heading">{{ title }}</h2>
+      <div :class="headRow">
+        <div :class="glyphBox"><ClayGlyph :name="glyph" :size="34" :on-dark="dark" /></div>
+        <h2 :class="heading">{{ title }}</h2>
+      </div>
       <p :class="desc">{{ description }}</p>
 
       <div :class="metaGrid">
@@ -231,10 +232,6 @@ const deviceBox = cva({
             </li>
           </ul>
         </div>
-      </div>
-
-      <div :class="chipRow">
-        <AppChip v-for="chip in chips" :key="chip">{{ chip }}</AppChip>
       </div>
     </div>
 

@@ -16,7 +16,6 @@ interface Service {
   audience: string
   features: string[]
   firstWeek: string
-  chips: string[]
 }
 
 const WEBY: Service = {
@@ -27,7 +26,6 @@ const WEBY: Service = {
   audience: 'Pre firmy a živnostníkov, ktorí chcú, aby web zákazky nosil a nie len existoval.',
   features: ['Dizajn na mieru, žiadna šablóna', 'Rýchlosť a SEO základ v cene', 'Jednoduchá správa obsahu', 'Meranie návštevnosti od spustenia'],
   firstWeek: 'Prvá skica domovskej stránky a jasný plán, čo bude kedy hotové.',
-  chips: ['Next.js', 'React', 'WordPress'],
 }
 
 const SOFTVER: Service = {
@@ -38,7 +36,6 @@ const SOFTVER: Service = {
   audience: 'Pre tímy, ktoré strácajú hodiny ručným prepisovaním a hľadaním v tabuľkách.',
   features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
   firstWeek: 'Zmapované procesy a návrh riešenia, ktorému rozumie šéf aj účtovníčka.',
-  chips: ['Node.js', '.NET', 'Java', 'PostgreSQL'],
 }
 
 const DESKTOP: Service = {
@@ -49,7 +46,6 @@ const DESKTOP: Service = {
   audience: 'Pre prevádzky a dielne, kde sa pracuje aj bez internetu a na jednom stroji celé roky.',
   features: ['Windows aj macOS', 'Práca offline so synchronizáciou', 'Automatické aktualizácie', 'Napojenie na tlačiarne a čítačky'],
   firstWeek: 'Klikateľný návrh obrazoviek a zoznam funkcií zoradený podľa priorít.',
-  chips: ['C#', '.NET', 'Java'],
 }
 
 const MOBIL: Service = {
@@ -60,7 +56,6 @@ const MOBIL: Service = {
   audience: 'Pre značky a služby, ktoré chcú byť zákazníkovi na dosah priamo vo vrecku.',
   features: ['Návrh, vývoj aj publikovanie', 'Push notifikácie a analytika', 'Aktualizácie a dlhodobá podpora'],
   firstWeek: 'Wireframe hlavných obrazoviek a odhad, kedy bude appka v obchodoch.',
-  chips: ['iOS', 'Android'],
 }
 
 const noteAccent = css({

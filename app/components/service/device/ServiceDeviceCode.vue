@@ -2,19 +2,20 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Terminál ako samostatné tmavé okno — služba „Vývoj softvéru". Nesie si
- * vlastný tmavý podklad, takže stojí na svetlej karte homepage aj v tmavom
- * páse podstránky; hover dopíše ďalší riadok behu.
+ * Terminál ako samostatné okno — služba „Vývoj softvéru". Na svetlom
+ * podklade je sivý ako ostatné zariadenia, v tmavom páse (data-dark)
+ * sa prepne na tmavú verziu; hover dopíše ďalší riadok behu.
  */
 const root = css({
   padding: '14px 20px 8px',
   display: 'flex',
   flexDirection: 'column',
-  background: 'dark.bg',
+  background: 'card',
   border: '1px solid',
-  borderColor: 'dark.fg/10',
+  borderColor: 'device.aluminum2',
   borderRadius: '13px',
   boxShadow: 'window',
+  '[data-dark] &': { background: 'dark.bg', borderColor: 'dark.fg/10' },
 })
 
 const head = css({
@@ -23,7 +24,8 @@ const head = css({
   gap: '6px',
   paddingBottom: '10px',
   borderBottom: '1px solid',
-  borderColor: 'dark.fg/8',
+  borderColor: 'ink/8',
+  '[data-dark] &': { borderColor: 'dark.fg/8' },
 })
 
 const dot = css({
@@ -40,7 +42,8 @@ const headTitle = css({
   fontFamily: 'mono',
   fontSize: '9px',
   letterSpacing: '0.05em',
-  color: 'dark.dim',
+  color: 'dim',
+  '[data-dark] &': { color: 'dark.dim' },
 })
 
 const lines = css({ paddingTop: '9px' })
@@ -52,9 +55,14 @@ const line = css({
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  color: 'dark.fg/60',
-  '&[data-tone="cmd"]': { color: 'dark.fg/88' },
-  '&[data-tone="ok"]': { _firstLetter: { color: 'accent' } },
+  color: 'ink/60',
+  '&[data-tone="cmd"]': { color: 'ink/88' },
+  '&[data-tone="ok"]': { _firstLetter: { color: 'accent.deep' } },
+  '[data-dark] &': {
+    color: 'dark.fg/60',
+    '&[data-tone="cmd"]': { color: 'dark.fg/88' },
+    '&[data-tone="ok"]': { _firstLetter: { color: 'accent' } },
+  },
 })
 
 /** Posledný riadok behu — dopíše sa až na hover karty. */
@@ -77,7 +85,8 @@ const caretRow = css({
 const prompt = css({
   fontFamily: 'mono',
   fontSize: '11.5px',
-  color: 'dark.dim',
+  color: 'dim',
+  '[data-dark] &': { color: 'dark.dim' },
 })
 
 const caret = css({
