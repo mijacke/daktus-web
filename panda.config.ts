@@ -51,6 +51,22 @@ export default defineConfig({
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
+        // stlačenie hmoty pri hoveri — squash a pružný návrat
+        claySquish: {
+          '0%': { transform: 'scale(1)' },
+          '35%': { transform: 'scale(1.14, 0.8)' },
+          '65%': { transform: 'scale(0.92, 1.08)' },
+          '100%': { transform: 'scale(1)' },
+        },
+        // dopad rozpučeného déčka na 404 — pád, pľasnutie, dokmitanie
+        claySplat: {
+          '0%': { transform: 'translateY(-46%) scale(0.94, 1.08)', opacity: '0' },
+          '30%': { transform: 'translateY(-12%) scale(0.94, 1.08)', opacity: '1' },
+          '46%': { transform: 'translateY(0) scale(1.14, 0.8)' },
+          '64%': { transform: 'scale(0.95, 1.06)' },
+          '82%': { transform: 'scale(1.05, 0.97)' },
+          '100%': { transform: 'scale(1)' },
+        },
       },
     },
   },

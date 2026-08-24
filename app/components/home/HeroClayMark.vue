@@ -45,11 +45,10 @@ const stage = css({
   top: 'clamp(150px, 19vh, 245px)',
   zIndex: 1,
   width: 'clamp(285px, 23vw, 400px)',
-  pointerEvents: 'none',
-  // objaví sa až po dostavaní hera (sekvencia v HomeHero končí ~2,2 s)
+  // nastúpi presne s koncom build sekvencie hera (trieda done ~1,85 s po mount)
   opacity: 0,
   transform: 'translateY(20px)',
-  transition: 'opacity 0.9s ease 2s, transform 1s {easings.out} 2s',
+  transition: 'opacity 0.7s ease 0.5s, transform 0.85s {easings.out} 0.5s',
   '.done &': { opacity: 1, transform: 'none' },
   _motionReduce: { opacity: 1, transform: 'none', transition: 'none' },
   '@media (max-width: 1180px)': { display: 'none' },
@@ -110,7 +109,7 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
 </script>
 
 <template>
-  <div ref="rootEl" :class="stage" aria-hidden="true">
+  <div ref="rootEl" :class="stage" aria-hidden="true" data-cursor="mega">
     <div :class="float">
       <div :class="sway">
         <div :class="jump">

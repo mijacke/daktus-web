@@ -3,13 +3,12 @@ import { css } from '~~/styled-system/css'
 
 /** Sekvencia „stavania" hera podľa prototypu (ms od mountnutia). */
 const BUILD_SEQUENCE = [
-  ['eyebrow', 500],
-  ['h1', 850],
-  ['lead', 1300],
-  ['ctas', 1550],
+  ['h1', 500],
+  ['lead', 950],
+  ['ctas', 1200],
 ] as const
 
-const built = reactive({ eyebrow: false, h1: false, lead: false, ctas: false })
+const built = reactive({ h1: false, lead: false, ctas: false })
 const done = ref(false)
 let timers: number[] = []
 
@@ -22,7 +21,7 @@ onMounted(() => {
   BUILD_SEQUENCE.forEach(([key, delay]) => {
     timers.push(window.setTimeout(() => (built[key] = true), delay))
   })
-  timers.push(window.setTimeout(() => (done.value = true), 2200))
+  timers.push(window.setTimeout(() => (done.value = true), 1850))
 })
 
 onBeforeUnmount(() => {
@@ -52,30 +51,6 @@ const gridBg = css({
 })
 
 const content = css({ position: 'relative', zIndex: 2 })
-
-const eyebrowFrame = css({ display: 'inline-block' })
-
-const eyebrow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '13px',
-})
-
-const eyebrowDot = css({
-  width: '8px',
-  height: '8px',
-  borderRadius: 'full',
-  background: 'accent',
-  flexShrink: 0,
-})
-
-const eyebrowLabel = css({
-  fontSize: '13px',
-  fontWeight: 600,
-  letterSpacing: '0.18em',
-  textTransform: 'uppercase',
-  color: 'dim',
-})
 
 const headingFrame = css({ marginTop: '30px' })
 
@@ -130,16 +105,9 @@ const ctas = css({
   <header :class="[hero, { done }]">
     <div :class="gridBg" />
     <HeroClayMark />
-    <div :class="[wrap, content]">
-      <BlueprintFrame :class="eyebrowFrame" tag="značka" :built="built.eyebrow">
-        <div :class="eyebrow">
-          <span :class="eyebrowDot" />
-          <span :class="eyebrowLabel">Digitálne štúdio · Prijímame nové projekty</span>
-        </div>
-      </BlueprintFrame>
-
+    <div :class="[wrap, content]" data-cursor="mega">
       <BlueprintFrame :class="headingFrame" tag="nadpis / h1" :built="built.h1">
-        <h1 :class="[heading, { in: built.h1 }]">
+        <h1 :class="[heading, { in: built.h1 }]" data-cursor="mega">
           <span :class="revealLine"><span :class="revealInner({ delay: 1 })">Weby,</span></span>
           <span :class="[revealLine, indent]"><span :class="[revealInner({ delay: 2 }), outline]">softvér</span></span>
           <span :class="revealLine"><span :class="revealInner({ delay: 3 })"><span :class="amp">&amp;</span> appky.</span></span>

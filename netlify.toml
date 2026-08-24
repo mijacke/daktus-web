@@ -4,3 +4,9 @@
 [build]
   command = "npm run generate"
   publish = "dist"
+
+# Neznáme cesty dostanú plne prerenderovanú 404 stránku (existujúce súbory majú prednosť)
+[[redirects]]
+  from = "/*"
+  to = "/404"
+  status = 404

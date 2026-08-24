@@ -29,7 +29,15 @@ const outline = css({
   _selection: { color: 'dark.fg', WebkitTextFillColor: 'dark.fg' },
 })
 
-const mark = css({ color: 'accent' })
+/** Otáznik číta čítačka, oko vidí plastelínu. */
+const srOnly = css({
+  position: 'absolute',
+  width: '1px',
+  height: '1px',
+  overflow: 'hidden',
+  clipPath: 'inset(50%)',
+  whiteSpace: 'nowrap',
+})
 
 const sub = css({
   fontSize: '18px',
@@ -53,9 +61,9 @@ const note = css({
 <template>
   <section ref="root" :class="[section, { in: inView }]" data-dark>
     <div :class="[wrap, inner]">
-      <div :class="big">
+      <div :class="big" data-cursor="mega">
         <span :class="revealLine">
-          <span :class="revealInner()"><span :class="outline">Máte</span> nápad<span :class="mark">?</span></span>
+          <span :class="revealInner()"><span :class="outline">Máte</span> nápad<span :class="srOnly">?</span><ClayQuestion /></span>
         </span>
       </div>
       <p :class="[sub, fadeIn()]">Poďme z neho spraviť hotový produkt.</p>

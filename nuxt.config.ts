@@ -4,6 +4,10 @@ export default defineNuxtConfig({
   modules: ['@nuxt/eslint'],
   components: [{ path: '~/components', pathPrefix: false }],
   css: ['~/assets/main.css'],
+  nitro: {
+    // statická 404 (pages/404.vue) nie je nikde linkovaná — crawler ju sám nenájde
+    prerender: { routes: ['/404'] },
+  },
   postcss: {
     plugins: {
       '@pandacss/dev/postcss': {},
@@ -19,6 +23,18 @@ export default defineNuxtConfig({
           name: 'description',
           content: 'Daktus je štúdio pre dizajn a vývoj. Navrhujeme a staviame weby, softvér a mobilné aplikácie — od prvej skice až po ostrú prevádzku.',
         },
+        { property: 'og:title', content: 'Daktus — weby, softvér & appky' },
+        {
+          property: 'og:description',
+          content: 'Daktus je štúdio pre dizajn a vývoj. Navrhujeme a staviame weby, softvér a mobilné aplikácie — od prvej skice až po ostrú prevádzku.',
+        },
+        { property: 'og:type', content: 'website' },
+        { property: 'og:url', content: 'https://daktus.sk' },
+        { property: 'og:image', content: 'https://daktus.sk/og.png' },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { name: 'twitter:card', content: 'summary_large_image' },
+        { name: 'twitter:image', content: 'https://daktus.sk/og.png' },
       ],
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
