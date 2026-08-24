@@ -1,83 +1,168 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
-const CHECKS = [
-  { label: 'Ciele a metriky', delay: 15 },
-  { label: 'Cieľová skupina', delay: 45 },
-  { label: 'Obsah a štruktúra', delay: 75 },
-  { label: 'Konkurencia a trh', delay: 105 },
+/**
+ * Analýza — z rozhovoru zadanie: klientove slová padajú ako lístky,
+ * prelejú sa do usporiadaného zadania a dole z neho vyrastie mapa webu.
+ */
+const NOTES = [
+  { text: '„potrebujeme rezervácie"', delay: 15 },
+  { text: '„väčšina ľudí príde z mobilu"', delay: 25 },
+  { text: '„spustiť do jari"', delay: 35 },
+  { text: '„čisté, veľa vzduchu"', delay: 45 },
+  { text: '„fotky sú základ"', delay: 55 },
 ] as const
 
-const NODES = [
-  { label: 'Služby', x: 15, delay: 70 },
-  { label: 'Projekty', x: 105, delay: 90 },
-  { label: 'Kontakt', x: 195, delay: 110 },
+const SPEC = [
+  { text: 'Rezervačný modul s kalendárom', delay: 75 },
+  { text: 'Mobil first, galérie v plnej šírke', delay: 85 },
+  { text: 'Míľnik: ostrá prevádzka v marci', delay: 100 },
+  { text: 'Štýl: minimal, vzdušná typografia', delay: 110 },
 ] as const
 
-const check = css({
+const MAP_NODES = [
+  { label: 'Galérie', delay: 130 },
+  { label: 'Cenník', delay: 135 },
+  { label: 'Rezervácia', delay: 140 },
+] as const
+
+const root = css({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+})
+
+const main = css({
+  flex: 1,
+  minHeight: 0,
+  display: 'grid',
+  gridTemplateColumns: '1fr 44px 1.15fr',
+  gap: '10px',
+  // stĺpce aj šípka sedia na jednej vodorovnej osi
+  alignItems: 'center',
+  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr', gap: '18px' },
+})
+
+const colLabel = css({
+  fontSize: '11px',
+  fontWeight: 600,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  color: 'dark.dim',
+})
+
+const notes = css({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '9px',
+  alignContent: 'flex-start',
+})
+
+/** Lístky z callu — naklonené, ako na stole po rozhovore. */
+const note = css({
+  fontSize: '13px',
+  color: 'dark.fg',
+  background: 'dark.fg/7',
+  border: '1px solid',
+  borderColor: 'dark.fg/14',
+  borderRadius: '9px',
+  padding: '7px 11px',
+  '&:nth-child(odd)': { transform: 'rotate(-2deg)' },
+  '&:nth-child(even)': { transform: 'rotate(1.6deg)' },
+})
+
+const arrow = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'accent',
+  '@media (max-width: 1000px)': { transform: 'rotate(90deg)' },
+})
+
+const specRow = css({
   display: 'flex',
   alignItems: 'center',
   gap: '11px',
-  paddingBlock: '9px',
-  fontSize: '14px',
+  paddingBlock: '11px',
+  fontSize: '13.5px',
   color: 'dark.fg',
+  borderBottom: '1px solid',
+  borderColor: 'dark.fg/6',
+  '&:last-child': { borderBottom: 'none' },
 })
 
-const checkCircle = css({
-  width: '20px',
-  height: '20px',
+const specCheck = css({
+  width: '18px',
+  height: '18px',
   borderRadius: 'full',
   background: 'accent/16',
+  color: 'accent',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
   flexShrink: 0,
+})
+
+/** Zo zadania vyrastie mapa — pás uzlov namiesto mŕtveho stromu. */
+const mapRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '9px',
+  flexWrap: 'wrap',
+})
+
+const mapNode = css({
+  fontSize: '12px',
+  color: 'dark.fg',
+  background: 'dark.fg/8',
+  borderRadius: 'full',
+  padding: '5px 13px',
+})
+
+const mapRoot = css({
+  fontSize: '12px',
+  fontWeight: 600,
   color: 'accent',
+  background: 'accent/18',
+  borderRadius: 'full',
+  padding: '5px 13px',
 })
 
-const sitemap = css({
-  width: '100%',
-  fontFamily: 'sans',
+const mapLink = css({
+  width: '18px',
+  height: '1.5px',
+  background: 'accent/50',
+  flexShrink: 0,
 })
-
-const draw = css({
-  strokeDashoffset: '320',
-  transition: 'stroke-dashoffset 1.2s ease 0.4s',
-  stroke: 'accent/60',
-  '.scene-on &': { strokeDashoffset: '0' },
-  _motionReduce: { strokeDashoffset: '0', transition: 'none' },
-})
-
-const rootRect = css({ fill: 'accent/16' })
-const rootText = css({ fill: 'accent', fontWeight: 600 })
-const nodeRect = css({ fill: 'dark.fg/8' })
-const nodeText = css({ fill: 'dark.fg' })
 </script>
 
 <template>
-  <div :class="sceneGrid">
-    <ProcessPanel title="Zadanie">
-      <div v-for="item in CHECKS" :key="item.label" :class="[check, sceneItem({ delay: item.delay })]">
-        <span :class="checkCircle"><IconCheck :size="10" /></span>{{ item.label }}
+  <div :class="root">
+    <div :class="main">
+      <ProcessPanel title="Z rozhovoru">
+        <div :class="notes">
+          <span v-for="item in NOTES" :key="item.text" :class="[note, sceneItem({ delay: item.delay })]">{{ item.text }}</span>
+        </div>
+      </ProcessPanel>
+      <div :class="[arrow, sceneItem({ delay: 70 })]">
+        <svg width="30" height="14" viewBox="0 0 30 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M 1 7 H 27 M 21 1.5 L 27 7 L 21 12.5" />
+        </svg>
       </div>
-    </ProcessPanel>
-    <ProcessPanel title="Mapa webu">
-      <svg :class="sitemap" height="200" viewBox="0 0 300 200" fill="none" aria-hidden="true">
-        <path
-          :class="draw"
-          d="M150 38 L150 78 M150 78 L60 118 M150 78 L150 118 M150 78 L240 118"
-          stroke-width="1.6"
-          stroke-dasharray="320"
-        />
-        <g :class="sceneItem({ delay: 20 })">
-          <rect :class="rootRect" x="105" y="14" width="90" height="26" rx="13" />
-          <text :class="rootText" x="150" y="31" text-anchor="middle" font-size="11">Domov</text>
-        </g>
-        <g v-for="node in NODES" :key="node.label" :class="sceneItem({ delay: node.delay })">
-          <rect :class="nodeRect" :x="node.x" y="118" width="90" height="26" rx="13" />
-          <text :class="nodeText" :x="node.x + 45" y="135" text-anchor="middle" font-size="11">{{ node.label }}</text>
-        </g>
-      </svg>
-    </ProcessPanel>
+      <ProcessPanel title="Zadanie">
+        <div v-for="item in SPEC" :key="item.text" :class="[specRow, sceneItem({ delay: item.delay })]">
+          <span :class="specCheck"><IconCheck :size="9" /></span>{{ item.text }}
+        </div>
+      </ProcessPanel>
+    </div>
+    <div :class="mapRow">
+      <span :class="[colLabel, sceneItem({ delay: 120 })]">Mapa webu</span>
+      <span :class="[mapRoot, sceneItem({ delay: 120 })]">Domov</span>
+      <template v-for="item in MAP_NODES" :key="item.label">
+        <span :class="[mapLink, sceneItem({ delay: item.delay })]" />
+        <span :class="[mapNode, sceneItem({ delay: item.delay })]">{{ item.label }}</span>
+      </template>
+    </div>
   </div>
 </template>

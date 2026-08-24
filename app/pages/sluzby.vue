@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import type { ServiceIconName } from '~/components/icons/ServiceIcon.vue'
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 useSeoMeta({
   title: 'Služby — Daktus',
@@ -8,7 +8,7 @@ useSeoMeta({
 })
 
 interface Service {
-  icon: ServiceIconName
+  glyph: ClayGlyphName
   title: string
   description: string
   chips: string[]
@@ -17,28 +17,28 @@ interface Service {
 
 const SERVICES: Service[] = [
   {
-    icon: 'web',
+    glyph: 'globus',
     title: 'Tvorba webstránok',
     description: 'Prezentačné weby, landing pages a e‑shopy, ktoré predávajú. Rýchle, prístupné a stavané presne na mieru vašej značke.',
     chips: ['Next.js', 'React', 'WordPress'],
     features: ['Dizajn na mieru, žiadna šablóna', 'Rýchlosť a SEO základ v cene', 'Jednoduchá správa obsahu'],
   },
   {
-    icon: 'software',
+    glyph: 'zatvorky',
     title: 'Vývoj softvéru',
     description: 'CRM, rezervačné systémy, interné nástroje a automatizácia presne podľa vašich procesov. Pre firmy, ktorým tabuľky už nestačia.',
     chips: ['Node.js', '.NET', 'Java', 'PostgreSQL'],
     features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'Bezpečnosť a zálohovanie'],
   },
   {
-    icon: 'desktop',
+    glyph: 'monitor',
     title: 'Desktopové aplikácie',
     description: 'Aplikácie pre Windows a macOS, ktoré zvládnu aj prácu offline. Pre prevádzky, sklady a všade, kde prehliadač nestačí.',
     chips: ['C#', '.NET', 'Java'],
     features: ['Windows aj macOS', 'Práca offline so synchronizáciou', 'Automatické aktualizácie'],
   },
   {
-    icon: 'mobile',
+    glyph: 'telefon',
     title: 'Mobilné aplikácie',
     description: 'iOS a Android appky od prvého wireframu po publikovanie v App Store a Google Play. Jeden tím, žiadne odovzdávanie.',
     chips: ['iOS', 'Android'],
@@ -64,7 +64,7 @@ const noteAccent = css({
       <ServiceRow
         v-for="service in SERVICES"
         :key="service.title"
-        :icon="service.icon"
+        :glyph="service.glyph"
         :title="service.title"
         :description="service.description"
         :chips="service.chips"

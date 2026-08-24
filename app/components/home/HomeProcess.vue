@@ -1,26 +1,33 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-const STEPS = [
-  { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.' },
-  { no: '02', title: 'Dizajn', text: 'Zo skice a wireframu vznikne vizuál, ktorý si odsúhlasíte.' },
-  { no: '03', title: 'Vývoj', text: 'Čistý kód a pravidelné ukážky. Progres vidíte každý týždeň.' },
-  { no: '04', title: 'Testovanie', text: 'Rýchlosť, mobily, formuláre. Doladíme každý detail.' },
-  { no: '05', title: 'Nasadenie', text: 'Spustenie, meranie a dlhodobá starostlivosť.' },
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
+
+const STEPS: { no: string, title: string, text: string, glyph: ClayGlyphName }[] = [
+  { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.', glyph: 'lupa' },
+  { no: '02', title: 'Dizajn', text: 'Zo skice a wireframu vznikne vizuál, ktorý si odsúhlasíte.', glyph: 'ceruzka' },
+  { no: '03', title: 'Vývoj', text: 'Čistý kód a pravidelné ukážky. Progres vidíte každý týždeň.', glyph: 'zatvorky' },
+  { no: '04', title: 'Testovanie', text: 'Rýchlosť, mobily, formuláre. Doladíme každý detail.', glyph: 'stit' },
+  { no: '05', title: 'Nasadenie', text: 'Spustenie, meranie a dlhodobá starostlivosť.', glyph: 'raketa' },
 ]
 
 /** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
 const PIN_QUERY = '(min-width: 1001px) and (prefers-reduced-motion: no-preference)'
 
 const active = ref(0)
-const progress = ref(0)
 const pinned = ref(false)
 /** Desktop má vždy MacBook, mobil iPhone — rovnaké rámy ako Vybraná práca. */
 const device = ref<'mac' | 'iphone'>('mac')
 const sectionEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
+/** Viditeľný priebeh naháňa scroll so stropom — celé 01 → 05 trvá aspoň 5 s. */
+const { target, progress, start, stop, snap } = useCappedProgress(5)
 let media: MediaQueryList | null = null
+
+function stepFor(value: number) {
+  return Math.min(STEPS.length - 1, Math.floor(value * STEPS.length))
+}
 
 function measure() {
   const host = sectionEl.value
@@ -28,16 +35,25 @@ function measure() {
   const scrollable = host.offsetHeight - window.innerHeight
   if (scrollable <= 0) return
   const raw = -host.getBoundingClientRect().top / scrollable
-  const clamped = Math.min(0.999, Math.max(0, raw))
-  if (Math.abs(clamped - progress.value) < 0.002) return
-  progress.value = clamped
-  active.value = Math.min(STEPS.length - 1, Math.floor(clamped * STEPS.length))
+  target.value = Math.min(0.999, Math.max(0, raw))
 }
+
+watch(progress, (value) => {
+  if (pinned.value) active.value = stepFor(value)
+})
 
 function applyMode() {
   pinned.value = media?.matches ?? false
   device.value = window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
-  measure()
+  if (pinned.value) {
+    measure()
+    snap(target.value)
+    active.value = stepFor(target.value)
+    start()
+  }
+  else {
+    stop()
+  }
 }
 
 onMounted(() => {
@@ -80,8 +96,8 @@ const section = css({
   marginTop: 'clamp(90px, 12vh, 150px)',
   padding: 'clamp(88px, 11vh, 140px) 0 clamp(80px, 10vh, 120px)',
   [`@media ${PIN_QUERY}`]: {
-    // dĺžka scrollu = päť krokov; javisko vnútri sa prilepí na viewport
-    height: '380vh',
+    // ≈ desať posunov kolieska na každý z piatich krokov (1 posun ≈ 100 px)
+    height: 'calc(100svh + 5000px)',
     padding: 0,
   },
 })
@@ -123,8 +139,8 @@ const stepItem = css({
 
 const stepTitleRow = css({
   display: 'flex',
-  alignItems: 'baseline',
-  gap: '16px',
+  alignItems: 'center',
+  gap: '15px',
 })
 
 const stepNo = css({
@@ -229,6 +245,7 @@ const scene = css({
           <div :class="stepHead" aria-live="polite">
             <div v-for="(item, index) in STEPS" :key="item.no" :class="[stepItem, { on: index === active }]">
               <div :class="stepTitleRow">
+                <ClayGlyph :name="item.glyph" :size="38" on-dark />
                 <span :class="stepNo">{{ item.no }}</span>
                 <span :class="stepTitle">{{ item.title }}</span>
               </div>
@@ -253,10 +270,10 @@ const scene = css({
             <DeviceShell :device="device" url="vas-projekt.sk" dark>
               <div :class="demo({ device })">
                 <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
-                <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
-                <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
+                <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign :resize-t="pinned ? fillFor(1) : 0" /></div>
+                <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode :edit-t="pinned ? fillFor(2) : 0" /></div>
                 <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
-                <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
+                <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive :deploy-t="pinned ? fillFor(4) : -1" /></div>
               </div>
             </DeviceShell>
           </div>

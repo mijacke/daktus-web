@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import type { ServiceIconName } from '~/components/icons/ServiceIcon.vue'
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 defineProps<{
-  icon: ServiceIconName
+  glyph: ClayGlyphName
   title: string
   description: string
   chips: string[]
@@ -85,7 +85,7 @@ const featureIcon = css({
 <template>
   <div :class="row">
     <div :class="iconBox">
-      <ServiceIcon :name="icon" :size="26" />
+      <ClayGlyph :name="glyph" :size="34" />
     </div>
     <div>
       <h3 :class="heading">{{ title }}</h3>

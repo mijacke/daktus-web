@@ -82,8 +82,8 @@ const noteChip = css({
       </div>
 
       <div ref="bandEl" :class="[fadeIn(), { in: bandIn }]">
-        <CtaBand title="Férový cenník bez tajností" cta-label="Pozrieť cenník" cta-href="/cennik">
-          Orientačné ceny zverejnené a na všetky balíky teraz <span :class="noteChip">úvodná zľava 25&nbsp;%</span>
+        <CtaBand title="Ceny na rovinu" cta-label="Pozrieť cenník" cta-href="/cennik">
+          Orientačný cenník máme verejný a na všetky balíky teraz <span :class="noteChip">úvodná zľava 25&nbsp;%</span>
         </CtaBand>
       </div>
     </div>
