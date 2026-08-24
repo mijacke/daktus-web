@@ -82,7 +82,7 @@ const mark = cva({
     display: 'inline-flex',
     opacity: 0,
     '.in &': {
-      animation: 'clayPop 0.7s {easings.out} forwards, clayShiver 7.2s ease-in-out infinite',
+      animation: 'clayPop 0.7s {easings.out} forwards, clayShiver 7.2s linear infinite',
       _motionReduce: { animation: 'none' },
     },
     _motionReduce: { opacity: 1 },

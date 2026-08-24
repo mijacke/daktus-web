@@ -73,13 +73,22 @@ export default defineConfig({
           '60%': { transform: 'scale(1.06)', opacity: '1' },
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
-        // občasné zatrasenie hmoty — krátky poskok hore dole, potom pokoj
+        // občasné drnčanie hmoty — dlhší rad rýchlych drobných zákmitov
+        // do strán aj hore dole, ku koncu dokmitá do pokoja
         clayShiver: {
-          '0%, 62%, 84%, 100%': { transform: 'translateY(0)' },
-          '66%': { transform: 'translateY(-14%) rotate(-2.4deg)' },
-          '70%': { transform: 'translateY(6%) rotate(1.8deg)' },
-          '74%': { transform: 'translateY(-8%)' },
-          '79%': { transform: 'translateY(3%)' },
+          '0%, 55%, 82%, 100%': { transform: 'translate(0, 0)' },
+          '57%': { transform: 'translate(-6%, -8%) rotate(-1.6deg)' },
+          '59%': { transform: 'translate(7%, 5%) rotate(1.4deg)' },
+          '61%': { transform: 'translate(-7%, -5%) rotate(-1.3deg)' },
+          '63%': { transform: 'translate(6%, 8%) rotate(1.6deg)' },
+          '65%': { transform: 'translate(-8%, -4%) rotate(-1.4deg)' },
+          '67%': { transform: 'translate(7%, 6%) rotate(1.2deg)' },
+          '69%': { transform: 'translate(-6%, -7%) rotate(-1deg)' },
+          '71%': { transform: 'translate(5%, 4%) rotate(0.9deg)' },
+          '73%': { transform: 'translate(-4%, -4%) rotate(-0.7deg)' },
+          '75%': { transform: 'translate(3%, 3%) rotate(0.5deg)' },
+          '77%': { transform: 'translate(-2%, -2%)' },
+          '79%': { transform: 'translate(1%, 1%)' },
         },
       },
     },
