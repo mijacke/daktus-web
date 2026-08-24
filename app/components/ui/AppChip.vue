@@ -16,6 +16,7 @@ const chip = cva({
     fontWeight: 500,
     color: 'dim',
     whiteSpace: 'nowrap',
+    '[data-dark] &': { borderColor: 'dark.fg/18', color: 'dark.dim' },
   },
   variants: {
     accent: {
