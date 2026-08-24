@@ -57,7 +57,6 @@ const notes = css({
   flexWrap: 'wrap',
   gap: '9px',
   alignContent: 'flex-start',
-  marginTop: '12px',
 })
 
 /** Lístky z callu — naklonené, ako na stole po rozhovore. */
@@ -81,24 +80,15 @@ const arrow = css({
   '@media (max-width: 1000px)': { transform: 'rotate(90deg)' },
 })
 
-/** Zadanie ako papierový zápisník — svetlý blok na tmavom displeji. */
-const spec = css({
-  background: 'paper',
-  borderRadius: '12px',
-  padding: '6px 16px',
-  marginTop: '12px',
-  boxShadow: '0 14px 34px rgba(0, 0, 0, 0.35)',
-})
-
 const specRow = css({
   display: 'flex',
   alignItems: 'center',
   gap: '11px',
   paddingBlock: '11px',
   fontSize: '13.5px',
-  color: 'ink',
+  color: 'dark.fg',
   borderBottom: '1px solid',
-  borderColor: 'ink/8',
+  borderColor: 'dark.fg/6',
   '&:last-child': { borderBottom: 'none' },
 })
 
@@ -106,8 +96,8 @@ const specCheck = css({
   width: '18px',
   height: '18px',
   borderRadius: 'full',
-  background: 'accent/18',
-  color: 'accent.deep',
+  background: 'accent/16',
+  color: 'accent',
   display: 'inline-flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -150,25 +140,21 @@ const mapLink = css({
 <template>
   <div :class="root">
     <div :class="main">
-      <div>
-        <span :class="colLabel">Z rozhovoru</span>
+      <ProcessPanel title="Z rozhovoru">
         <div :class="notes">
           <span v-for="item in NOTES" :key="item.text" :class="[note, sceneItem({ delay: item.delay })]">{{ item.text }}</span>
         </div>
-      </div>
+      </ProcessPanel>
       <div :class="[arrow, sceneItem({ delay: 70 })]">
         <svg width="30" height="14" viewBox="0 0 30 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M 1 7 H 27 M 21 1.5 L 27 7 L 21 12.5" />
         </svg>
       </div>
-      <div>
-        <span :class="colLabel">Zadanie</span>
-        <div :class="spec">
-          <div v-for="item in SPEC" :key="item.text" :class="[specRow, sceneItem({ delay: item.delay })]">
-            <span :class="specCheck"><IconCheck :size="9" /></span>{{ item.text }}
-          </div>
+      <ProcessPanel title="Zadanie">
+        <div v-for="item in SPEC" :key="item.text" :class="[specRow, sceneItem({ delay: item.delay })]">
+          <span :class="specCheck"><IconCheck :size="9" /></span>{{ item.text }}
         </div>
-      </div>
+      </ProcessPanel>
     </div>
     <div :class="mapRow">
       <span :class="[colLabel, sceneItem({ delay: 120 })]">Mapa webu</span>
