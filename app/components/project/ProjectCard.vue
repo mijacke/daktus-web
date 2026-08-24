@@ -1,20 +1,14 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-interface ProjectChip {
-  label: string
-  accent?: boolean
-}
-
 withDefaults(defineProps<{
   name: string
   description: string
-  tone: 'blush' | 'steel' | 'navy'
-  chips?: ProjectChip[]
+  tone: 'blush' | 'navy'
   state?: 'idle' | 'active' | 'dimmed'
   /** Stavová clay nálepka pri názve (napr. „Vo vývoji"). */
   badge?: string
-}>(), { state: 'idle', chips: () => [], badge: undefined })
+}>(), { state: 'idle', badge: undefined })
 
 defineEmits<{ select: [] }>()
 
@@ -50,7 +44,6 @@ const cover = cva({
   variants: {
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
-      steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
       navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
     },
     state: {
@@ -100,13 +93,6 @@ const metaNote = css({
   color: 'dim',
   marginTop: '4px',
 })
-
-const chipRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  flexWrap: 'wrap',
-})
 </script>
 
 <template>
@@ -132,11 +118,6 @@ const chipRow = css({
           <span v-if="badge" :class="clayBadge">{{ badge }}</span>
         </div>
         <div :class="metaNote">{{ description }}</div>
-      </div>
-      <div v-if="chips.length" :class="chipRow">
-        <AppChip v-for="chip in chips" :key="chip.label" :accent="chip.accent">
-          {{ chip.label }}
-        </AppChip>
       </div>
     </div>
   </article>
