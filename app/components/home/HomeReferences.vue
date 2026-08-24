@@ -72,27 +72,43 @@ const card = cva({
   },
 })
 
-/**
- * Miesené úvodzovky — vstúpia s prekmitom a potom sa ako hmota v hero raz
- * za čas krátko zatrasú hore dole. Dvojica delayov = vstup, trasenie; fázy
- * sú rozhodené, nech sa štyri úvodzovky netrasú naraz.
- */
+/** Miesené úvodzovky — vstupujú s prekmitom, keď sekcia nabehne. */
 const mark = cva({
   base: {
     display: 'inline-flex',
     opacity: 0,
     '.in &': {
-      animation: 'clayPop 0.7s {easings.out} forwards, clayShiver 7.2s linear infinite',
+      animation: 'clayPop 0.7s {easings.out} forwards',
       _motionReduce: { animation: 'none' },
     },
     _motionReduce: { opacity: 1 },
   },
   variants: {
     markDelay: {
-      1: { animationDelay: '0.35s, 1.6s' },
-      2: { animationDelay: '0.5s, 2.5s' },
-      3: { animationDelay: '0.6s, 3.4s' },
-      4: { animationDelay: '0.75s, 4.3s' },
+      1: { animationDelay: '0.35s' },
+      2: { animationDelay: '0.5s' },
+      3: { animationDelay: '0.6s' },
+      4: { animationDelay: '0.75s' },
+    },
+  },
+})
+
+/**
+ * Nepretržité mikrochvenie na vlastnom obale — nehryzie sa so vstupným
+ * prekmitom. Záporné delaye rozhodia fázy, nech sa nechvejú štyri naraz.
+ */
+const vibe = cva({
+  base: {
+    display: 'inline-flex',
+    animation: 'clayVibe 2.6s ease-in-out infinite',
+    _motionReduce: { animation: 'none' },
+  },
+  variants: {
+    phase: {
+      1: { animationDelay: '0s' },
+      2: { animationDelay: '-0.65s' },
+      3: { animationDelay: '-1.3s' },
+      4: { animationDelay: '-1.95s' },
     },
   },
 })
@@ -169,12 +185,16 @@ const projLink = css({
         <div v-for="item in REFERENCES" :key="item.site" :class="fadeIn({ delay: item.delay })">
           <article :class="card({ tilt: item.tilt })">
             <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
-              <ClayGlyph name="uvodzovky" :size="24" />
+              <span :class="vibe({ phase: item.markDelay })">
+                <ClayGlyph name="uvodzovky" :size="24" />
+              </span>
             </span>
             <p :class="quote">{{ item.quote }}</p>
             <span :class="markClose" aria-hidden="true">
               <span :class="mark({ markDelay: item.closeDelay })">
-                <ClayGlyph name="uvodzovky" :size="24" />
+                <span :class="vibe({ phase: item.closeDelay })">
+                  <ClayGlyph name="uvodzovky" :size="24" />
+                </span>
               </span>
             </span>
             <div :class="foot">
