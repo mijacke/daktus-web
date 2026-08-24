@@ -55,8 +55,7 @@ const line = css({
   whiteSpace: 'nowrap',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  color: 'ink/60',
-  '&[data-tone="cmd"]': { color: 'ink/88' },
+  color: 'ink',
   '&[data-tone="ok"]': { _firstLetter: { color: 'accent.deep' } },
   '[data-dark] &': {
     color: 'dark.fg/60',
@@ -85,7 +84,7 @@ const caretRow = css({
 const prompt = css({
   fontFamily: 'mono',
   fontSize: '11.5px',
-  color: 'dim',
+  color: 'ink/80',
   '[data-dark] &': { color: 'dark.dim' },
 })
 
