@@ -2,60 +2,50 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Nasadenie — deploy pipeline: scroll napíše `npm run generate` a potom
- * zhora nadol plní zvislú linku medzi krokmi Build → Upload → Sieť → Naživo.
- * Vpravo okno prehliadača so stránkou z Dizajnu; status (zálohy, monitoring,
- * SSL) žije staticky v päte okna. Bez pinu beží scéna na čas.
+ * Nasadenie — deploy pipeline: po otvorení karty sa sám napíše
+ * `npm run generate` a potom sa zhora nadol plní zvislá linka medzi
+ * krokmi Build → Upload → Sieť → Naživo. Vpravo okno prehliadača so
+ * stránkou z Dizajnu; status (zálohy, monitoring, SSL) žije v päte okna.
  */
 const props = withDefaults(defineProps<{
-  /** Priebeh kroku 0 – 100 zo scroll pinu; záporná hodnota = bez pinu. */
-  deployT?: number
-}>(), { deployT: -1 })
+  /** Scéna je otvorená — spustí písanie príkazu a plnenie pipeline. */
+  running?: boolean
+}>(), { running: false })
 
-const driven = computed(() => props.deployT >= 0)
-const t = computed(() => Math.min(100, Math.max(0, props.deployT)))
+/** Samočinný priebeh deployu po otvorení karty. */
+const t = useSceneRun(toRef(props, 'running'), { duration: 5 })
 
 const CMD = '$ npm run generate'
-/** Pri scrolle sa príkaz píše po znakoch (t 2 – 14), potom sa plní pipeline. */
-const typedCmd = computed(() => {
-  if (!driven.value) return CMD
-  return CMD.slice(0, Math.round(CMD.length * Math.min(1, Math.max(0, (t.value - 2) / 12))))
-})
-const typing = computed(() => driven.value && t.value >= 2 && t.value < 18)
+/** Príkaz sa píše po znakoch (t 2 – 14), potom sa plní pipeline. */
+const typedCmd = computed(() => CMD.slice(0, Math.round(CMD.length * Math.min(1, Math.max(0, (t.value - 2) / 12)))))
+const typing = computed(() => t.value >= 2 && t.value < 18)
 
-/** Kroky pipeline — `at` je prah scrollu, `delay` časový fallback bez pinu. */
+/** Kroky pipeline — `at` je prah priebehu, na ktorom sa uzol odškrtne. */
 const STAGES = [
-  { title: 'Build', detail: '12 stránok vygenerovaných', at: 18, delay: 35 },
-  { title: 'Upload', detail: 'nahrané na produkciu', at: 30, delay: 55 },
-  { title: 'Sieť', detail: 'CDN, DNS a SSL pripravené', at: 66, delay: 90 },
-  { title: 'Naživo', detail: 'vas-projekt.sk beží', at: 84, delay: 105 },
+  { title: 'Build', detail: '12 stránok vygenerovaných', at: 18 },
+  { title: 'Upload', detail: 'nahrané na produkciu', at: 30 },
+  { title: 'Sieť', detail: 'CDN, DNS a SSL pripravené', at: 66 },
+  { title: 'Naživo', detail: 'vas-projekt.sk beží', at: 84 },
 ] as const
 
 /** Percento uploadu — plní sa medzi krokmi Upload a Sieť. */
 const uploadPct = computed(() => Math.round(Math.min(1, Math.max(0, (t.value - 30) / 36)) * 100))
 
-/** Uzol je hotový, keď scroll prejde jeho prah; bez pinu hneď. */
 function stageDone(at: number) {
-  return !driven.value || t.value >= at
+  return t.value >= at
 }
 
 /** Naplnenie spojky medzi uzlom `index` a nasledujúcim (0 – 100 %). */
 function segmentFill(index: number) {
-  if (!driven.value) return 100
   const from = STAGES[index]!.at
   const to = STAGES[index + 1]?.at ?? 100
   return Math.round(Math.min(1, Math.max(0, (t.value - from) / (to - from))) * 100)
 }
 
-/** Detail uploadu ukazuje pri scrolle živé percento. */
+/** Detail uploadu ukazuje počas behu živé percento. */
 function stageDetail(stage: (typeof STAGES)[number]) {
-  if (driven.value && stage.title === 'Upload') return `nahrávam na produkciu · ${uploadPct.value} %`
+  if (stage.title === 'Upload' && t.value < 66) return `nahrávam na produkciu · ${uploadPct.value} %`
   return stage.detail
-}
-
-/** Vstupná animácia bez pinu — pri scrolle je kostra viditeľná od začiatku. */
-function entrance(delay: 15 | 35 | 55 | 90 | 105) {
-  return driven.value ? [] : [sceneItem({ delay })]
 }
 
 const grid = css({
@@ -181,10 +171,10 @@ const win = css({
 <template>
   <div :class="grid">
     <ProcessPanel title="Nasadenie">
-      <div :class="[cmdLine, entrance(15)]">
+      <div :class="cmdLine">
         {{ typedCmd }}<span v-if="typing" :class="cmdCaret" />
       </div>
-      <div v-for="(stage, index) in STAGES" :key="stage.title" :class="[stageRow, entrance(stage.delay)]">
+      <div v-for="(stage, index) in STAGES" :key="stage.title" :class="stageRow">
         <div :class="nodeCol">
           <span :class="[node, { done: stageDone(stage.at) }]"><IconCheck :size="9" /></span>
           <span :class="segment" data-segment>
@@ -198,7 +188,7 @@ const win = css({
       </div>
     </ProcessPanel>
     <div :class="liveWrap">
-      <div :class="[win, driven ? [sceneReveal, { on: t >= 84 }] : sceneItem({ delay: 115 })]">
+      <div :class="[win, sceneReveal, { on: t >= 84 }]">
         <ProcessLiveWindow />
       </div>
     </div>
