@@ -3,7 +3,7 @@ import { css } from '~~/styled-system/css'
 
 export type ClayGlyphName
   = | 'lupa' | 'ceruzka' | 'zatvorky' | 'stit' | 'raketa'
-    | 'globus' | 'monitor' | 'telefon' | 'fajka' | 'uvodzovky' | 'bodka'
+    | 'globus' | 'monitor' | 'telefon' | 'fajka' | 'uvodzovky' | 'bodka' | 'kosik'
 
 /**
  * Knižnica plastelínových glyfov — rovnaká kuchyňa ako hero logomark:
@@ -117,6 +117,12 @@ const detailFill = css({ fill: 'var(--clay-detail)' })
 
       <template v-else-if="name === 'bodka'">
         <circle cx="24" cy="24" r="16" :fill="sageUrl" />
+      </template>
+
+      <template v-else-if="name === 'kosik'">
+        <path d="M 12 16 H 36 L 32.5 32 H 15.5 Z" :stroke="sageUrl" stroke-width="6.5" />
+        <circle :class="detailFill" cx="18.5" cy="40" r="2.8" />
+        <circle :class="detailFill" cx="29.5" cy="40" r="2.8" />
       </template>
 
       <template v-else>
