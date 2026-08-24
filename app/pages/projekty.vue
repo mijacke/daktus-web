@@ -44,7 +44,7 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         tagline="Špecialisti na nadrozmernú prepravu v EÚ"
         brief="Web, ktorý pôsobí dôveryhodne pre veľkých partnerov a jasne vysvetlí služby sprievodov nadrozmerných nákladov."
         solution="Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Nový web štartuje v týchto dňoch."
-        tone="sky"
+        tone="navy"
         flip
         :state="stateFor(1)"
         @select="select(1)"

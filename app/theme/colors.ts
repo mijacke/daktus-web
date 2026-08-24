@@ -35,9 +35,6 @@ export const colors = defineTokens.colors({
     // zosvetlená navy z palety aditrade.sk — tmavé okno návrhu na nej kontrastuje
     navy: { value: '#3D5070' },
     navy2: { value: '#283A52' },
-    // tá istá navy stiahnutá do svetlého tónu krytov
-    sky: { value: '#D5E2F0' },
-    sky2: { value: '#BFD2E8' },
     // šalviový akcent stiahnutý do svetlého tónu krytov — vlastný projekt
     mint: { value: '#C8DFDA' },
     mint2: { value: '#AFCFC9' },
