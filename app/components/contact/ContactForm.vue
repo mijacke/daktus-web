@@ -26,9 +26,21 @@ const form = reactive({
 
 const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
+/** Pasca na botov — človek nevyplní formulár pod pár sekúnd od načítania. */
+const MIN_FILL_MS = 4000
+let mountedAt = 0
+onMounted(() => {
+  mountedAt = Date.now()
+})
+
 /** Netlify Forms AJAX submit — statický HTML formulár Netlify zachytí pri builde. */
 async function submit() {
   if (status.value === 'sending') return
+  // podozrivo rýchle odoslanie potichu „prejde" bez requestu — bot sa nič nedozvie
+  if (Date.now() - mountedAt < MIN_FILL_MS) {
+    status.value = 'sent'
+    return
+  }
   status.value = 'sending'
   try {
     const body = new URLSearchParams({
