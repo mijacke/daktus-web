@@ -20,6 +20,7 @@ const REFERENCES = [
     tilt: 'left',
     delay: 1,
     markDelay: 1,
+    closeDelay: 3,
   },
   {
     quote: 'Od prvej skice bolo vidieť, že rozumejú, čo naša firma potrebuje. Nový web pôsobí dôveryhodne aj pre veľkých partnerov.',
@@ -31,6 +32,7 @@ const REFERENCES = [
     tilt: 'right',
     delay: 2,
     markDelay: 2,
+    closeDelay: 4,
   },
 ] as const
 
@@ -74,7 +76,6 @@ const card = cva({
 const mark = cva({
   base: {
     display: 'inline-flex',
-    marginBottom: '14px',
     opacity: 0,
     '.in &': {
       animation: 'clayPop 0.7s {easings.out} forwards',
@@ -86,8 +87,21 @@ const mark = cva({
     markDelay: {
       1: { animationDelay: '0.35s' },
       2: { animationDelay: '0.5s' },
+      3: { animationDelay: '0.6s' },
+      4: { animationDelay: '0.75s' },
     },
   },
+})
+
+/** Otváracie úvodzovky — vľavo hore nad citátom. */
+const markOpen = css({ marginBottom: '14px' })
+
+/** Zatváracie úvodzovky — ten istý glyf otočený, sedí vpravo pod citátom. */
+const markClose = css({
+  alignSelf: 'flex-end',
+  display: 'inline-flex',
+  transform: 'rotate(180deg)',
+  marginTop: '10px',
 })
 
 const quote = css({
@@ -149,10 +163,15 @@ const projLink = css({
       <div ref="gridEl" :class="[grid, { in: gridIn }]">
         <div v-for="item in REFERENCES" :key="item.site" :class="fadeIn({ delay: item.delay })">
           <article :class="card({ tilt: item.tilt })">
-            <span :class="mark({ markDelay: item.markDelay })" aria-hidden="true">
+            <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
               <ClayGlyph name="uvodzovky" :size="34" />
             </span>
             <p :class="quote">{{ item.quote }}</p>
+            <span :class="markClose" aria-hidden="true">
+              <span :class="mark({ markDelay: item.closeDelay })">
+                <ClayGlyph name="uvodzovky" :size="34" />
+              </span>
+            </span>
             <div :class="foot">
               <div :class="clientName">
                 {{ item.name }}
