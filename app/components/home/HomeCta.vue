@@ -30,14 +30,7 @@ const outline = css({
 })
 
 /** Otáznik číta čítačka, oko vidí plastelínu. */
-const srOnly = css({
-  position: 'absolute',
-  width: '1px',
-  height: '1px',
-  overflow: 'hidden',
-  clipPath: 'inset(50%)',
-  whiteSpace: 'nowrap',
-})
+const srOnly = css({ srOnly: true })
 
 const sub = css({
   fontSize: '18px',

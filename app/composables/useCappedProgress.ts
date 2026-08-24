@@ -8,6 +8,7 @@ export function useCappedProgress(minSeconds = 2) {
   const progress = ref(0)
   let raf = 0
   let last = 0
+  let engaged = false
 
   function tick(now: number) {
     const dt = Math.min(0.1, (now - last) / 1000)
@@ -17,19 +18,28 @@ export function useCappedProgress(minSeconds = 2) {
       // mäkký exponenciálny dojazd, tvrdý strop rýchlosti
       const step = Math.min(Math.abs(diff) * Math.min(1, dt * 8), dt / minSeconds)
       progress.value += Math.sign(diff) * step
+      raf = requestAnimationFrame(tick)
     }
-    raf = requestAnimationFrame(tick)
+    else {
+      // dobehnuté — slučka zaspí, zobudí ju až zmena cieľa
+      raf = 0
+    }
   }
 
-  function start() {
-    if (raf) return
+  function wake() {
+    if (!engaged || raf) return
     last = performance.now()
     raf = requestAnimationFrame(tick)
   }
 
+  function start() {
+    engaged = true
+    wake()
+  }
+
   function stop() {
-    if (!raf) return
-    cancelAnimationFrame(raf)
+    engaged = false
+    if (raf) cancelAnimationFrame(raf)
     raf = 0
   }
 
@@ -39,6 +49,7 @@ export function useCappedProgress(minSeconds = 2) {
     progress.value = value
   }
 
+  watch(target, wake)
   onBeforeUnmount(stop)
 
   return { target, progress, start, stop, snap }

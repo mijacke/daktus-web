@@ -29,6 +29,31 @@ const { pinned, active, fillFor, select } = useStoryPin(sectionEl, {
 const wide = useMediaQuery('(min-width: 1001px)', { initial: true })
 const device = computed(() => (wide.value ? 'mac' : 'iphone'))
 
+/** Mimo pinu (mobil, tablet, reduced motion) listuje kroky časovač ako autoplay. */
+const STEP_DURATION = 3800
+const demoEl = ref<HTMLElement | null>(null)
+const demoIn = useInView(demoEl, { threshold: 0.25, once: false })
+const reduced = useReducedMotion()
+let timer = 0
+
+function scheduleAutoplay() {
+  clearTimeout(timer)
+  if (pinned.value || reduced.value || !demoIn.value) return
+  timer = window.setTimeout(() => {
+    select((active.value + 1) % STEPS.length)
+    scheduleAutoplay()
+  }, STEP_DURATION)
+}
+
+/** Ručný výber kroku reštartuje tempo autoplayu. */
+function pick(index: number) {
+  select(index)
+  scheduleAutoplay()
+}
+
+watch([demoIn, pinned, reduced], scheduleAutoplay)
+onBeforeUnmount(() => clearTimeout(timer))
+
 const section = css({
   background: 'dark.bg',
   color: 'dark.fg',
@@ -193,7 +218,12 @@ const scene = css({
 
         <div ref="stageEl" :class="[fadeIn(), { in: stageIn }]">
           <div :class="stepHead" aria-live="polite">
-            <div v-for="(item, index) in STEPS" :key="item.no" :class="[stepItem, { on: index === active }]">
+            <div
+              v-for="(item, index) in STEPS"
+              :key="item.no"
+              :class="[stepItem, { on: index === active }]"
+              :aria-hidden="index !== active"
+            >
               <div :class="stepTitleRow">
                 <ClayGlyph :name="item.glyph" :size="38" on-dark />
                 <span :class="stepNo">{{ item.no }}</span>
@@ -210,13 +240,13 @@ const scene = css({
               type="button"
               :class="dot"
               :aria-label="`Krok ${item.no}: ${item.title}`"
-              @click="select(index)"
+              @click="pick(index)"
             >
               <span :class="dotTrack"><i :class="dotFill" :style="{ width: `${fillFor(index)}%` }" /></span>
             </button>
           </div>
 
-          <div :class="shellWrap({ device })">
+          <div ref="demoEl" :class="shellWrap({ device })">
             <DeviceShell :device="device" url="vas-projekt.sk" dark>
               <div :class="demo({ device })">
                 <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
