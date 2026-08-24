@@ -93,30 +93,31 @@ const mark = cva({
   },
 })
 
-/** Otváracie úvodzovky — vľavo hore nad citátom. */
-const markOpen = css({ marginBottom: '14px' })
+/** Otváracie úvodzovky — tesne nad prvým riadkom citátu. */
+const markOpen = css({ marginBottom: '4px' })
 
-/** Zatváracie úvodzovky — ten istý glyf otočený, sedí vpravo pod citátom. */
+/** Zatváracie úvodzovky — ten istý glyf otočený, hneď za posledným riadkom. */
 const markClose = css({
   alignSelf: 'flex-end',
   display: 'inline-flex',
   transform: 'rotate(180deg)',
-  marginTop: '10px',
+  marginTop: '2px',
+  marginBottom: '14px',
 })
 
 const quote = css({
-  flex: 1,
   fontSize: 'clamp(15.5px, 1.2vw, 17px)',
   lineHeight: 1.65,
 })
 
+/** Pätka sedí na dne karty — voľný priestor ostáva medzi citátom a čiarou. */
 const foot = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   gap: '12px',
   flexWrap: 'wrap',
-  marginTop: '20px',
+  marginTop: 'auto',
   paddingTop: '16px',
   borderTop: '1px solid',
   borderColor: 'hairline.soft',
@@ -164,12 +165,12 @@ const projLink = css({
         <div v-for="item in REFERENCES" :key="item.site" :class="fadeIn({ delay: item.delay })">
           <article :class="card({ tilt: item.tilt })">
             <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
-              <ClayGlyph name="uvodzovky" :size="34" />
+              <ClayGlyph name="uvodzovky" :size="24" />
             </span>
             <p :class="quote">{{ item.quote }}</p>
             <span :class="markClose" aria-hidden="true">
               <span :class="mark({ markDelay: item.closeDelay })">
-                <ClayGlyph name="uvodzovky" :size="34" />
+                <ClayGlyph name="uvodzovky" :size="24" />
               </span>
             </span>
             <div :class="foot">
