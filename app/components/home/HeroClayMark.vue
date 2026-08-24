@@ -60,7 +60,14 @@ const float = css({
   _motionReduce: { animation: 'none' },
 })
 
-/** Raz za deväť sekúnd si poskočí — pružne, so squash-and-stretch hmoty. */
+/** Sem-tam sa krátko rozhojdá doprava-doľava a z náklonu potom skáče. */
+const sway = css({
+  transformOrigin: '50% 88%',
+  animation: 'claySway 7.4s ease-in-out infinite',
+  _motionReduce: { animation: 'none' },
+})
+
+/** Raz za deväť sekúnd si poskočí — pružne, z aktuálneho náklonu hojdania. */
 const jump = css({
   transformOrigin: '50% 100%',
   animation: 'clayJump 9s ease-in-out infinite',
@@ -105,8 +112,9 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
 <template>
   <div ref="rootEl" :class="stage" aria-hidden="true">
     <div :class="float">
-      <div :class="jump">
-        <svg :class="mark" viewBox="0 0 210 226" fill="none">
+      <div :class="sway">
+        <div :class="jump">
+          <svg :class="mark" viewBox="0 0 210 226" fill="none">
         <defs>
           <linearGradient id="clay-sage" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0" :class="stopSageLight" />
@@ -147,7 +155,8 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
             <rect x="0" y="0" width="210" height="226" filter="url(#clay-bumps)" />
           </g>
         </g>
-        </svg>
+          </svg>
+        </div>
       </div>
     </div>
     <span :class="ground" />

@@ -26,6 +26,14 @@ export default defineConfig({
           '0%, 100%': { transform: 'translateX(-50%) scaleX(1)', opacity: '1' },
           '50%': { transform: 'translateX(-50%) scaleX(0.86)', opacity: '0.65' },
         },
+        // občasný zákmit do strán — krátke rozhojdanie doprava-doľava, potom pokoj
+        claySway: {
+          '0%, 54%, 74%, 100%': { transform: 'rotate(0deg)' },
+          '58%': { transform: 'rotate(3.1deg)' },
+          '63%': { transform: 'rotate(-2.7deg)' },
+          '67%': { transform: 'rotate(1.7deg)' },
+          '71%': { transform: 'rotate(-0.8deg)' },
+        },
         // občasný pružný poskok plastelíny — squash pred výskokom, stretch vo vzduchu
         clayJump: {
           '0%, 86%, 100%': { transform: 'none' },

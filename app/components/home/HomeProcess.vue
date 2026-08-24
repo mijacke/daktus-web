@@ -11,13 +11,12 @@ const STEPS = [
 
 /** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
 const PIN_QUERY = '(min-width: 1001px) and (prefers-reduced-motion: no-preference)'
-/** Zariadenie podľa obrazovky — najväčšie dostanú iMac, bežné MacBook, mobil iPhone. */
-const IMAC_QUERY = '(min-width: 1680px)'
 
 const active = ref(0)
 const progress = ref(0)
 const pinned = ref(false)
-const device = ref<'mac' | 'imac' | 'iphone'>('mac')
+/** Desktop má vždy MacBook, mobil iPhone — rovnaké rámy ako Vybraná práca. */
+const device = ref<'mac' | 'iphone'>('mac')
 const sectionEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
@@ -37,9 +36,7 @@ function measure() {
 
 function applyMode() {
   pinned.value = media?.matches ?? false
-  device.value = window.matchMedia(IMAC_QUERY).matches
-    ? 'imac'
-    : window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
+  device.value = window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
   measure()
 }
 
@@ -184,14 +181,18 @@ const shellWrap = cva({
   base: { marginTop: 'clamp(20px, 3.2vh, 40px)', marginInline: 'auto' },
   variants: {
     device: {
-      mac: { width: 'min(880px, 100%)' },
-      imac: { width: 'min(1060px, 100%)' },
+      mac: { width: 'min(900px, 100%)' },
       iphone: { width: 'min(340px, 92%)' },
     },
   },
 })
 
-/** Výška displeja drží pomer zariadenia a zmestí sa do viewportu s pinom. */
+/**
+ * Výška displeja podľa devices.css MacBook Pro (2022): displej 600 × 386,
+ * pomer 1,554. Pri šírke shellu 900 px (displej 882) je natívna výška
+ * obrazovky 568 px vrátane 38 px lišty → demo 530 px; kratšie viewporty
+ * to stiahne pin.
+ */
 const demo = cva({
   base: {
     position: 'relative',
@@ -200,8 +201,7 @@ const demo = cva({
   },
   variants: {
     device: {
-      mac: { height: 'clamp(300px, min(50vw, calc(100svh - 460px)), 540px)' },
-      imac: { height: 'clamp(300px, min(56vw, calc(100svh - 560px)), 600px)' },
+      mac: { height: 'clamp(300px, calc(100svh - 460px), 530px)' },
       iphone: { minHeight: '480px' },
     },
   },
