@@ -72,22 +72,22 @@ const noteAccent = css({
         title="Čo staviame"
         note="Od jednostránkového webu po systém, na ktorom stojí celá firma. Dizajn aj vývoj pod jednou strechou."
       />
-      <ServiceFeature v-bind="WEBY" />
+      <ServiceFeature v-bind="WEBY" flip />
     </div>
 
     <ServiceDarkBand>
       <div :class="wrap">
-        <ServiceFeature v-bind="SOFTVER" flip dark />
+        <ServiceFeature v-bind="SOFTVER" dark />
       </div>
     </ServiceDarkBand>
 
     <div :class="wrap">
-      <ServiceFeature v-bind="DESKTOP" />
+      <ServiceFeature v-bind="DESKTOP" flip />
     </div>
 
     <ServiceDarkBand>
       <div :class="wrap">
-        <ServiceFeature v-bind="MOBIL" flip dark />
+        <ServiceFeature v-bind="MOBIL" dark />
       </div>
     </ServiceDarkBand>
 
