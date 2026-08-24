@@ -26,15 +26,11 @@ const box = css({
 })
 
 const label = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '9px',
   fontSize: '12.5px',
   fontWeight: 600,
   letterSpacing: '0.16em',
   textTransform: 'uppercase',
   color: 'dim',
-  _before: { content: '""', width: '18px', height: '2px', background: 'accent' },
 })
 
 const mailRow = css({

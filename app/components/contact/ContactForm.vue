@@ -47,17 +47,13 @@ const fieldGrid = css({
   '@media (max-width: 640px)': { gridTemplateColumns: '1fr' },
 })
 
-/** Blueprint štítok poľa — čiarka a verzálky ako sekčné eyebrow. */
 const fieldLabel = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '9px',
+  display: 'block',
   fontSize: '12.5px',
   fontWeight: 600,
   letterSpacing: '0.16em',
   textTransform: 'uppercase',
   color: 'dim',
-  _before: { content: '""', width: '18px', height: '2px', background: 'accent' },
 })
 
 const input = css({
