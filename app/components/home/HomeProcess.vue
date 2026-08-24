@@ -112,15 +112,26 @@ const dotsRow = css({
   marginTop: '4px',
 })
 
+/** Klikací cieľ kroku — vyšší než samotný pruh, nech sa dá pohodlne trafiť. */
 const dot = css({
+  display: 'inline-flex',
+  alignItems: 'center',
   width: '36px',
+  height: '18px',
+  background: 'transparent',
+  border: 0,
+  padding: 0,
+  cursor: 'pointer',
+  _hover: { '& > span': { background: 'dark.fg/26' } },
+})
+
+const dotTrack = css({
+  width: '100%',
   height: '3px',
   borderRadius: 'full',
   background: 'dark.fg/14',
   overflow: 'hidden',
-  border: 0,
-  padding: 0,
-  cursor: 'pointer',
+  transition: 'background 0.3s ease',
 })
 
 const dotFill = css({
@@ -201,7 +212,7 @@ const scene = css({
               :aria-label="`Krok ${item.no}: ${item.title}`"
               @click="select(index)"
             >
-              <i :class="dotFill" :style="{ width: `${fillFor(index)}%` }" />
+              <span :class="dotTrack"><i :class="dotFill" :style="{ width: `${fillFor(index)}%` }" /></span>
             </button>
           </div>
 

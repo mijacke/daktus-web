@@ -21,12 +21,12 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'description',
-          content: 'Daktus je štúdio pre dizajn a vývoj. Navrhujeme a staviame weby, softvér a mobilné aplikácie — od prvej skice až po ostrú prevádzku.',
+          content: 'Sme malý tím dizajnérov a vývojárov. Staviame weby, softvér a appky na mieru, od prvej skice až po ostrú prevádzku.',
         },
         { property: 'og:title', content: 'Daktus — weby, softvér & appky' },
         {
           property: 'og:description',
-          content: 'Daktus je štúdio pre dizajn a vývoj. Navrhujeme a staviame weby, softvér a mobilné aplikácie — od prvej skice až po ostrú prevádzku.',
+          content: 'Sme malý tím dizajnérov a vývojárov. Staviame weby, softvér a appky na mieru, od prvej skice až po ostrú prevádzku.',
         },
         { property: 'og:type', content: 'website' },
         { property: 'og:url', content: 'https://daktus.sk' },
