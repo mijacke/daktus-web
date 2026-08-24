@@ -125,7 +125,7 @@ const scene = css({
               <DeviceShell :device="device" url="vas-projekt.sk" dark>
                 <div :class="demo({ device })">
                   <div :class="[scene, { 'scene-on': active === index }]">
-                    <component :is="SCENES[index]" :running="index === 1 || index === 3 ? active === index : undefined" />
+                    <component :is="SCENES[index]" :running="index > 0 ? active === index : undefined" />
                   </div>
                 </div>
               </DeviceShell>

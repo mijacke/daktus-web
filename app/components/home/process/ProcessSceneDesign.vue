@@ -20,7 +20,7 @@ const ringEl = ref<HTMLElement | null>(null)
 const paperEl = ref<HTMLElement | null>(null)
 const mintEl = ref<HTMLElement | null>(null)
 
-const { linePaper } = useDesignSceneLoop(
+const { tone } = useDesignSceneLoop(
   toRef(props, 'running'),
   { root: rootEl, board: boardEl, cursor: cursorEl, ring: ringEl, paper: paperEl, mint: mintEl },
 )
@@ -87,6 +87,9 @@ const miniMenu = css({
   fontSize: '6.5px',
   fontWeight: 500,
   color: 'ink/55',
+  transition: 'color 0.4s ease',
+  // klik na mint v palete prefarbí práve tieto tri položky menu
+  '&.menu-mint': { color: 'accent.deep', fontWeight: 700 },
 })
 
 const miniTitle = css({
@@ -250,10 +253,10 @@ const slider2 = css({
   <div ref="rootEl" :class="root">
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
-        <div ref="boardEl" :class="[board, { 'line-paper': linePaper }]">
+        <div ref="boardEl" :class="[board, { 'line-paper': tone === 'paper' }]">
           <div :class="[nav, sceneItem({ delay: 25 })]">
             <span :class="miniLogo">Daktus</span>
-            <span :class="miniMenu"><span>Domov</span><span>Služby</span><span>Kontakt</span></span>
+            <span :class="[miniMenu, { 'menu-mint': tone === 'mint' }]"><span>Domov</span><span>Služby</span><span>Kontakt</span></span>
           </div>
           <div :class="[miniTitle, sceneItem({ delay: 45 })]">Váš nový web</div>
           <p :class="[miniNote, sceneItem({ delay: 50 })]">Jasný obsah, vzdušný spacing a typografia Archivo 800.</p>

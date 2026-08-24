@@ -26,7 +26,8 @@ const SCALE_MIN = 0.92
  */
 export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopElements) {
   const reduced = useReducedMotion()
-  const linePaper = ref(false)
+  /** Naposledy kliknutý swatch — biela prefarbí rám výberu, mint texty menu. */
+  const tone = ref<'paper' | 'mint' | null>(null)
   let tl: gsap.core.Timeline | null = null
   let delayTimer = 0
 
@@ -87,7 +88,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
       tl!.to(cursor, { scale: 0.82, duration: 0.1 })
       tl!.add(() => {
         clickFx(swatch)
-        linePaper.value = toPaper
+        tone.value = toPaper ? 'paper' : 'mint'
       })
       tl!.to(cursor, { scale: 1, duration: 0.16 }, '+=0.1')
       tl!.to({}, { duration: 0.4 })
@@ -101,6 +102,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     drag(cornerSmall, SCALE_MIN)
     drag(corner, 1)
     paletteClick(mintAt, els.mint.value, false)
+    // repeat -1 opakuje celé kolo: biela ↔ mint sa striedajú donekonečna
   }
 
   function stop() {
@@ -131,5 +133,5 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
 
   onBeforeUnmount(stop)
 
-  return { linePaper }
+  return { tone }
 }

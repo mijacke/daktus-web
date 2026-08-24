@@ -7,25 +7,23 @@ import { css } from '~~/styled-system/css'
  * Hovorí presne to, čo krok sľubuje: rýchlosť, mobily, formuláre.
  */
 const props = withDefaults(defineProps<{
-  /** Scéna je práve aktívna — spustí napočítanie skóre od nuly. */
+  /** Scéna je práve aktívna — spustí beh testov aj napočítanie skóre. */
   running?: boolean
-  /** Priebeh kroku 0 – 100 zo scroll pinu; záporná hodnota = bez pinu. */
-  testT?: number
-}>(), { running: false, testT: -1 })
+}>(), { running: false })
 
-const driven = computed(() => props.testT >= 0)
-const t = computed(() => Math.min(100, Math.max(0, props.testT)))
+/** Samočinný beh testov po otvorení karty — riadky odškrtáva vlastný priebeh. */
+const t = useSceneRun(toRef(props, 'running'), { duration: 4.5 })
 
 const CHECKS = [
-  { name: 'výkon', value: 'LCP 0,9 s', delay: 25, at: 14 },
-  { name: 'mobil', value: '360 px bez zlomov', delay: 45, at: 36 },
-  { name: 'formuláre', value: 'odoslanie aj chyby', delay: 70, at: 58 },
-  { name: 'prístupnosť', value: 'kontrast AA', delay: 90, at: 80 },
+  { name: 'výkon', value: 'LCP 0,9 s', at: 14 },
+  { name: 'mobil', value: '360 px bez zlomov', at: 36 },
+  { name: 'formuláre', value: 'odoslanie aj chyby', at: 58 },
+  { name: 'prístupnosť', value: 'kontrast AA', at: 80 },
 ] as const
 
-/** Riadok testu: pri pine ho odškrtne prah scrollu, inak časový sceneItem. */
-function reveal(delay: 15 | 25 | 45 | 70 | 90, at: number) {
-  return driven.value ? [sceneReveal, { on: t.value >= at }] : [sceneItem({ delay })]
+/** Riadok testu sa odkryje, keď beh prejde jeho prahom. */
+function reveal(at: number) {
+  return [sceneReveal, { on: t.value >= at }]
 }
 
 /** Cieľové skóre — drží sa ho aj animácia oblúka nižšie. */
@@ -143,8 +141,8 @@ const scoreCaption = css({
 <template>
   <div :class="root">
     <ProcessPanel title="Beh testov">
-      <div :class="[cmdLine, reveal(15, 4)]">$ daktus test --ostro</div>
-      <div v-for="item in CHECKS" :key="item.name" :class="[checkRow, reveal(item.delay, item.at)]">
+      <div :class="[cmdLine, reveal(4)]">$ daktus test --ostro</div>
+      <div v-for="item in CHECKS" :key="item.name" :class="[checkRow, reveal(item.at)]">
         <span :class="checkOk">✓</span>
         <span :class="checkName">{{ item.name }}</span>
         <span :class="checkDots" />
