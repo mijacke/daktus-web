@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-const STEPS = [
-  { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.' },
-  { no: '02', title: 'Dizajn', text: 'Zo skice a wireframu vznikne vizuál, ktorý si odsúhlasíte.' },
-  { no: '03', title: 'Vývoj', text: 'Čistý kód a pravidelné ukážky. Progres vidíte každý týždeň.' },
-  { no: '04', title: 'Testovanie', text: 'Rýchlosť, mobily, formuláre. Doladíme každý detail.' },
-  { no: '05', title: 'Nasadenie', text: 'Spustenie, meranie a dlhodobá starostlivosť.' },
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
+
+const STEPS: { no: string, title: string, text: string, glyph: ClayGlyphName }[] = [
+  { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.', glyph: 'lupa' },
+  { no: '02', title: 'Dizajn', text: 'Zo skice a wireframu vznikne vizuál, ktorý si odsúhlasíte.', glyph: 'ceruzka' },
+  { no: '03', title: 'Vývoj', text: 'Čistý kód a pravidelné ukážky. Progres vidíte každý týždeň.', glyph: 'zatvorky' },
+  { no: '04', title: 'Testovanie', text: 'Rýchlosť, mobily, formuláre. Doladíme každý detail.', glyph: 'stit' },
+  { no: '05', title: 'Nasadenie', text: 'Spustenie, meranie a dlhodobá starostlivosť.', glyph: 'raketa' },
 ]
 
 /** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
@@ -123,8 +125,8 @@ const stepItem = css({
 
 const stepTitleRow = css({
   display: 'flex',
-  alignItems: 'baseline',
-  gap: '16px',
+  alignItems: 'center',
+  gap: '15px',
 })
 
 const stepNo = css({
@@ -229,6 +231,7 @@ const scene = css({
           <div :class="stepHead" aria-live="polite">
             <div v-for="(item, index) in STEPS" :key="item.no" :class="[stepItem, { on: index === active }]">
               <div :class="stepTitleRow">
+                <ClayGlyph :name="item.glyph" :size="38" on-dark />
                 <span :class="stepNo">{{ item.no }}</span>
                 <span :class="stepTitle">{{ item.title }}</span>
               </div>

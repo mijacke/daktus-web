@@ -3,7 +3,7 @@ import { css } from '~~/styled-system/css'
 
 useSeoMeta({
   title: 'Cenník — Daktus',
-  description: 'Férový cenník bez tajností. Orientačné sumy hneď, presná ponuka do 48 hodín — webstránky, e‑shopy aj softvér na mieru.',
+  description: 'Ceny na rovinu. Orientačné sumy hneď, presná ponuka do 48 hodín — webstránky, e‑shopy aj softvér na mieru.',
 })
 
 const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 48 hodín.'
