@@ -9,6 +9,8 @@ const MENU = [
   { label: 'Kontakt', href: '/kontakt' },
 ]
 
+const scrollTopOnHome = useScrollTopLink()
+
 // kým profily nie sú založené, odkazy vedú na homepage — potom doplniť URL
 const SOCIALS = [
   { label: 'Instagram', href: '/' },
@@ -170,7 +172,7 @@ const legal = css({
     <div :class="wrap">
       <div :class="cols">
         <div :class="brand">
-          <NuxtLink :class="brandLogo" to="/" data-logo>
+          <NuxtLink :class="brandLogo" to="/" data-logo @click="scrollTopOnHome">
             <span :class="brandLogoMark"><LogoMark :size="24" /></span>
             <span>Daktus</span>
           </NuxtLink>

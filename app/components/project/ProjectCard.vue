@@ -12,7 +12,9 @@ withDefaults(defineProps<{
   tone: 'blush' | 'steel' | 'navy'
   chips?: ProjectChip[]
   state?: 'idle' | 'active' | 'dimmed'
-}>(), { state: 'idle', chips: () => [] })
+  /** Stavová clay nálepka pri názve (napr. „Vo vývoji"). */
+  badge?: string
+}>(), { state: 'idle', chips: () => [], badge: undefined })
 
 defineEmits<{ select: [] }>()
 
@@ -125,7 +127,10 @@ const chipRow = css({
     </BlueprintFrame>
     <div :class="meta">
       <div>
-        <div :class="metaName">{{ name }}</div>
+        <div :class="metaName">
+          {{ name }}
+          <span v-if="badge" :class="clayBadge">{{ badge }}</span>
+        </div>
         <div :class="metaNote">{{ description }}</div>
       </div>
       <div v-if="chips.length" :class="chipRow">
