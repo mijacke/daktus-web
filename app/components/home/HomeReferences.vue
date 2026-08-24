@@ -94,21 +94,22 @@ const mark = cva({
 })
 
 /**
- * Nepretržité mikrochvenie na vlastnom obale — nehryzie sa so vstupným
- * prekmitom. Záporné delaye rozhodia fázy, nech sa nechvejú štyri naraz.
+ * Výskok s drnčaním ako hmota v hero — beží na vlastnom obale, nech sa
+ * nehryzie so vstupným prekmitom. Záporné delaye rozhodia fázy, takže
+ * v každom okamihu skáče najviac jedna úvodzovka.
  */
-const vibe = cva({
+const buzz = cva({
   base: {
     display: 'inline-flex',
-    animation: 'clayVibe 2.6s ease-in-out infinite',
+    animation: 'clayBuzz 4s linear infinite',
     _motionReduce: { animation: 'none' },
   },
   variants: {
     phase: {
       1: { animationDelay: '0s' },
-      2: { animationDelay: '-0.65s' },
-      3: { animationDelay: '-1.3s' },
-      4: { animationDelay: '-1.95s' },
+      2: { animationDelay: '-1.1s' },
+      3: { animationDelay: '-2.1s' },
+      4: { animationDelay: '-3.2s' },
     },
   },
 })
@@ -185,14 +186,14 @@ const projLink = css({
         <div v-for="item in REFERENCES" :key="item.site" :class="fadeIn({ delay: item.delay })">
           <article :class="card({ tilt: item.tilt })">
             <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
-              <span :class="vibe({ phase: item.markDelay })">
+              <span :class="buzz({ phase: item.markDelay })">
                 <ClayGlyph name="uvodzovky" :size="24" />
               </span>
             </span>
             <p :class="quote">{{ item.quote }}</p>
             <span :class="markClose" aria-hidden="true">
               <span :class="mark({ markDelay: item.closeDelay })">
-                <span :class="vibe({ phase: item.closeDelay })">
+                <span :class="buzz({ phase: item.closeDelay })">
                   <ClayGlyph name="uvodzovky" :size="24" />
                 </span>
               </span>

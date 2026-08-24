@@ -73,14 +73,22 @@ export default defineConfig({
           '60%': { transform: 'scale(1.06)', opacity: '1' },
           '100%': { transform: 'scale(1)', opacity: '1' },
         },
-        // nepretržité mikrochvenie hmoty — plynulá slučka drobných posunov
-        // a natočení, žiadne bursty; hmota pôsobí stále živá
-        clayVibe: {
-          '0%, 100%': { transform: 'translate(0, 0) rotate(0deg)' },
-          '20%': { transform: 'translate(4%, -5%) rotate(1.1deg)' },
-          '40%': { transform: 'translate(-4%, -2%) rotate(-1.3deg)' },
-          '60%': { transform: 'translate(3%, 4%) rotate(0.9deg)' },
-          '80%': { transform: 'translate(-3%, 3%) rotate(-0.7deg)' },
+        // hmota ako v hero: ~3 s pokoj na mieste, potom malý výskok, počas
+        // neho rýchle drnčanie do strán (5 kmitov) a pád naspäť dole
+        clayBuzz: {
+          '0%, 75%, 96%, 100%': { transform: 'translate(0, 0)' },
+          '77%': { transform: 'translate(0, -18%)' },
+          '78.5%': { transform: 'translate(-8%, -18%)' },
+          '80%': { transform: 'translate(8%, -19%)' },
+          '81.5%': { transform: 'translate(-8%, -18%)' },
+          '83%': { transform: 'translate(7%, -19%)' },
+          '84.5%': { transform: 'translate(-7%, -18%)' },
+          '86%': { transform: 'translate(6%, -19%)' },
+          '87.5%': { transform: 'translate(-5%, -18%)' },
+          '89%': { transform: 'translate(4%, -18%)' },
+          '90.5%': { transform: 'translate(-3%, -18%)' },
+          '92%': { transform: 'translate(0, -16%)' },
+          '94%': { transform: 'translate(0, 3%)' },
         },
       },
     },
