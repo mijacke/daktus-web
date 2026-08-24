@@ -2,9 +2,10 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * iPhone v striebornej edícii ako pri živých náhľadoch projektov — prstenec,
- * dynamic island so šošovkou, stavový pruh. Spodok odsekáva okraj javiska,
- * hover karty doručí push notifikáciu.
+ * iPhone ako pri živých náhľadoch projektov — prstenec, dynamic island so
+ * šošovkou, stavový pruh. Na svetlom podklade strieborná edícia, v tmavom
+ * páse (data-dark) tmavá edícia s tokenmi z deviceTone. Spodok odsekáva
+ * okraj javiska, hover karty doručí push notifikáciu.
  */
 const phone = css({
   position: 'relative',
@@ -39,6 +40,13 @@ const phone = css({
     borderRadius: '2px',
     background: 'device.silver2',
   },
+  '[data-dark] &': {
+    borderColor: 'device.dark2',
+    background: 'device.island',
+    boxShadow: '{shadows.window}, inset 0 0 4px 2px rgba(255, 255, 255, 0.14), inset 0 0 0 5px token(colors.device.dark2)',
+    _before: { background: 'device.dark2', boxShadow: '0 24px 0 token(colors.device.dark2)' },
+    _after: { background: 'device.dark2' },
+  },
 })
 
 const screen = css({
@@ -48,6 +56,7 @@ const screen = css({
   background: 'card',
   overflow: 'hidden',
   padding: '28px 10px 0',
+  '[data-dark] &': { background: 'device.dark' },
 })
 
 /** Stavový pruh — čas a dynamic island so šošovkou kamery. */
@@ -59,6 +68,7 @@ const statusTime = css({
   fontWeight: 600,
   letterSpacing: '0.02em',
   color: 'ink',
+  '[data-dark] &': { color: 'dark.fg' },
 })
 
 const island = css({
@@ -104,6 +114,7 @@ const push = css({
   zIndex: 2,
   '[data-svc]:hover &': { transform: 'none' },
   _motionReduce: { transition: 'none' },
+  '[data-dark] &': { background: 'device.dark4', borderColor: 'accent/55' },
 })
 
 const pushDot = css({
@@ -119,6 +130,7 @@ const pushBar = css({
   height: '4px',
   borderRadius: 'full',
   background: 'ink/12',
+  '[data-dark] &': { background: 'dark.fg/30' },
 })
 
 /** Obsah appky — titulok, obrázok, riadky zoznamu. */
@@ -127,6 +139,7 @@ const titleBar = css({
   height: '8px',
   borderRadius: '4px',
   background: 'ink/55',
+  '[data-dark] &': { background: 'dark.fg/70' },
 })
 
 const block = css({
@@ -141,6 +154,7 @@ const listRow = css({
   borderRadius: '5px',
   background: 'ink/9',
   marginTop: '7px',
+  '[data-dark] &': { background: 'dark.fg/14' },
 })
 </script>
 
