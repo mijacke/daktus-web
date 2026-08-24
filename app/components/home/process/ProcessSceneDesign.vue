@@ -6,6 +6,17 @@ import { css } from '~~/styled-system/css'
  * s mini stránkou vo výbere (čiarkovaný rám, úchyty, kurzor) a lišta
  * vlastností s našou paletou. Prvky nabiehajú, ako keby ich niekto ukladal.
  */
+const props = withDefaults(defineProps<{
+  /** Priebeh kroku 0 – 100 zo scroll pinu; bez pinu artboard drží mierku 1. */
+  resizeT?: number
+}>(), { resizeT: 0 })
+
+/** Kurzor na rohu „ťahá" veľkosť: cez krok sa artboard mierne zmenší a vráti. */
+const boardScale = computed(() => {
+  const t = Math.min(100, Math.max(0, props.resizeT)) / 100
+  return (1 - 0.07 * Math.sin(Math.PI * t)).toFixed(4)
+})
+
 const root = css({
   height: '100%',
   display: 'grid',
@@ -26,15 +37,22 @@ const canvas = css({
   backgroundSize: '16px 16px',
 })
 
+/** Obal drží šírku a vstupnú animáciu; mierka zo scrollu žije na artboarde. */
+const boardWrap = css({ width: 'min(340px, 84%)' })
+
 const board = css({
   position: 'relative',
-  width: 'min(340px, 84%)',
+  width: '100%',
   background: 'paper',
   borderRadius: '8px',
   padding: '15px',
   outline: '1.5px dashed',
   outlineColor: 'accent',
   outlineOffset: '6px',
+  // origin vľavo hore = pravý dolný roh (s kurzorom) sa hýbe najviac
+  transformOrigin: 'top left',
+  transition: 'transform 0.15s linear',
+  _motionReduce: { transition: 'none' },
 })
 
 const handle = css({
@@ -162,21 +180,23 @@ const slider2 = css({
 <template>
   <div :class="root">
     <div :class="canvas">
-      <div :class="[board, sceneItem({ delay: 15 })]">
-        <span :class="handle" style="top: -10px; left: -10px;" />
-        <span :class="handle" style="top: -10px; right: -10px;" />
-        <span :class="handle" style="bottom: -10px; left: -10px;" />
-        <span :class="handle" style="bottom: -10px; right: -10px;" />
-        <div :class="[nav, sceneItem({ delay: 25 })]">
-          <span :class="navLogo" /><span :class="navMenu"><i /><i /><i /></span>
+      <div :class="[boardWrap, sceneItem({ delay: 15 })]">
+        <div :class="board" :style="{ transform: `scale(${boardScale})` }">
+          <span :class="handle" style="top: -10px; left: -10px;" />
+          <span :class="handle" style="top: -10px; right: -10px;" />
+          <span :class="handle" style="bottom: -10px; left: -10px;" />
+          <span :class="handle" style="bottom: -10px; right: -10px;" />
+          <div :class="[nav, sceneItem({ delay: 25 })]">
+            <span :class="navLogo" /><span :class="navMenu"><i /><i /><i /></span>
+          </div>
+          <div :class="[hline, sceneItem({ delay: 45 })]" />
+          <div :class="[hline2, sceneItem({ delay: 50 })]" />
+          <div :class="[img, sceneItem({ delay: 75 })]" />
+          <div :class="[cta, sceneItem({ delay: 100 })]" />
+          <svg :class="[cursor, sceneItem({ delay: 115 })]" width="17" height="19" viewBox="0 0 14 16" aria-hidden="true">
+            <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
+          </svg>
         </div>
-        <div :class="[hline, sceneItem({ delay: 45 })]" />
-        <div :class="[hline2, sceneItem({ delay: 50 })]" />
-        <div :class="[img, sceneItem({ delay: 75 })]" />
-        <div :class="[cta, sceneItem({ delay: 100 })]" />
-        <svg :class="[cursor, sceneItem({ delay: 115 })]" width="17" height="19" viewBox="0 0 14 16" aria-hidden="true">
-          <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
-        </svg>
       </div>
     </div>
     <div :class="rail">

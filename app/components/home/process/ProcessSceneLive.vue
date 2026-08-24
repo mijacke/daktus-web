@@ -2,23 +2,38 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Nasadenie — vľavo dobehne deploy log, vpravo sa otvorí okno prehliadača
- * a stránka z Dizajnu v ňom už beží naživo: pulzujúca bodka pri doméne,
- * pod oknom starostlivosť.
+ * Nasadenie — scroll v kroku píše `npm run generate`, postupne odkrýva
+ * deploy log s pruhom nahrávania a na konci sa otvorí okno prehliadača,
+ * kde stránka z Dizajnu už beží naživo. Bez pinu beží log na čas.
  */
-const LOG = [
-  { text: '$ npm run generate', tone: 'cmd', delay: 15 },
-  { text: '✓ 12 stránok vygenerovaných', tone: 'ok', delay: 35 },
-  { text: '→ nahrávam na produkciu…', tone: 'plain', delay: 55 },
-  { text: '✓ CDN a cache pripravené', tone: 'ok', delay: 75 },
-  { text: '✓ DNS a SSL certifikát aktívne', tone: 'ok', delay: 90 },
-  { text: '✓ vas-projekt.sk je naživo', tone: 'accent', delay: 105 },
-] as const
+const props = withDefaults(defineProps<{
+  /** Priebeh kroku 0 – 100 zo scroll pinu; záporná hodnota = bez pinu. */
+  deployT?: number
+}>(), { deployT: -1 })
+
+const driven = computed(() => props.deployT >= 0)
+const t = computed(() => Math.min(100, Math.max(0, props.deployT)))
+
+const CMD = '$ npm run generate'
+/** Pri scrolle sa príkaz píše po znakoch (t 2 – 14), potom beží log. */
+const typedCmd = computed(() => {
+  if (!driven.value) return CMD
+  return CMD.slice(0, Math.round(CMD.length * Math.min(1, Math.max(0, (t.value - 2) / 12))))
+})
+const typing = computed(() => driven.value && t.value >= 2 && t.value < 18)
+
+/** Percento nahrávania na produkciu — plní sa medzi riadkom nahrávania a CDN. */
+const uploadPct = computed(() => Math.round(Math.min(1, Math.max(0, (t.value - 26) / 36)) * 100))
 
 const META = [
-  { label: 'Zálohy zapnuté', delay: 135 },
-  { label: 'Monitoring 24/7', delay: 140 },
+  { label: 'Zálohy zapnuté', delay: 135, at: 90 },
+  { label: 'Monitoring 24/7', delay: 140, at: 95 },
 ] as const
+
+/** Riadok/blok scény: pri pine ho odhalí prah scrollu, inak časový sceneItem. */
+function reveal(delay: 15 | 35 | 55 | 75 | 90 | 105 | 115 | 135 | 140, at: number) {
+  return driven.value ? [revealed, { on: t.value >= at }] : [sceneItem({ delay })]
+}
 
 /** Log dostáva širší stĺpec — displej MacBooku medzitým narástol. */
 const grid = css({
@@ -40,6 +55,51 @@ const logLine = css({
   '&[data-tone="cmd"]': { color: 'dark.fg/85' },
   '&[data-tone="ok"]': { color: 'dark.fg/60', _firstLetter: { color: 'accent' } },
   '&[data-tone="accent"]': { color: 'accent', fontWeight: 700 },
+})
+
+/** Náprotivok sceneItem pre pin — miesto času odhaľuje prah scrollu. */
+const revealed = css({
+  opacity: 0,
+  transform: 'translateY(9px)',
+  transition: 'opacity 0.4s ease, transform 0.5s {easings.out}',
+  '&.on': { opacity: 1, transform: 'none' },
+})
+
+/** Kurzor za písaným príkazom. */
+const cmdCaret = css({
+  display: 'inline-block',
+  width: '7px',
+  height: '13px',
+  marginLeft: '3px',
+  background: 'accent',
+  verticalAlign: '-2px',
+  animation: 'caretBlink 1s steps(1) infinite',
+  _motionReduce: { animation: 'none' },
+})
+
+/** Pruh nahrávania pod riadkom „nahrávam" — pri pine ho plní scroll. */
+const uploadBar = css({
+  height: '4px',
+  maxWidth: '240px',
+  borderRadius: 'full',
+  background: 'dark.fg/12',
+  overflow: 'hidden',
+  marginBlock: '7px',
+})
+
+const uploadFill = css({
+  display: 'block',
+  height: '100%',
+  borderRadius: 'full',
+  background: 'accent',
+  transition: 'width 0.15s linear',
+})
+
+/** Bez pinu sa pruh naplní sám, keď scéna nabehne. */
+const uploadFillAuto = css({
+  width: '0%',
+  '.scene-on &': { animation: 'fillBar 1.1s {easings.out} 0.75s forwards' },
+  _motionReduce: { width: '100%', animation: 'none' },
 })
 
 const liveWrap = css({
@@ -171,17 +231,22 @@ const metaChip = css({
 <template>
   <div :class="grid">
     <ProcessPanel title="Nasadenie">
-      <div
-        v-for="item in LOG"
-        :key="item.text"
-        :class="[logLine, sceneItem({ delay: item.delay })]"
-        :data-tone="item.tone"
-      >
-        {{ item.text }}
+      <div :class="[logLine, reveal(15, 2)]" data-tone="cmd">
+        {{ typedCmd }}<span v-if="typing" :class="cmdCaret" />
       </div>
+      <div :class="[logLine, reveal(35, 18)]" data-tone="ok">✓ 12 stránok vygenerovaných</div>
+      <div :class="[logLine, reveal(55, 26)]" data-tone="plain">
+        → nahrávam na produkciu…<template v-if="driven"> {{ uploadPct }} %</template>
+      </div>
+      <div :class="[uploadBar, reveal(55, 26)]">
+        <i :class="driven ? uploadFill : [uploadFill, uploadFillAuto]" :style="driven ? { width: `${uploadPct}%` } : undefined" />
+      </div>
+      <div :class="[logLine, reveal(75, 64)]" data-tone="ok">✓ CDN a cache pripravené</div>
+      <div :class="[logLine, reveal(90, 72)]" data-tone="ok">✓ DNS a SSL certifikát aktívne</div>
+      <div :class="[logLine, reveal(105, 80)]" data-tone="accent">✓ vas-projekt.sk je naživo</div>
     </ProcessPanel>
     <div :class="liveWrap">
-      <div :class="[win, sceneItem({ delay: 115 })]">
+      <div :class="[win, reveal(115, 84)]">
         <div :class="winBar">
           <i :class="winDot" /><i :class="winDot" /><i :class="winDot" />
           <span :class="winUrl"><span :class="liveDot" />vas-projekt.sk</span>
@@ -197,7 +262,7 @@ const metaChip = css({
         </div>
       </div>
       <div :class="liveMeta">
-        <span v-for="item in META" :key="item.label" :class="[metaChip, sceneItem({ delay: item.delay })]">
+        <span v-for="item in META" :key="item.label" :class="[metaChip, reveal(item.delay, item.at)]">
           {{ item.label }}
         </span>
       </div>
