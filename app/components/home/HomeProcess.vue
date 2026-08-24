@@ -14,81 +14,20 @@ const STEPS: { no: string, title: string, text: string, glyph: ClayGlyphName }[]
 /** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
 const PIN_QUERY = '(min-width: 1001px) and (prefers-reduced-motion: no-preference)'
 
-const active = ref(0)
-const pinned = ref(false)
-/** Desktop má vždy MacBook, mobil iPhone — rovnaké rámy ako Vybraná práca. */
-const device = ref<'mac' | 'iphone'>('mac')
 const sectionEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
-/** Viditeľný priebeh naháňa scroll so stropom — celé 01 → 05 trvá aspoň 5 s. */
-const { target, progress, start, stop, snap } = useCappedProgress(5)
-let media: MediaQueryList | null = null
 
-function stepFor(value: number) {
-  return Math.min(STEPS.length - 1, Math.floor(value * STEPS.length))
-}
-
-function measure() {
-  const host = sectionEl.value
-  if (!host || !pinned.value) return
-  const scrollable = host.offsetHeight - window.innerHeight
-  if (scrollable <= 0) return
-  const raw = -host.getBoundingClientRect().top / scrollable
-  target.value = Math.min(0.999, Math.max(0, raw))
-}
-
-watch(progress, (value) => {
-  if (pinned.value) active.value = stepFor(value)
+/** Pin, tempo (celé 01 → 05 aspoň 5 s) aj zámok kolieska drží useStoryPin. */
+const { pinned, active, fillFor, select } = useStoryPin(sectionEl, {
+  pinQuery: PIN_QUERY,
+  steps: STEPS.length,
+  minSeconds: 5,
 })
 
-function applyMode() {
-  pinned.value = media?.matches ?? false
-  device.value = window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
-  if (pinned.value) {
-    measure()
-    snap(target.value)
-    active.value = stepFor(target.value)
-    start()
-  }
-  else {
-    stop()
-  }
-}
-
-onMounted(() => {
-  media = window.matchMedia(PIN_QUERY)
-  media.addEventListener('change', applyMode)
-  window.addEventListener('scroll', measure, { passive: true })
-  window.addEventListener('resize', applyMode, { passive: true })
-  applyMode()
-})
-
-onBeforeUnmount(() => {
-  media?.removeEventListener('change', applyMode)
-  window.removeEventListener('scroll', measure)
-  window.removeEventListener('resize', applyMode)
-})
-
-/** Naplnenie pruhu kroku — pri pine podľa scrollu, inak plný aktívny. */
-function fillFor(index: number) {
-  if (!pinned.value) return index === active.value ? 100 : 0
-  const part = progress.value * STEPS.length - index
-  return Math.round(Math.min(1, Math.max(0, part)) * 100)
-}
-
-/** Klik na krok: pri pine odscrolluje stránku do jeho úseku, inak prepne rovno. */
-function select(index: number) {
-  const host = sectionEl.value
-  if (pinned.value && host) {
-    const scrollable = host.offsetHeight - window.innerHeight
-    const top = window.scrollY + host.getBoundingClientRect().top
-    window.scrollTo({ top: top + ((index + 0.5) / STEPS.length) * scrollable, behavior: 'smooth' })
-  }
-  else {
-    active.value = index
-  }
-}
+/** Desktop má vždy MacBook, mobil iPhone — rovnaké rámy ako Vybraná práca. */
+const wide = useMediaQuery('(min-width: 1001px)', { initial: true })
+const device = computed(() => (wide.value ? 'mac' : 'iphone'))
 
 const section = css({
   background: 'dark.bg',
