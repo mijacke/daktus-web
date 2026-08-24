@@ -76,28 +76,70 @@ const progress = css({
   _motionReduce: { transition: 'none' },
 })
 
-const body = css({ padding: '9px 9px 10px' })
+const body = css({ padding: '8px 10px 10px' })
 
-const eyebrow = css({
-  width: '26px',
-  height: '3.5px',
-  borderRadius: 'full',
-  background: 'accent',
+/** Anatómia stránky — logo a menu, veľký titulok, tlačidlá, obrázok. */
+const nav = css({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
 })
 
-const titleBar = css({
-  width: '70%',
+const navLogo = css({
+  width: '22px',
+  height: '5px',
+  borderRadius: '2px',
+  background: 'ink/75',
+})
+
+const navMenu = css({
+  display: 'flex',
+  gap: '4px',
+  '& i': { width: '9px', height: '3px', borderRadius: 'full', background: 'ink/22' },
+})
+
+const headline = css({
+  width: '76%',
   height: '8px',
-  borderRadius: '4px',
-  background: 'ink/14',
-  marginTop: '6px',
+  borderRadius: '3px',
+  background: 'ink/55',
+  marginTop: '8px',
+})
+
+const headline2 = css({
+  width: '52%',
+  height: '8px',
+  borderRadius: '3px',
+  background: 'ink/55',
+  marginTop: '4px',
+})
+
+const ctaRow = css({
+  display: 'flex',
+  gap: '5px',
+  marginTop: '7px',
+})
+
+const ctaFill = css({
+  width: '30px',
+  height: '9px',
+  borderRadius: 'full',
+  background: 'ink/80',
+})
+
+const ctaGhost = css({
+  width: '26px',
+  height: '9px',
+  borderRadius: 'full',
+  border: '1px solid',
+  borderColor: 'ink/25',
 })
 
 const hero = css({
-  height: '34px',
+  height: '26px',
   borderRadius: '6px',
   marginTop: '8px',
-  background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 32%, transparent), color-mix(in srgb, token(colors.accent) 9%, transparent))',
+  background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 42%, transparent), color-mix(in srgb, token(colors.accent) 14%, transparent))',
   opacity: 0.55,
   transform: 'scale(0.985)',
   transition: 'opacity 0.6s ease 0.35s, transform 0.6s {easings.out} 0.35s',
@@ -138,8 +180,16 @@ const deck = css({
           <span :class="progress" />
         </div>
         <div :class="body">
-          <div :class="eyebrow" />
-          <div :class="titleBar" />
+          <div :class="nav">
+            <span :class="navLogo" />
+            <span :class="navMenu"><i /><i /><i /></span>
+          </div>
+          <div :class="headline" />
+          <div :class="headline2" />
+          <div :class="ctaRow">
+            <span :class="ctaFill" />
+            <span :class="ctaGhost" />
+          </div>
           <div :class="hero" />
         </div>
       </div>

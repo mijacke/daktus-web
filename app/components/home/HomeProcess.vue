@@ -83,15 +83,15 @@ const section = css({
   },
 })
 
+// nadpis sekcie začína vľavo hore ako v ostatných sekciách; žiadny flex,
+// nech wrap vnútri drží plnú šírku sekcie
 const sticky = css({
   [`@media ${PIN_QUERY}`]: {
     position: 'sticky',
     top: 0,
     minHeight: '100svh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    paddingBlock: '34px',
+    paddingTop: 'clamp(56px, 8vh, 104px)',
+    paddingBottom: '30px',
   },
 })
 
@@ -173,10 +173,9 @@ const dotFill = css({
   _motionReduce: { transition: 'none' },
 })
 
-/** Široký MacBook v strede — rovnaký rám ako živé náhľady projektov. */
+/** MacBook na plnú šírku sekcie — rovnaký rám ako živé náhľady projektov. */
 const macWrap = css({
-  width: 'min(1040px, 100%)',
-  marginInline: 'auto',
+  width: '100%',
   marginTop: 'clamp(20px, 3.2vh, 40px)',
 })
 
@@ -204,9 +203,7 @@ const scene = css({
   <section id="proces" ref="sectionEl" :class="section" data-dark>
     <div :class="sticky">
       <div :class="wrap">
-        <SectionHead eyebrow="Proces" title="Ako vzniká produkt">
-          <span :class="sectionNote">Scrollujte — každý úsek posunie váš projekt o krok ďalej.</span>
-        </SectionHead>
+        <SectionHead eyebrow="Proces" title="Ako vzniká produkt" />
 
         <div ref="stageEl" :class="[fadeIn(), { in: stageIn }]">
           <div :class="stepHead" aria-live="polite">

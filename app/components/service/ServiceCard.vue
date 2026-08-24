@@ -45,7 +45,7 @@ const card = cva({
 const stage = cva({
   base: {
     display: 'flex',
-    minHeight: '132px',
+    minHeight: '148px',
     '& > *': {
       minWidth: 0,
       transition: 'transform 0.55s {easings.out}',
@@ -76,9 +76,13 @@ const stage = cva({
       },
       phone: {
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
+        height: '148px',
+        minHeight: '148px',
+        overflow: 'hidden',
+        '& > *': { transformOrigin: '50% 0%' },
         '@media (prefers-reduced-motion: no-preference)': {
-          '& > *': { transform: 'scale(0.86)' },
+          '& > *': { transform: 'scale(0.88)' },
           '[data-svc]:hover & > *': { transform: 'scale(1)' },
         },
       },

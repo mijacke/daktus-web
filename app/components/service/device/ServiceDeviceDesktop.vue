@@ -36,7 +36,7 @@ const screen = css({
   borderRadius: '5px',
   overflow: 'hidden',
   display: 'grid',
-  gridTemplateColumns: '22px 1fr',
+  gridTemplateColumns: '22px 1fr 30px',
   gap: '7px',
   padding: '8px',
   height: '84px',
@@ -89,6 +89,19 @@ const row = css({
   '&:first-of-type': { marginTop: 0 },
 })
 
+/** Mini graf — appka niečo meria, nie je to len zoznam. */
+const chart = css({
+  display: 'flex',
+  alignItems: 'flex-end',
+  justifyContent: 'space-between',
+  paddingBottom: '2px',
+  '& i': { width: '5px', borderRadius: '2px 2px 0 0', background: 'accent/65' },
+  '& i:nth-child(1)': { height: '32%' },
+  '& i:nth-child(2)': { height: '58%' },
+  '& i:nth-child(3)': { height: '42%', background: 'accent' },
+  '& i:nth-child(4)': { height: '78%' },
+})
+
 /** Stojan — plochý krk a podstava, tak ako pri veľkom iMacu v náhľadoch. */
 const neck = css({
   width: '26px',
@@ -121,6 +134,7 @@ const base = css({
           <div :class="row" />
           <div :class="row" />
         </div>
+        <div :class="chart"><i /><i /><i /><i /></div>
       </div>
     </div>
     <div :class="neck" />
