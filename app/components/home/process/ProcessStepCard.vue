@@ -21,7 +21,7 @@ const card = cva({
     borderRadius: '18px',
     border: '1px solid transparent',
     // vysoké riadky ako na cuberte — scroll cez sekciu má mať tempo, nie šprint
-    padding: 'clamp(38px, 6vh, 64px) clamp(24px, 3vw, 48px)',
+    padding: 'clamp(56px, 9vh, 96px) clamp(24px, 3vw, 48px)',
     transitionProperty: 'background-color, border-color',
     transitionDuration: '0.5s',
     background: 'dark.fg/4',
@@ -69,7 +69,8 @@ const body = cva({
   base: {
     display: 'grid',
     gridTemplateRows: '0fr',
-    transition: 'grid-template-rows 0.65s {easings.out}',
+    // pomalé „odrolovanie" — obsah sa odkrýva plynulo, nie skokom
+    transition: 'grid-template-rows 1.05s {easings.out}',
     _motionReduce: { transition: 'none' },
   },
   variants: {

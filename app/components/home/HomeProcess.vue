@@ -102,7 +102,7 @@ const scene = css({
   inset: 0,
   opacity: 0,
   transform: 'scale(0.985)',
-  transition: 'opacity 0.5s ease 0.15s, transform 0.6s {easings.out} 0.15s',
+  transition: 'opacity 0.6s ease 0.3s, transform 0.7s {easings.out} 0.3s',
   pointerEvents: 'none',
   padding: 'clamp(20px, 2.2vw, 36px)',
   '&.scene-on': { opacity: 1, transform: 'none' },
@@ -125,7 +125,7 @@ const scene = css({
               <DeviceShell :device="device" url="vas-projekt.sk" dark>
                 <div :class="demo({ device })">
                   <div :class="[scene, { 'scene-on': active === index }]">
-                    <component :is="SCENES[index]" :running="index === 3 ? active === 3 : undefined" />
+                    <component :is="SCENES[index]" :running="index === 1 || index === 3 ? active === index : undefined" />
                   </div>
                 </div>
               </DeviceShell>

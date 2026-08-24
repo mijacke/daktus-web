@@ -4,20 +4,27 @@ import { css, cva } from '~~/styled-system/css'
 /**
  * Dizajn — pozeráte dizajnérovi cez plece: bodkované plátno, artboard
  * s mini stránkou vo výbere (čiarkovaný rám, úchyty, kurzor) a lišta
- * vlastností s našou paletou. Prvky nabiehajú, ako keby ich niekto ukladal.
+ * vlastností s našou paletou. Kým je scéna otvorená, kurzor za roh
+ * artboard donekonečna zmenšuje a zväčšuje a sem-tam si odskočí do
+ * palety prepnúť farbu rámu výberu.
  */
 const props = withDefaults(defineProps<{
-  /** Priebeh kroku 0 – 100 zo scroll pinu; bez pinu artboard drží mierku 1. */
-  resizeT?: number
-}>(), { resizeT: 0 })
+  /** Scéna je otvorená — beží slučka dýchania a výletov kurzora. */
+  running?: boolean
+}>(), { running: false })
 
-/** Kurzor na rohu „ťahá" veľkosť: cez krok sa artboard mierne zmenší a vráti. */
-const boardScale = computed(() => {
-  const t = Math.min(100, Math.max(0, props.resizeT)) / 100
-  return (1 - 0.07 * Math.sin(Math.PI * t)).toFixed(4)
-})
+const rootEl = ref<HTMLElement | null>(null)
+const boardEl = ref<HTMLElement | null>(null)
+const paperEl = ref<HTMLElement | null>(null)
+const mintEl = ref<HTMLElement | null>(null)
+
+const { scale, linePaper, pressed, cursorStyle } = useDesignSceneLoop(
+  toRef(props, 'running'),
+  { root: rootEl, board: boardEl, paper: paperEl, mint: mintEl },
+)
 
 const root = css({
+  position: 'relative',
   height: '100%',
   display: 'grid',
   gridTemplateColumns: '1fr clamp(150px, 19%, 195px)',
@@ -37,7 +44,7 @@ const canvas = css({
   backgroundSize: '16px 16px',
 })
 
-/** Obal drží šírku a vstupnú animáciu; mierka zo scrollu žije na artboarde. */
+/** Obal drží šírku a vstupnú animáciu; mierka dýchania žije na artboarde. */
 const boardWrap = css({ width: 'min(340px, 84%)' })
 
 const board = css({
@@ -51,8 +58,9 @@ const board = css({
   outlineOffset: '6px',
   // origin vľavo hore = pravý dolný roh (s kurzorom) sa hýbe najviac
   transformOrigin: 'top left',
-  transition: 'transform 0.15s linear',
+  transition: 'transform 2.6s ease-in-out, outline-color 0.4s ease',
   _motionReduce: { transition: 'none' },
+  '&.line-paper': { outlineColor: 'paper' },
 })
 
 const handle = cva({
@@ -62,6 +70,8 @@ const handle = cva({
     height: '7px',
     borderRadius: '2px',
     background: 'accent',
+    transition: 'background 0.4s ease',
+    '.line-paper &': { background: 'paper' },
   },
   variants: {
     corner: {
@@ -99,10 +109,16 @@ const img = css({
 
 const cta = css({ width: '44px', height: '11px', borderRadius: 'full', background: 'ink/80', marginTop: '10px' })
 
+/** Putujúci kurzor — roh artboardu ↔ paleta; polohy sa merajú za behu. */
 const cursor = css({
   position: 'absolute',
-  right: '-14px',
-  bottom: '-12px',
+  left: 0,
+  top: 0,
+  zIndex: 3,
+  pointerEvents: 'none',
+  transitionProperty: 'transform',
+  willChange: 'transform',
+  _motionReduce: { transition: 'none' },
 })
 
 const cursorPath = css({ fill: 'ink', stroke: 'paper' })
@@ -130,10 +146,23 @@ const railLabel = css({
 const swatches = css({
   display: 'flex',
   gap: '6px',
-  '& i': { width: '20px', height: '20px', borderRadius: '6px' },
-  '& i:nth-child(1)': { background: 'dark.bg', border: '1px solid', borderColor: 'dark.fg/20' },
-  '& i:nth-child(2)': { background: 'accent' },
-  '& i:nth-child(3)': { background: 'paper' },
+})
+
+const swatch = cva({
+  base: {
+    width: '20px',
+    height: '20px',
+    borderRadius: '6px',
+    transition: 'transform 0.15s ease',
+    '&.pressed': { transform: 'scale(0.8)' },
+  },
+  variants: {
+    tone: {
+      ink: { background: 'dark.bg', border: '1px solid', borderColor: 'dark.fg/20' },
+      mint: { background: 'accent' },
+      paper: { background: 'paper' },
+    },
+  },
 })
 
 const typo = css({
@@ -188,10 +217,10 @@ const slider2 = css({
 </script>
 
 <template>
-  <div :class="root">
+  <div ref="rootEl" :class="root">
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
-        <div :class="board" :style="{ transform: `scale(${boardScale})` }">
+        <div ref="boardEl" :class="[board, { 'line-paper': linePaper }]" :style="{ transform: `scale(${scale})` }">
           <span :class="handle({ corner: 'tl' })" />
           <span :class="handle({ corner: 'tr' })" />
           <span :class="handle({ corner: 'bl' })" />
@@ -203,15 +232,16 @@ const slider2 = css({
           <div :class="[hline2, sceneItem({ delay: 50 })]" />
           <div :class="[img, sceneItem({ delay: 75 })]" />
           <div :class="[cta, sceneItem({ delay: 100 })]" />
-          <svg :class="[cursor, sceneItem({ delay: 115 })]" width="17" height="19" viewBox="0 0 14 16" aria-hidden="true">
-            <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
-          </svg>
         </div>
       </div>
     </div>
     <div :class="rail">
       <span :class="[railLabel, sceneItem({ delay: 130 })]">Paleta</span>
-      <div :class="[swatches, sceneItem({ delay: 130 })]"><i /><i /><i /></div>
+      <div :class="[swatches, sceneItem({ delay: 130 })]">
+        <i :class="swatch({ tone: 'ink' })" />
+        <i ref="mintEl" :class="[swatch({ tone: 'mint' }), { pressed: pressed === 'mint' }]" />
+        <i ref="paperEl" :class="[swatch({ tone: 'paper' }), { pressed: pressed === 'paper' }]" />
+      </div>
       <span :class="[railLabel, sceneItem({ delay: 140 })]">Typografia</span>
       <div :class="sceneItem({ delay: 140 })">
         <div :class="typo">Aa</div>
@@ -221,5 +251,8 @@ const slider2 = css({
       <div :class="[slider, sceneItem({ delay: 150 })]" />
       <div :class="[slider2, sceneItem({ delay: 160 })]" />
     </div>
+    <svg :class="[cursor, sceneItem({ delay: 115 })]" :style="cursorStyle" width="17" height="19" viewBox="0 0 14 16" aria-hidden="true">
+      <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
+    </svg>
   </div>
 </template>
