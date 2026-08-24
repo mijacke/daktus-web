@@ -21,7 +21,7 @@ const EXTRAS: Extra[] = [
     glyph: 'stit',
     title: 'Údržba a správa',
     price: 'od 39 € mesačne',
-    text: 'Aktualizácie, zálohy a dohľad nad prevádzkou. Web beží a vy sa venujete firme.',
+    text: 'Aktualizácie, zálohy a dohľad nad prevádzkou. Prvý mesiac je v cene každého balíka.',
   },
   {
     glyph: 'lupa',
