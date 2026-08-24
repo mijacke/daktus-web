@@ -1,15 +1,32 @@
 <script setup lang="ts">
-import { css, cva } from '~~/styled-system/css'
+import { css } from '~~/styled-system/css'
 
 /**
- * Testovanie — tá istá stránka na troch viewportoch, pod každým naskočí
- * fajka a vpravo sa napočíta celkové skóre. Presne to, čo krok sľubuje:
- * rýchlosť, mobily, formuláre.
+ * Testovanie — beh testov: tabuľka reálnych kontrol s hodnotami, ktoré
+ * scroll odškrtáva jednu po druhej, vpravo sa napočíta celkové skóre.
+ * Hovorí presne to, čo krok sľubuje: rýchlosť, mobily, formuláre.
  */
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   /** Scéna je práve aktívna — spustí napočítanie skóre od nuly. */
   running?: boolean
-}>()
+  /** Priebeh kroku 0 – 100 zo scroll pinu; záporná hodnota = bez pinu. */
+  testT?: number
+}>(), { running: false, testT: -1 })
+
+const driven = computed(() => props.testT >= 0)
+const t = computed(() => Math.min(100, Math.max(0, props.testT)))
+
+const CHECKS = [
+  { name: 'výkon', value: 'LCP 0,9 s', delay: 25, at: 14 },
+  { name: 'mobil', value: '360 px bez zlomov', delay: 45, at: 36 },
+  { name: 'formuláre', value: 'odoslanie aj chyby', delay: 70, at: 58 },
+  { name: 'prístupnosť', value: 'kontrast AA', delay: 90, at: 80 },
+] as const
+
+/** Riadok testu: pri pine ho odškrtne prah scrollu, inak časový sceneItem. */
+function reveal(delay: 15 | 25 | 45 | 70 | 90, at: number) {
+  return driven.value ? [sceneReveal, { on: t.value >= at }] : [sceneItem({ delay })]
+}
 
 /** Cieľové skóre — drží sa ho aj animácia oblúka nižšie. */
 const TARGET = 98
@@ -29,100 +46,67 @@ watch(() => props.running, (on) => {
   }
   const start = performance.now()
   const tick = (now: number) => {
-    const t = Math.min(1, (now - start) / COUNT_DURATION)
+    const progress = Math.min(1, (now - start) / COUNT_DURATION)
     // rovnaký dobeh ako easing oblúka — rýchly nábeh, pomalý záver
-    score.value = Math.round(TARGET * (1 - (1 - t) ** 3))
-    if (t < 1) raf = requestAnimationFrame(tick)
+    score.value = Math.round(TARGET * (1 - (1 - progress) ** 3))
+    if (progress < 1) raf = requestAnimationFrame(tick)
   }
   raf = requestAnimationFrame(tick)
 })
 
 onBeforeUnmount(() => cancelAnimationFrame(raf))
 
-const DEVICES = [
-  { kind: 'desktop', label: 'desktop', frameDelay: 15, okDelay: 70 },
-  { kind: 'tablet', label: 'tablet', frameDelay: 25, okDelay: 90 },
-  { kind: 'mobil', label: 'mobil', frameDelay: 35, okDelay: 110 },
-] as const
-
 const root = css({
   height: '100%',
   display: 'grid',
-  gridTemplateColumns: '1fr auto',
-  gap: 'clamp(20px, 3vw, 48px)',
+  gridTemplateColumns: '1.5fr auto',
+  gap: 'clamp(24px, 3.4vw, 56px)',
   alignItems: 'center',
   '@media (max-width: 1000px)': { gridTemplateColumns: '1fr', justifyItems: 'center', gap: '26px' },
 })
 
-const devices = css({
-  display: 'flex',
-  alignItems: 'flex-end',
-  justifyContent: 'center',
-  gap: 'clamp(14px, 2.2vw, 30px)',
-  flexWrap: 'wrap',
-})
-
-const device = css({ textAlign: 'center' })
-
-/** Tri rámy, jedna stránka — rovnaký obsah v troch pomeroch. */
-const frame = cva({
-  base: {
-    border: '1.5px solid',
-    borderColor: 'dark.fg/25',
-    borderRadius: '9px',
-    background: 'paper',
-    padding: '9px',
-    marginInline: 'auto',
-  },
-  variants: {
-    kind: {
-      desktop: { width: 'clamp(150px, 16vw, 214px)' },
-      tablet: { width: 'clamp(96px, 10vw, 130px)', borderRadius: '11px' },
-      mobil: { width: 'clamp(54px, 6vw, 74px)', borderRadius: '13px' },
-    },
-  },
-})
-
-const miniLine = css({
-  width: '70%',
-  height: '6px',
-  borderRadius: '3px',
-  background: 'ink/50',
-})
-
-const miniImg = cva({
-  base: {
-    borderRadius: '5px',
-    marginTop: '7px',
-    background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 45%, transparent), color-mix(in srgb, token(colors.accent) 15%, transparent))',
-  },
-  variants: {
-    kind: {
-      desktop: { height: 'clamp(58px, 6vw, 84px)' },
-      tablet: { height: 'clamp(74px, 8vw, 104px)' },
-      mobil: { height: 'clamp(88px, 9vw, 118px)' },
-    },
-  },
-})
-
-const ok = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '6px',
-  marginTop: '10px',
+const cmdLine = css({
+  fontFamily: 'mono',
   fontSize: '12.5px',
-  fontWeight: 600,
-  color: 'accent',
+  color: 'dark.fg/85',
+  marginBottom: '4px',
 })
 
-const okIcon = css({
-  width: '17px',
-  height: '17px',
-  borderRadius: 'full',
-  background: 'accent/18',
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
+const checkRow = css({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '10px',
+  fontFamily: 'mono',
+  fontSize: '12px',
+  paddingBlock: '9px',
+  borderBottom: '1px solid',
+  borderColor: 'dark.fg/6',
+  '&:last-child': { borderBottom: 'none' },
+})
+
+const checkOk = css({ color: 'accent', flexShrink: 0 })
+
+const checkName = css({ color: 'dark.fg' })
+
+/** Bodkovaný vodiaci riadok medzi názvom testu a nameranou hodnotou. */
+const checkDots = css({
+  flex: 1,
+  borderBottom: '1px dotted',
+  borderColor: 'dark.fg/18',
+  transform: 'translateY(-3px)',
+})
+
+const checkValue = css({ color: 'dark.dim' })
+
+const passChip = css({
+  fontSize: '9.5px',
+  letterSpacing: '0.1em',
+  color: 'accent',
+  border: '1px solid',
+  borderColor: 'accent/40',
+  borderRadius: '4px',
+  padding: '1px 6px',
+  flexShrink: 0,
 })
 
 const scorePanel = css({
@@ -158,17 +142,16 @@ const scoreCaption = css({
 
 <template>
   <div :class="root">
-    <div :class="devices">
-      <div v-for="item in DEVICES" :key="item.kind" :class="device">
-        <div :class="[frame({ kind: item.kind }), sceneItem({ delay: item.frameDelay })]">
-          <div :class="miniLine" />
-          <div :class="miniImg({ kind: item.kind })" />
-        </div>
-        <span :class="[ok, sceneItem({ delay: item.okDelay })]">
-          <span :class="okIcon"><IconCheck :size="9" /></span>{{ item.label }}
-        </span>
+    <ProcessPanel title="Beh testov">
+      <div :class="[cmdLine, reveal(15, 4)]">$ daktus test --ostro</div>
+      <div v-for="item in CHECKS" :key="item.name" :class="[checkRow, reveal(item.delay, item.at)]">
+        <span :class="checkOk">✓</span>
+        <span :class="checkName">{{ item.name }}</span>
+        <span :class="checkDots" />
+        <span :class="checkValue">{{ item.value }}</span>
+        <span :class="passChip">PASS</span>
       </div>
-    </div>
+    </ProcessPanel>
     <div :class="scorePanel">
       <svg width="150" height="150" viewBox="0 0 120 120" aria-hidden="true">
         <circle :class="scoreTrack" cx="60" cy="60" r="50" fill="none" stroke-width="7" />

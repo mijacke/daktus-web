@@ -50,18 +50,22 @@ const grid = css({
   '@media (max-width: 640px)': { gridTemplateColumns: '1fr' },
 })
 
-/** Zľava ako chip — vystúpi z vety, nech ju oko nájde na prvý pohľad. */
-const noteChip = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  height: '26px',
-  paddingInline: '12px',
-  borderRadius: 'full',
-  background: 'accent/13',
-  color: 'accent.deep',
+/** Uvádzacie ceny ako clay nálepka — jediný pootočený prvok vo vete. */
+const clayBadge = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  letterSpacing: '0.02em',
   fontSize: '13px',
-  fontWeight: 600,
+  color: 'dark.bg',
+  background: 'accent',
+  borderRadius: '9px',
+  padding: '5px 13px',
+  transform: 'rotate(-2.5deg)',
+  boxShadow: '0 4px 12px rgba(16, 19, 21, 0.18)',
   verticalAlign: 'middle',
+  marginInline: '4px',
 })
 </script>
 
@@ -83,7 +87,7 @@ const noteChip = css({
 
       <div ref="bandEl" :class="[fadeIn(), { in: bandIn }]">
         <CtaBand title="Ceny na rovinu" cta-label="Pozrieť cenník" cta-href="/cennik">
-          Orientačný cenník máme verejný a na všetky balíky teraz <span :class="noteChip">úvodná zľava 25&nbsp;%</span>
+          Orientačný cenník máme verejný a pre prvých klientov teraz platia <span :class="clayBadge">uvádzacie ceny</span>
         </CtaBand>
       </div>
     </div>

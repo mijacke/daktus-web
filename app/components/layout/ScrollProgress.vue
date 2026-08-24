@@ -3,12 +3,20 @@ import { gsap } from 'gsap'
 import { css } from '~~/styled-system/css'
 
 const barEl = ref<HTMLElement | null>(null)
+const reduced = useReducedMotion()
+let toScale: ((value: number) => void) | null = null
 
 function update() {
   if (!barEl.value) return
   const max = document.documentElement.scrollHeight - window.innerHeight
   const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0
-  gsap.set(barEl.value, { scaleX: progress })
+  if (reduced.value) {
+    gsap.set(barEl.value, { scaleX: progress })
+    return
+  }
+  // krátky dojazd vyžehlí aj zákmity zámku procesného pinu (scroll tam pílkuje)
+  toScale ??= gsap.quickTo(barEl.value, 'scaleX', { duration: 0.3, ease: 'power2.out' })
+  toScale(progress)
 }
 
 onMounted(() => {

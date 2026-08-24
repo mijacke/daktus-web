@@ -117,7 +117,7 @@ const ctas = css({
       <div :class="below">
         <BlueprintFrame :class="leadFrame" tag="text" :built="built.lead">
           <p :class="lead">
-            Daktus je štúdio pre dizajn a vývoj. Navrhujeme a staviame digitálne produkty,
+            Sme malý tím dizajnérov a vývojárov. Navrhujeme a staviame weby, softvér a appky,
             ktoré vyzerajú presne tak dobre, ako fungujú. Od prvej skice až po ostrú prevádzku.
           </p>
         </BlueprintFrame>

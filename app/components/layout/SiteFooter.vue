@@ -9,7 +9,11 @@ const MENU = [
   { label: 'Kontakt', href: '/kontakt' },
 ]
 
-const SOCIALS = ['Instagram', 'LinkedIn', 'GitHub']
+// kým profily nie sú založené, odkazy vedú na homepage — potom doplniť URL
+const SOCIALS = [
+  { label: 'Instagram', href: '/' },
+  { label: 'LinkedIn', href: '/' },
+]
 
 const footer = css({
   background: 'dark.bg',
@@ -26,7 +30,7 @@ const cols = css({
   paddingTop: '72px',
 })
 
-const brand = css({ maxWidth: '340px' })
+const brand = css({ maxWidth: '360px' })
 
 const brandLogo = css({
   display: 'inline-flex',
@@ -39,10 +43,62 @@ const brandLogo = css({
   textTransform: 'uppercase',
 })
 
+/** Rovnaké správanie ako v headeri — plastelínové D hover stlačí. */
+const brandLogoMark = css({
+  display: 'inline-flex',
+  transformOrigin: '50% 100%',
+  '[data-logo]:hover &': { animation: 'claySquish 0.6s {easings.out}' },
+  _motionReduce: { animation: 'none' },
+})
+
 const brandNote = css({
   fontSize: '15px',
   color: 'dark.dim',
   margin: '14px 0 0',
+})
+
+/** Posledná šanca na konverziu — mail ako veľké CTA, nie vizitka. */
+const brandMail = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontWeight: 800,
+  fontSize: 'clamp(24px, 2.6vw, 34px)',
+  letterSpacing: '-0.01em',
+  color: 'accent',
+  marginTop: '26px',
+  transition: 'color 0.3s ease',
+  _hover: { color: 'dark.fg' },
+})
+
+const avail = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '9px',
+  marginTop: '16px',
+  fontFamily: 'mono',
+  fontSize: '11.5px',
+  letterSpacing: '0.1em',
+  textTransform: 'uppercase',
+  color: 'dark.dim',
+})
+
+const availDot = css({
+  position: 'relative',
+  width: '6px',
+  height: '6px',
+  borderRadius: 'full',
+  background: 'accent',
+  flexShrink: 0,
+  _after: {
+    content: '""',
+    position: 'absolute',
+    inset: '-4px',
+    borderRadius: 'full',
+    border: '1.5px solid',
+    borderColor: 'accent/50',
+    animation: 'pulse 1.8s ease-out infinite',
+  },
+  _motionReduce: { _after: { animation: 'none' } },
 })
 
 const groups = css({
@@ -114,11 +170,13 @@ const legal = css({
     <div :class="wrap">
       <div :class="cols">
         <div :class="brand">
-          <div :class="brandLogo">
-            <LogoMark :size="24" />
+          <NuxtLink :class="brandLogo" to="/" data-logo>
+            <span :class="brandLogoMark"><LogoMark :size="24" /></span>
             <span>Daktus</span>
-          </div>
+          </NuxtLink>
           <p :class="brandNote">Webdizajn a vývoj digitálnych produktov. Navrhujeme, kódujeme a staráme sa.</p>
+          <a :class="brandMail" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
+          <div :class="avail"><span :class="availDot" />Prijímame nové projekty</div>
         </div>
         <div :class="groups">
           <div :class="group">
@@ -132,7 +190,12 @@ const legal = css({
           </div>
           <div :class="group">
             <span :class="groupLabel">Sledujte nás</span>
-            <a v-for="social in SOCIALS" :key="social" :class="groupLink" href="#">{{ social }}</a>
+            <NuxtLink
+              v-for="item in SOCIALS"
+              :key="item.label"
+              :class="groupLink"
+              :to="item.href"
+            >{{ item.label }}</NuxtLink>
           </div>
         </div>
       </div>

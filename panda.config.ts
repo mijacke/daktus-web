@@ -67,6 +67,29 @@ export default defineConfig({
           '82%': { transform: 'scale(1.05, 0.97)' },
           '100%': { transform: 'scale(1)' },
         },
+        // vstup plastelínového prvku — prekmit cez cieľ a mäkké sadnutie
+        clayPop: {
+          '0%': { transform: 'scale(0.6)', opacity: '0' },
+          '60%': { transform: 'scale(1.06)', opacity: '1' },
+          '100%': { transform: 'scale(1)', opacity: '1' },
+        },
+        // hmota ako v hero: ~3 s pokoj na mieste, potom malý výskok, počas
+        // neho rýchle drnčanie do strán (5 kmitov) a pád naspäť dole
+        clayBuzz: {
+          '0%, 75%, 96%, 100%': { transform: 'translate(0, 0)' },
+          '77%': { transform: 'translate(0, -18%)' },
+          '78.5%': { transform: 'translate(-8%, -18%)' },
+          '80%': { transform: 'translate(8%, -19%)' },
+          '81.5%': { transform: 'translate(-8%, -18%)' },
+          '83%': { transform: 'translate(7%, -19%)' },
+          '84.5%': { transform: 'translate(-7%, -18%)' },
+          '86%': { transform: 'translate(6%, -19%)' },
+          '87.5%': { transform: 'translate(-5%, -18%)' },
+          '89%': { transform: 'translate(4%, -18%)' },
+          '90.5%': { transform: 'translate(-3%, -18%)' },
+          '92%': { transform: 'translate(0, -16%)' },
+          '94%': { transform: 'translate(0, 3%)' },
+        },
       },
     },
   },

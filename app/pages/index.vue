@@ -7,6 +7,7 @@
     <HomeProcess />
     <HomeStack />
     <HomeAbout />
+    <HomeReferences />
     <HomeCta />
   </main>
 </template>

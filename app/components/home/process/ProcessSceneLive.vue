@@ -2,9 +2,10 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Nasadenie — scroll v kroku píše `npm run generate`, postupne odkrýva
- * deploy log s pruhom nahrávania a na konci sa otvorí okno prehliadača,
- * kde stránka z Dizajnu už beží naživo. Bez pinu beží log na čas.
+ * Nasadenie — deploy pipeline: scroll napíše `npm run generate` a potom
+ * zhora nadol plní zvislú linku medzi krokmi Build → Upload → Sieť → Naživo.
+ * Vpravo okno prehliadača so stránkou z Dizajnu; status (zálohy, monitoring,
+ * SSL) žije staticky v päte okna. Bez pinu beží scéna na čas.
  */
 const props = withDefaults(defineProps<{
   /** Priebeh kroku 0 – 100 zo scroll pinu; záporná hodnota = bez pinu. */
@@ -15,54 +16,61 @@ const driven = computed(() => props.deployT >= 0)
 const t = computed(() => Math.min(100, Math.max(0, props.deployT)))
 
 const CMD = '$ npm run generate'
-/** Pri scrolle sa príkaz píše po znakoch (t 2 – 14), potom beží log. */
+/** Pri scrolle sa príkaz píše po znakoch (t 2 – 14), potom sa plní pipeline. */
 const typedCmd = computed(() => {
   if (!driven.value) return CMD
   return CMD.slice(0, Math.round(CMD.length * Math.min(1, Math.max(0, (t.value - 2) / 12))))
 })
 const typing = computed(() => driven.value && t.value >= 2 && t.value < 18)
 
-/** Percento nahrávania na produkciu — plní sa medzi riadkom nahrávania a CDN. */
-const uploadPct = computed(() => Math.round(Math.min(1, Math.max(0, (t.value - 26) / 36)) * 100))
-
-const META = [
-  { label: 'Zálohy zapnuté', delay: 135, at: 90 },
-  { label: 'Monitoring 24/7', delay: 140, at: 95 },
+/** Kroky pipeline — `at` je prah scrollu, `delay` časový fallback bez pinu. */
+const STAGES = [
+  { title: 'Build', detail: '12 stránok vygenerovaných', at: 18, delay: 35 },
+  { title: 'Upload', detail: 'nahrané na produkciu', at: 30, delay: 55 },
+  { title: 'Sieť', detail: 'CDN, DNS a SSL pripravené', at: 66, delay: 90 },
+  { title: 'Naživo', detail: 'vas-projekt.sk beží', at: 84, delay: 105 },
 ] as const
 
-/** Riadok/blok scény: pri pine ho odhalí prah scrollu, inak časový sceneItem. */
-function reveal(delay: 15 | 35 | 55 | 75 | 90 | 105 | 115 | 135 | 140, at: number) {
-  return driven.value ? [revealed, { on: t.value >= at }] : [sceneItem({ delay })]
+/** Percento uploadu — plní sa medzi krokmi Upload a Sieť. */
+const uploadPct = computed(() => Math.round(Math.min(1, Math.max(0, (t.value - 30) / 36)) * 100))
+
+/** Uzol je hotový, keď scroll prejde jeho prah; bez pinu hneď. */
+function stageDone(at: number) {
+  return !driven.value || t.value >= at
 }
 
-/** Log dostáva širší stĺpec — displej MacBooku medzitým narástol. */
+/** Naplnenie spojky medzi uzlom `index` a nasledujúcim (0 – 100 %). */
+function segmentFill(index: number) {
+  if (!driven.value) return 100
+  const from = STAGES[index]!.at
+  const to = STAGES[index + 1]?.at ?? 100
+  return Math.round(Math.min(1, Math.max(0, (t.value - from) / (to - from))) * 100)
+}
+
+/** Detail uploadu ukazuje pri scrolle živé percento. */
+function stageDetail(stage: (typeof STAGES)[number]) {
+  if (driven.value && stage.title === 'Upload') return `nahrávam na produkciu · ${uploadPct.value} %`
+  return stage.detail
+}
+
+/** Vstupná animácia bez pinu — pri scrolle je kostra viditeľná od začiatku. */
+function entrance(delay: 15 | 35 | 55 | 90 | 105) {
+  return driven.value ? [] : [sceneItem({ delay })]
+}
+
 const grid = css({
   display: 'grid',
-  gridTemplateColumns: '1.25fr 1fr',
-  gap: '22px',
+  gridTemplateColumns: '1.15fr 1fr',
+  gap: '26px',
   height: '100%',
   '@media (max-width: 1000px)': { gridTemplateColumns: '1fr' },
 })
 
-const logLine = css({
+const cmdLine = css({
   fontFamily: 'mono',
   fontSize: '12.5px',
-  lineHeight: 2.1,
-  whiteSpace: 'nowrap',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-  color: 'dark.fg/60',
-  '&[data-tone="cmd"]': { color: 'dark.fg/85' },
-  '&[data-tone="ok"]': { color: 'dark.fg/60', _firstLetter: { color: 'accent' } },
-  '&[data-tone="accent"]': { color: 'accent', fontWeight: 700 },
-})
-
-/** Náprotivok sceneItem pre pin — miesto času odhaľuje prah scrollu. */
-const revealed = css({
-  opacity: 0,
-  transform: 'translateY(9px)',
-  transition: 'opacity 0.4s ease, transform 0.5s {easings.out}',
-  '&.on': { opacity: 1, transform: 'none' },
+  color: 'dark.fg/85',
+  marginBottom: '14px',
 })
 
 /** Kurzor za písaným príkazom. */
@@ -77,194 +85,121 @@ const cmdCaret = css({
   _motionReduce: { animation: 'none' },
 })
 
-/** Pruh nahrávania pod riadkom „nahrávam" — pri pine ho plní scroll. */
-const uploadBar = css({
-  height: '4px',
-  maxWidth: '240px',
+/** Riadok pipeline — uzol so spojkou vľavo, text vpravo. */
+const stageRow = css({
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr',
+  columnGap: '14px',
+  '&:last-child [data-segment]': { display: 'none' },
+})
+
+const nodeCol = css({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+})
+
+const node = css({
+  width: '20px',
+  height: '20px',
+  borderRadius: 'full',
+  border: '1.5px solid',
+  borderColor: 'dark.fg/25',
+  color: 'dark.bg',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  flexShrink: 0,
+  transitionProperty: 'background, border-color, transform',
+  transitionDuration: '0.3s',
+  transitionTimingFunction: 'ease',
+  '& svg': { opacity: 0, transition: 'opacity 0.3s ease' },
+  '&.done': {
+    background: 'accent',
+    borderColor: 'accent',
+    '& svg': { opacity: 1 },
+  },
+  _motionReduce: { transition: 'none', '& svg': { transition: 'none' } },
+})
+
+/** Zvislá spojka medzi uzlami — plní sa zhora nadol podľa scrollu. */
+const segment = css({
+  position: 'relative',
+  width: '2px',
+  flex: 1,
+  minHeight: '22px',
+  marginBlock: '4px',
   borderRadius: 'full',
   background: 'dark.fg/12',
   overflow: 'hidden',
-  marginBlock: '7px',
 })
 
-const uploadFill = css({
-  display: 'block',
-  height: '100%',
-  borderRadius: 'full',
+const segmentFillBar = css({
+  position: 'absolute',
+  top: 0,
+  left: 0,
+  right: 0,
   background: 'accent',
-  transition: 'width 0.15s linear',
+  transition: 'height 0.15s linear',
+  _motionReduce: { transition: 'none' },
 })
 
-/** Bez pinu sa pruh naplní sám, keď scéna nabehne. */
-const uploadFillAuto = css({
-  width: '0%',
-  '.scene-on &': { animation: 'fillBar 1.1s {easings.out} 0.75s forwards' },
-  _motionReduce: { width: '100%', animation: 'none' },
+const stageBody = css({ paddingBottom: '18px' })
+
+const stageTitle = css({
+  fontSize: '13.5px',
+  fontWeight: 600,
+  color: 'dark.fg',
+  lineHeight: '20px',
+  '&.live': { color: 'accent' },
+})
+
+const stageDetailLine = css({
+  fontFamily: 'mono',
+  fontSize: '11px',
+  color: 'dark.dim',
+  marginTop: '3px',
 })
 
 const liveWrap = css({
   height: '100%',
   display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
   justifyContent: 'center',
-  gap: '16px',
 })
 
-/** Okno so spustenou stránkou — tá istá mini stránka ako na dizajnovom plátne. */
+/** Okno so spustenou stránkou — vnútro kreslí ProcessLiveWindow. */
 const win = css({
-  width: 'min(300px, 100%)',
+  width: 'min(320px, 100%)',
   background: 'card',
   borderRadius: '10px',
   overflow: 'hidden',
   boxShadow: '0 18px 44px rgba(0, 0, 0, 0.45)',
-})
-
-const winBar = css({
-  position: 'relative',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  height: '28px',
-  paddingInline: '10px',
-  background: 'paper2',
-  borderBottom: '1px solid',
-  borderColor: 'hairline.soft',
-})
-
-const winDot = css({
-  width: '6px',
-  height: '6px',
-  borderRadius: 'full',
-  '&:nth-child(1)': { background: 'traffic.red' },
-  '&:nth-child(2)': { background: 'traffic.amber' },
-  '&:nth-child(3)': { background: 'traffic.green' },
-})
-
-const winUrl = css({
-  position: 'absolute',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '6px',
-  height: '17px',
-  paddingInline: '10px',
-  borderRadius: 'full',
-  background: 'card',
-  border: '1px solid',
-  borderColor: 'ink/8',
-  fontSize: '9.5px',
-  color: 'dim',
-  whiteSpace: 'nowrap',
-})
-
-/** Pulz pri doméne — web žije. */
-const liveDot = css({
-  position: 'relative',
-  width: '7px',
-  height: '7px',
-  borderRadius: 'full',
-  background: 'accent',
-  flexShrink: 0,
-  _after: {
-    content: '""',
-    position: 'absolute',
-    inset: '-4px',
-    borderRadius: 'full',
-    border: '1.5px solid',
-    borderColor: 'accent/50',
-    animation: 'pulse 1.8s ease-out infinite',
-  },
-  _motionReduce: { _after: { animation: 'none' } },
-})
-
-const winBody = css({ background: 'paper', padding: '13px' })
-
-const pageNav = css({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'space-between',
-})
-
-const pageLogo = css({ width: '24px', height: '5px', borderRadius: '3px', background: 'ink/75' })
-
-const pageMenu = css({
-  display: 'flex',
-  gap: '4px',
-  '& i': { width: '10px', height: '3px', borderRadius: 'full', background: 'ink/22' },
-})
-
-const pageLine = css({ width: '72%', height: '8px', borderRadius: '4px', background: 'ink/55', marginTop: '10px' })
-const pageLine2 = css({ width: '46%', height: '8px', borderRadius: '4px', background: 'ink/55', marginTop: '4px' })
-
-const pageImg = css({
-  height: '46px',
-  borderRadius: '6px',
-  marginTop: '10px',
-  background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 45%, transparent), color-mix(in srgb, token(colors.accent) 15%, transparent))',
-})
-
-const pageCta = css({ width: '40px', height: '10px', borderRadius: 'full', background: 'ink/80', marginTop: '9px' })
-
-const liveMeta = css({
-  display: 'flex',
-  gap: '10px',
-  flexWrap: 'wrap',
-  justifyContent: 'center',
-})
-
-const metaChip = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '7px',
-  height: '30px',
-  paddingInline: '14px',
-  borderRadius: 'full',
-  background: 'accent/12',
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'accent',
 })
 </script>
 
 <template>
   <div :class="grid">
     <ProcessPanel title="Nasadenie">
-      <div :class="[logLine, reveal(15, 2)]" data-tone="cmd">
+      <div :class="[cmdLine, entrance(15)]">
         {{ typedCmd }}<span v-if="typing" :class="cmdCaret" />
       </div>
-      <div :class="[logLine, reveal(35, 18)]" data-tone="ok">✓ 12 stránok vygenerovaných</div>
-      <div :class="[logLine, reveal(55, 26)]" data-tone="plain">
-        → nahrávam na produkciu…<template v-if="driven"> {{ uploadPct }} %</template>
+      <div v-for="(stage, index) in STAGES" :key="stage.title" :class="[stageRow, entrance(stage.delay)]">
+        <div :class="nodeCol">
+          <span :class="[node, { done: stageDone(stage.at) }]"><IconCheck :size="9" /></span>
+          <span :class="segment" data-segment>
+            <i :class="segmentFillBar" :style="{ height: `${segmentFill(index)}%` }" />
+          </span>
+        </div>
+        <div :class="stageBody">
+          <div :class="[stageTitle, { live: stage.title === 'Naživo' }]">{{ stage.title }}</div>
+          <div :class="stageDetailLine">{{ stageDetail(stage) }}</div>
+        </div>
       </div>
-      <div :class="[uploadBar, reveal(55, 26)]">
-        <i :class="driven ? uploadFill : [uploadFill, uploadFillAuto]" :style="driven ? { width: `${uploadPct}%` } : undefined" />
-      </div>
-      <div :class="[logLine, reveal(75, 64)]" data-tone="ok">✓ CDN a cache pripravené</div>
-      <div :class="[logLine, reveal(90, 72)]" data-tone="ok">✓ DNS a SSL certifikát aktívne</div>
-      <div :class="[logLine, reveal(105, 80)]" data-tone="accent">✓ vas-projekt.sk je naživo</div>
     </ProcessPanel>
     <div :class="liveWrap">
-      <div :class="[win, reveal(115, 84)]">
-        <div :class="winBar">
-          <i :class="winDot" /><i :class="winDot" /><i :class="winDot" />
-          <span :class="winUrl"><span :class="liveDot" />vas-projekt.sk</span>
-        </div>
-        <div :class="winBody">
-          <div :class="pageNav">
-            <span :class="pageLogo" /><span :class="pageMenu"><i /><i /><i /></span>
-          </div>
-          <div :class="pageLine" />
-          <div :class="pageLine2" />
-          <div :class="pageImg" />
-          <div :class="pageCta" />
-        </div>
-      </div>
-      <div :class="liveMeta">
-        <span v-for="item in META" :key="item.label" :class="[metaChip, reveal(item.delay, item.at)]">
-          {{ item.label }}
-        </span>
+      <div :class="[win, driven ? [sceneReveal, { on: t >= 84 }] : sceneItem({ delay: 115 })]">
+        <ProcessLiveWindow />
       </div>
     </div>
   </div>

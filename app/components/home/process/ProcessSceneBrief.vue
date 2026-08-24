@@ -3,7 +3,8 @@ import { css } from '~~/styled-system/css'
 
 /**
  * Analýza — z rozhovoru zadanie: klientove slová padajú ako lístky,
- * prelejú sa do usporiadaného zadania a dole z neho vyrastie mapa webu.
+ * prelejú sa do usporiadaného zadania a dole pristane prísľub klientovi:
+ * do týždňa ponuka a harmonogram. Analýza nekončí diagramom ale ponukou.
  */
 const NOTES = [
   { text: '„potrebujeme rezervácie"', delay: 15 },
@@ -20,11 +21,6 @@ const SPEC = [
   { text: 'Štýl: minimal, vzdušná typografia', delay: 110 },
 ] as const
 
-const MAP_NODES = [
-  { label: 'Galérie', delay: 130 },
-  { label: 'Cenník', delay: 135 },
-  { label: 'Rezervácia', delay: 140 },
-] as const
 
 const root = css({
   height: '100%',
@@ -42,14 +38,6 @@ const main = css({
   // stĺpce aj šípka sedia na jednej vodorovnej osi
   alignItems: 'center',
   '@media (max-width: 1000px)': { gridTemplateColumns: '1fr', gap: '18px' },
-})
-
-const colLabel = css({
-  fontSize: '11px',
-  fontWeight: 600,
-  letterSpacing: '0.14em',
-  textTransform: 'uppercase',
-  color: 'dark.dim',
 })
 
 const notes = css({
@@ -104,36 +92,13 @@ const specCheck = css({
   flexShrink: 0,
 })
 
-/** Zo zadania vyrastie mapa — pás uzlov namiesto mŕtveho stromu. */
-const mapRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '9px',
-  flexWrap: 'wrap',
-})
-
-const mapNode = css({
-  fontSize: '12px',
-  color: 'dark.fg',
-  background: 'dark.fg/8',
-  borderRadius: 'full',
-  padding: '5px 13px',
-})
-
-const mapRoot = css({
-  fontSize: '12px',
-  fontWeight: 600,
-  color: 'accent',
-  background: 'accent/18',
-  borderRadius: 'full',
-  padding: '5px 13px',
-})
-
-const mapLink = css({
-  width: '18px',
-  height: '1.5px',
-  background: 'accent/50',
-  flexShrink: 0,
+/** Pointa scény — čo z analýzy pristane klientovi na stole. */
+const promiseLine = css({
+  fontFamily: 'mono',
+  fontSize: '12.5px',
+  textAlign: 'center',
+  color: 'dark.dim',
+  '& b': { fontWeight: 700, color: 'accent' },
 })
 </script>
 
@@ -156,13 +121,8 @@ const mapLink = css({
         </div>
       </ProcessPanel>
     </div>
-    <div :class="mapRow">
-      <span :class="[colLabel, sceneItem({ delay: 120 })]">Mapa webu</span>
-      <span :class="[mapRoot, sceneItem({ delay: 120 })]">Domov</span>
-      <template v-for="item in MAP_NODES" :key="item.label">
-        <span :class="[mapLink, sceneItem({ delay: item.delay })]" />
-        <span :class="[mapNode, sceneItem({ delay: item.delay })]">{{ item.label }}</span>
-      </template>
+    <div :class="[promiseLine, sceneItem({ delay: 120 })]">
+      <b>Do týždňa:</b> cenová ponuka a harmonogram na stole
     </div>
   </div>
 </template>
