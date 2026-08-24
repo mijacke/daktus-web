@@ -83,7 +83,15 @@ const noteAccent = css({
 
     <div :class="wrap">
       <ServiceFeature v-bind="DESKTOP" />
-      <ServiceFeature v-bind="MOBIL" flip />
+    </div>
+
+    <ServiceDarkBand>
+      <div :class="wrap">
+        <ServiceFeature v-bind="MOBIL" flip dark />
+      </div>
+    </ServiceDarkBand>
+
+    <div :class="wrap">
       <ServiceExtras />
       <div :class="pageBottom">
         <CtaBand title="Koľko to stojí?" cta-label="Pozrieť cenník" cta-href="/cennik">
