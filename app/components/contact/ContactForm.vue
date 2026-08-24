@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
+import type { ChipOption } from '~/components/contact/ChoiceChips.vue'
 
-const INTERESTS = ['Web', 'E‑shop', 'Mobilná appka', 'Softvér na mieru', 'Ešte neviem presne']
-const BUDGETS = ['do 3 000 €', '3 000 až 8 000 €', 'nad 8 000 €', 'Ešte neviem']
+const INTERESTS: ChipOption[] = [
+  { label: 'Web', glyph: 'okno' },
+  { label: 'E‑shop', glyph: 'kosik' },
+  { label: 'Mobilná appka', glyph: 'telefon' },
+  { label: 'Softvér na mieru', glyph: 'vrstvy' },
+  { label: 'Ešte neviem presne', glyph: 'bublina' },
+]
+const BUDGETS: ChipOption[] = [
+  { label: 'do 3 000 €' },
+  { label: '3 000 až 8 000 €' },
+  { label: 'nad 8 000 €' },
+  { label: 'Ešte neviem' },
+]
 
 const form = reactive({
   name: '',
