@@ -99,7 +99,7 @@ const itemText = css({
         :key="extra.title"
         :class="[item, fadeIn({ delay: (index + 1) as 1 | 2 | 3 })]"
       >
-        <ClayGlyph :name="extra.glyph" :size="26" />
+        <ClayGlyph :name="extra.glyph" :size="34" />
         <div>
           <h3 :class="itemTitle">{{ extra.title }}</h3>
           <p :class="itemText">{{ extra.text }}</p>
