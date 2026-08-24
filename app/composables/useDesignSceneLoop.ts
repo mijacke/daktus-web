@@ -67,7 +67,8 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     const mintAt = els.mint.value && swatchCenter(els.mint.value)
     if (!cursor || !board || !corner || !cornerSmall || !paperAt || !mintAt) return
 
-    gsap.set(cursor, { x: corner.x, y: corner.y })
+    // kurzor sa odkryje až tu — priamo na rohu, nikdy nie vľavo hore
+    gsap.set(cursor, { x: corner.x, y: corner.y, autoAlpha: 1 })
     tl = gsap.timeline({ repeat: -1, defaults: { ease: 'power2.inOut' } })
 
     /** Klik na roh a ťah — artboard nasleduje kurzor na cieľovú mierku. */
@@ -108,7 +109,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     tl = null
     // žiadny zamrznutý stav do ďalšieho otvorenia — mierka aj kurzor načisto
     if (els.board.value) gsap.set(els.board.value, { scale: 1 })
-    if (els.cursor.value) gsap.set(els.cursor.value, { scale: 1 })
+    if (els.cursor.value) gsap.set(els.cursor.value, { scale: 1, autoAlpha: 0 })
   }
 
   function start() {
@@ -118,7 +119,7 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
       if (reduced.value) {
         const corner = cornerPoint(1)
         const cursor = els.cursor.value
-        if (corner && cursor) gsap.set(cursor, { x: corner.x, y: corner.y })
+        if (corner && cursor) gsap.set(cursor, { x: corner.x, y: corner.y, autoAlpha: 1 })
         return
       }
       build()

@@ -65,42 +65,47 @@ const board = css({
   '&.line-paper': { outlineColor: 'paper' },
 })
 
-const handle = cva({
-  base: {
-    position: 'absolute',
-    width: '7px',
-    height: '7px',
-    borderRadius: '2px',
-    background: 'accent',
-    transition: 'background 0.4s ease',
-    '.line-paper &': { background: 'paper' },
-  },
-  variants: {
-    corner: {
-      tl: { top: '-10px', left: '-10px' },
-      tr: { top: '-10px', right: '-10px' },
-      bl: { bottom: '-10px', left: '-10px' },
-      br: { bottom: '-10px', right: '-10px' },
-    },
-  },
-})
-
+/** Mini stránka v artboarde — reálny obsah v Archivo 800, žiadny skeleton. */
 const nav = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
 })
 
-const navLogo = css({ width: '26px', height: '5px', borderRadius: '3px', background: 'ink/75' })
-
-const navMenu = css({
-  display: 'flex',
-  gap: '5px',
-  '& i': { width: '11px', height: '3.5px', borderRadius: 'full', background: 'ink/22' },
+const miniLogo = css({
+  fontFamily: 'display',
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  fontSize: '8px',
+  letterSpacing: '0.03em',
+  color: 'ink',
 })
 
-const hline = css({ width: '74%', height: '9px', borderRadius: '4px', background: 'ink/55', marginTop: '11px' })
-const hline2 = css({ width: '50%', height: '9px', borderRadius: '4px', background: 'ink/55', marginTop: '5px' })
+const miniMenu = css({
+  display: 'flex',
+  gap: '8px',
+  fontSize: '6.5px',
+  fontWeight: 500,
+  color: 'ink/55',
+})
+
+const miniTitle = css({
+  fontFamily: 'display',
+  fontWeight: 800,
+  textTransform: 'uppercase',
+  fontSize: '17px',
+  lineHeight: 1.04,
+  letterSpacing: '-0.01em',
+  color: 'ink',
+  marginTop: '13px',
+})
+
+const miniNote = css({
+  fontSize: '7.5px',
+  color: 'ink/60',
+  maxWidth: '75%',
+  margin: '5px 0 0',
+})
 
 const img = css({
   height: 'clamp(44px, 5vw, 66px)',
@@ -109,18 +114,28 @@ const img = css({
   background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 45%, transparent), color-mix(in srgb, token(colors.accent) 15%, transparent))',
 })
 
-const cta = css({ width: '44px', height: '11px', borderRadius: 'full', background: 'ink/80', marginTop: '10px' })
+const miniCta = css({
+  display: 'inline-block',
+  fontSize: '7px',
+  fontWeight: 700,
+  color: 'paper',
+  background: 'ink',
+  borderRadius: 'full',
+  padding: '4px 10px',
+  marginTop: '10px',
+})
 
 /**
- * Putujúci kurzor — roh artboardu ↔ paleta. Obal hýbe GSAP; vstupný
- * sceneItem žije na vnútornom SVG, nech jeho `forwards` transform
- * neprebíja polohu obalu.
+ * Putujúci kurzor — roh artboardu ↔ paleta. Hýbe ho výhradne GSAP a aj
+ * ho odkrýva (autoAlpha) až po zmeraní polohy, takže sa nikdy neukáže
+ * vľavo hore pred prvým umiestnením.
  */
 const cursorHolder = css({
   position: 'absolute',
   left: 0,
   top: 0,
   zIndex: 3,
+  opacity: 0,
   pointerEvents: 'none',
   willChange: 'transform',
 })
@@ -236,17 +251,14 @@ const slider2 = css({
     <div :class="canvas">
       <div :class="[boardWrap, sceneItem({ delay: 15 })]">
         <div ref="boardEl" :class="[board, { 'line-paper': linePaper }]">
-          <span :class="handle({ corner: 'tl' })" />
-          <span :class="handle({ corner: 'tr' })" />
-          <span :class="handle({ corner: 'bl' })" />
-          <span :class="handle({ corner: 'br' })" />
           <div :class="[nav, sceneItem({ delay: 25 })]">
-            <span :class="navLogo" /><span :class="navMenu"><i /><i /><i /></span>
+            <span :class="miniLogo">Daktus</span>
+            <span :class="miniMenu"><span>Domov</span><span>Služby</span><span>Kontakt</span></span>
           </div>
-          <div :class="[hline, sceneItem({ delay: 45 })]" />
-          <div :class="[hline2, sceneItem({ delay: 50 })]" />
+          <div :class="[miniTitle, sceneItem({ delay: 45 })]">Váš nový web</div>
+          <p :class="[miniNote, sceneItem({ delay: 50 })]">Jasný obsah, vzdušný spacing a typografia Archivo 800.</p>
           <div :class="[img, sceneItem({ delay: 75 })]" />
-          <div :class="[cta, sceneItem({ delay: 100 })]" />
+          <span :class="[miniCta, sceneItem({ delay: 100 })]">Napíšte nám</span>
         </div>
       </div>
     </div>
@@ -268,7 +280,7 @@ const slider2 = css({
     </div>
     <div ref="cursorEl" :class="cursorHolder" aria-hidden="true">
       <span ref="ringEl" :class="clickRing" />
-      <svg :class="sceneItem({ delay: 115 })" width="17" height="19" viewBox="0 0 14 16">
+      <svg width="17" height="19" viewBox="0 0 14 16">
         <path :class="cursorPath" d="M 1 1 L 12 9 L 7 10 L 9.5 15 L 7 16 L 4.5 11 L 1 14 Z" stroke-width="1.2" stroke-linejoin="round" />
       </svg>
     </div>
