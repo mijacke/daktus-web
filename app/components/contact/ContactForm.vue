@@ -112,21 +112,23 @@ const errorLink = css({
   textDecoration: 'underline',
 })
 
+/**
+ * Stav po odoslaní — žiadna kartička, veľký stredový moment na mieste
+ * formulára: obria fajka z hmoty pleskne na stránku, pod ňou nadpis
+ * v mierke sekcií a odkaz na projekty, kým čakáte na odpoveď.
+ */
 const success = css({
+  minHeight: 'clamp(380px, 46vh, 520px)',
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  gap: 'clamp(20px, 3vw, 34px)',
-  flexWrap: 'wrap',
-  border: '1px solid',
-  borderColor: 'accent/55',
-  borderRadius: '18px',
-  background: 'accent/8',
-  padding: 'clamp(28px, 3.4vw, 48px)',
+  justifyContent: 'center',
+  textAlign: 'center',
+  paddingBlock: 'clamp(36px, 5vh, 64px)',
 })
 
 /** Fajka z hmoty — jediné miesto, kde návštevník niečo dokončil. */
 const successMark = css({
-  flexShrink: 0,
   transformOrigin: '50% 100%',
   animation: 'claySplat 1s {easings.out} 0.1s backwards',
   _motionReduce: { animation: 'none' },
@@ -135,15 +137,22 @@ const successMark = css({
 const successTitle = css({
   fontFamily: 'display',
   fontWeight: 800,
-  fontSize: 'clamp(22px, 2.2vw, 34px)',
+  fontSize: 'clamp(34px, 3.6vw, 58px)',
+  lineHeight: 1.02,
   textTransform: 'uppercase',
-  letterSpacing: '-0.015em',
+  letterSpacing: '-0.02em',
+  marginTop: '30px',
 })
 
 const successText = css({
-  fontSize: '15.5px',
+  fontSize: 'clamp(15.5px, 1.1vw, 17px)',
   color: 'dim',
-  margin: '10px 0 0',
+  maxWidth: '46ch',
+  margin: '16px 0 0',
+})
+
+const successCta = css({
+  marginTop: '36px',
 })
 
 const honeypot = css({ display: 'none' })
@@ -151,10 +160,11 @@ const honeypot = css({ display: 'none' })
 
 <template>
   <div v-if="status === 'sent'" :class="success">
-    <span :class="successMark"><ClayGlyph name="fajka" :size="72" /></span>
-    <div>
-      <div :class="successTitle">Správa letí k nám</div>
-      <p :class="successText">Ďakujeme! Ozveme sa do 24 hodín na e‑mail, ktorý ste uviedli.</p>
+    <span :class="successMark"><ClayGlyph name="fajka" :size="128" /></span>
+    <div :class="successTitle">Správa letí k nám</div>
+    <p :class="successText">Ďakujeme! Ozveme sa do 24 hodín na e‑mail, ktorý ste uviedli.</p>
+    <div :class="successCta">
+      <AppButton href="/projekty" variant="ghost" arrow>Zatiaľ si pozrite našu prácu</AppButton>
     </div>
   </div>
 
