@@ -42,7 +42,19 @@ const heading = css({
   margin: '24px 0 0',
 })
 
-const mark = css({ color: 'accent.deep' })
+/**
+ * Miesená guľôčka hmoty namiesto interpunkčnej bodky — clay podpis titulku.
+ * Rozmer aj poloha v em, nech bodka rastie s fontom; záporný vertical-align
+ * kompenzuje vnútorný odstup gule vo viewboxe, aby sadla na účiaru.
+ */
+const dot = css({
+  display: 'inline-flex',
+  width: '0.36em',
+  height: '0.36em',
+  marginLeft: '0.05em',
+  verticalAlign: '-0.06em',
+  '& svg': { width: '100%', height: '100%' },
+})
 
 const noteText = css({
   maxWidth: '560px',
@@ -58,7 +70,7 @@ const noteText = css({
       <span :class="dash" />
       <span :class="label">{{ eyebrow }}</span>
     </div>
-    <h1 :class="heading">{{ title }}<span :class="mark">.</span></h1>
+    <h1 :class="heading">{{ title }}<span :class="dot" aria-hidden="true"><ClayGlyph name="bodka" /></span></h1>
     <p :class="noteText">{{ note }}</p>
   </div>
 </template>

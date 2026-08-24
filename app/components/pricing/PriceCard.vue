@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 defineProps<{
   /** Popisok blueprint rámu, napr. „balík / web". */
   tag: string
+  /** Veľký clay glyf balíka — rovnaká prítomnosť hmoty ako hero logomark. */
+  glyph: ClayGlyphName
   title: string
   price: string
   was: string
@@ -48,19 +51,11 @@ const body = css({
   height: '100%',
 })
 
-const badge = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  height: '27px',
-  paddingInline: '13px',
-  borderRadius: 'full',
-  background: 'accent/14',
-  color: 'accent.deep',
-  fontSize: '12px',
-  fontWeight: 700,
-  letterSpacing: '0.06em',
-  textTransform: 'uppercase',
-  marginBottom: '16px',
+const glyphBox = css({
+  width: 'clamp(56px, 4.5vw, 76px)',
+  height: 'clamp(56px, 4.5vw, 76px)',
+  marginBottom: '18px',
+  '& svg': { width: '100%', height: '100%' },
 })
 
 const heading = css({
@@ -139,7 +134,7 @@ const cta = css({
 <template>
   <div ref="root">
     <BlueprintFrame :class="card" :tag="tag" :built="built" :content-class="body">
-      <span :class="badge">Úvodná zľava 25&nbsp;%</span>
+      <span :class="glyphBox"><ClayGlyph :name="glyph" :size="76" /></span>
       <h3 :class="heading">{{ title }}</h3>
       <div :class="amount"><small>od</small> {{ price }} <span :class="wasPrice">{{ was }}</span></div>
       <div :class="noteText">{{ note }}</div>

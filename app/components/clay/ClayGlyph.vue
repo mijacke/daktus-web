@@ -3,7 +3,8 @@ import { css } from '~~/styled-system/css'
 
 export type ClayGlyphName
   = | 'lupa' | 'ceruzka' | 'zatvorky' | 'stit' | 'raketa'
-    | 'globus' | 'monitor' | 'telefon' | 'fajka' | 'uvodzovky'
+    | 'globus' | 'monitor' | 'telefon' | 'fajka' | 'uvodzovky' | 'bodka' | 'kosik'
+    | 'okno' | 'vrstvy' | 'koleso' | 'bublina' | 'obnova' | 'stranka' | 'kurzor' | 'kocka'
 
 /**
  * Knižnica plastelínových glyfov — rovnaká kuchyňa ako hero logomark:
@@ -113,6 +114,60 @@ const detailFill = css({ fill: 'var(--clay-detail)' })
       <template v-else-if="name === 'uvodzovky'">
         <path d="M 19 14 C 20 21 17 27 12 31" :stroke="sageUrl" stroke-width="8.5" />
         <path :class="detailStroke" d="M 34 14 C 35 21 32 27 27 31" stroke-width="8.5" />
+      </template>
+
+      <template v-else-if="name === 'bodka'">
+        <circle cx="24" cy="24" r="16" :fill="sageUrl" />
+      </template>
+
+      <template v-else-if="name === 'kosik'">
+        <path d="M 12 16 H 36 L 32.5 32 H 15.5 Z" :stroke="sageUrl" stroke-width="6.5" />
+        <circle :class="detailFill" cx="18.5" cy="40" r="2.8" />
+        <circle :class="detailFill" cx="29.5" cy="40" r="2.8" />
+      </template>
+
+      <template v-else-if="name === 'okno'">
+        <rect x="10" y="12" width="28" height="24" rx="4.5" :stroke="sageUrl" stroke-width="7" />
+        <path :class="detailStroke" d="M 11 19.5 H 37" stroke-width="4" />
+        <circle :class="detailFill" cx="15.5" cy="16" r="1.9" />
+      </template>
+
+      <template v-else-if="name === 'vrstvy'">
+        <path d="M 24 7 L 38 15 L 24 23 L 10 15 Z" :stroke="sageUrl" stroke-width="6" />
+        <path :class="detailStroke" d="M 10 24 L 24 32 L 38 24" stroke-width="5" />
+        <path :class="detailStroke" d="M 10 32 L 24 40 L 38 32" stroke-width="5" />
+      </template>
+
+      <template v-else-if="name === 'koleso'">
+        <circle cx="24" cy="24" r="10" :stroke="sageUrl" stroke-width="7" />
+        <path :class="detailStroke" d="M 24 6.5 V 11 M 24 37 V 41.5 M 6.5 24 H 11 M 37 24 H 41.5" stroke-width="5" />
+      </template>
+
+      <template v-else-if="name === 'bublina'">
+        <rect x="10" y="10" width="28" height="21" rx="8" :stroke="sageUrl" stroke-width="6.5" />
+        <path :class="detailStroke" d="M 17 33 L 15 40 L 23 34" stroke-width="4.5" />
+        <circle :class="detailFill" cx="19" cy="20.5" r="2" />
+        <circle :class="detailFill" cx="28" cy="20.5" r="2" />
+      </template>
+
+      <template v-else-if="name === 'obnova'">
+        <path d="M 35.5 15.5 A 14 14 0 1 0 38 27" :stroke="sageUrl" stroke-width="7" />
+        <path :class="detailStroke" d="M 36 7 L 36.5 16.5 L 27 16" stroke-width="5" />
+      </template>
+
+      <template v-else-if="name === 'stranka'">
+        <rect x="14" y="7.5" width="20" height="33" rx="4" :stroke="sageUrl" stroke-width="6.5" />
+        <path :class="detailStroke" d="M 20 19 H 28 M 20 26 H 28" stroke-width="4" />
+      </template>
+
+      <template v-else-if="name === 'kurzor'">
+        <path d="M 18 10 L 18 36 L 24.5 30.5 L 28.5 40 L 33 38 L 29 28.5 L 37 28 Z" :fill="sageUrl" />
+        <path :class="detailStroke" d="M 13 14 H 7 M 15 8 L 10.5 3.5" stroke-width="4" />
+      </template>
+
+      <template v-else-if="name === 'kocka'">
+        <path d="M 24 7 L 38.5 15.5 V 32.5 L 24 41 L 9.5 32.5 V 15.5 Z" :stroke="sageUrl" stroke-width="6" />
+        <path :class="detailStroke" d="M 10.5 16 L 24 24 L 37.5 16 M 24 24 V 40" stroke-width="4" />
       </template>
 
       <template v-else>
