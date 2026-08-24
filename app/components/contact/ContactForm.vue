@@ -113,11 +113,23 @@ const errorLink = css({
 })
 
 const success = css({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 'clamp(20px, 3vw, 34px)',
+  flexWrap: 'wrap',
   border: '1px solid',
   borderColor: 'accent/55',
   borderRadius: '18px',
   background: 'accent/8',
   padding: 'clamp(28px, 3.4vw, 48px)',
+})
+
+/** Fajka z hmoty — jediné miesto, kde návštevník niečo dokončil. */
+const successMark = css({
+  flexShrink: 0,
+  transformOrigin: '50% 100%',
+  animation: 'claySplat 1s {easings.out} 0.1s backwards',
+  _motionReduce: { animation: 'none' },
 })
 
 const successTitle = css({
@@ -139,8 +151,11 @@ const honeypot = css({ display: 'none' })
 
 <template>
   <div v-if="status === 'sent'" :class="success">
-    <div :class="successTitle">Správa odoslaná</div>
-    <p :class="successText">Ďakujeme! Ozveme sa do 24 hodín na e‑mail, ktorý ste uviedli.</p>
+    <span :class="successMark"><ClayGlyph name="fajka" :size="72" /></span>
+    <div>
+      <div :class="successTitle">Správa letí k nám</div>
+      <p :class="successText">Ďakujeme! Ozveme sa do 24 hodín na e‑mail, ktorý ste uviedli.</p>
+    </div>
   </div>
 
   <form

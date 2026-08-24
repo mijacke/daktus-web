@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
+/** Kód dostáva širší stĺpec — displej MacBooku medzitým narástol. */
+const grid = css({
+  display: 'grid',
+  gridTemplateColumns: '1.35fr 1fr',
+  gap: '22px',
+  height: '100%',
+  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr' },
+})
+
 const codeLine = css({
   display: 'flex',
   gap: '12px',
@@ -69,22 +78,37 @@ const previewNote = css({
   marginTop: '6px',
 })
 
+const buttonWrap = css({ display: 'inline-block' })
+
+/** Naozaj funkčné — dá sa stlačiť, pekne pruží a nič sa nestane. Klasika. */
 const previewButton = css({
   display: 'inline-flex',
   alignItems: 'center',
   height: '34px',
   paddingInline: '18px',
   borderRadius: 'full',
+  border: 'none',
   background: 'accent',
   color: 'dark.bg',
+  fontFamily: 'sans',
   fontSize: '12.5px',
   fontWeight: 700,
   marginTop: '12px',
+  cursor: 'pointer',
+  // klikateľné len v aktívnej scéne — skryté scény nesmú chytať kliky
+  pointerEvents: 'none',
+  '.scene-on &': { pointerEvents: 'auto' },
+  transitionProperty: 'transform, box-shadow',
+  transitionDuration: '0.18s',
+  transitionTimingFunction: 'out',
+  _hover: { boxShadow: 'glow' },
+  _active: { transform: 'scale(0.92)' },
+  _motionReduce: { transition: 'none' },
 })
 </script>
 
 <template>
-  <div :class="sceneGrid">
+  <div :class="grid">
     <ProcessPanel title="Kód">
       <div :class="[codeLine, sceneItem({ delay: 15 })]">
         <span :class="lineNo">1</span><span :class="lineText"><b>const</b> web = <b>await</b> daktus.<b>build</b>({</span>
@@ -101,8 +125,11 @@ const previewButton = css({
       <div :class="[codeLine, sceneItem({ delay: 135 })]">
         <span :class="lineNo">5</span><span :class="lineText">})</span>
       </div>
+      <div :class="[codeLine, sceneItem({ delay: 160 })]">
+        <span :class="lineNo">6</span><span :class="lineText">daktus.<b>ukazPriebeh</b>(web, <i>'každý týždeň'</i>)</span>
+      </div>
       <div :class="[codeLine, sceneItem({ delay: 175 })]">
-        <span :class="lineNo">6</span><span :class="lineText"><b>export default</b> web</span>
+        <span :class="lineNo">7</span><span :class="lineText"><b>export default</b> web</span>
       </div>
     </ProcessPanel>
     <ProcessPanel title="Náhľad">
@@ -114,7 +141,10 @@ const previewButton = css({
         <div :class="previewTitle">Nadpis sekcie</div>
         <div :class="previewNote">Obsah sa skladá presne podľa dizajnu.</div>
       </div>
-      <span :class="[previewButton, sceneItem({ delay: 160 })]">Funkčné tlačidlo</span>
+      <!-- obal nesie scene animáciu (fill forwards drží transform), tlačidlo pruží samo -->
+      <span :class="[buttonWrap, sceneItem({ delay: 160 })]">
+        <button :class="previewButton" type="button">Funkčné tlačidlo</button>
+      </span>
     </ProcessPanel>
   </div>
 </template>

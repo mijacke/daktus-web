@@ -1,13 +1,4 @@
-import { css, cva } from '~~/styled-system/css'
-
-/** Dvojstĺpcová mriežka obsahu scény v demo okne procesu. */
-export const sceneGrid = css({
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '22px',
-  height: '100%',
-  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr' },
-})
+import { cva } from '~~/styled-system/css'
 
 /**
  * Položka scény procesu — objaví sa s odstupom, keď je scéna aktívna

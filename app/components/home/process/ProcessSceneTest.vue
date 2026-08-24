@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
+/**
+ * Testovanie — tá istá stránka na troch viewportoch, pod každým naskočí
+ * fajka a vpravo sa napočíta celkové skóre. Presne to, čo krok sľubuje:
+ * rýchlosť, mobily, formuláre.
+ */
 const props = defineProps<{
   /** Scéna je práve aktívna — spustí napočítanie skóre od nuly. */
   running?: boolean
@@ -34,59 +39,96 @@ watch(() => props.running, (on) => {
 
 onBeforeUnmount(() => cancelAnimationFrame(raf))
 
-const ROWS = [
-  { label: 'Rýchlosť', value: '98/100', width: 'near' as const, delay: 15 },
-  { label: 'Mobilná verzia', value: 'OK', width: 'full' as const, delay: 50 },
-  { label: 'Formuláre a validácie', value: 'OK', width: 'full' as const, delay: 85 },
-  { label: 'SEO základ', value: 'OK', width: 'full' as const, delay: 120 },
+const DEVICES = [
+  { kind: 'desktop', label: 'desktop', frameDelay: 15, okDelay: 70 },
+  { kind: 'tablet', label: 'tablet', frameDelay: 25, okDelay: 90 },
+  { kind: 'mobil', label: 'mobil', frameDelay: 35, okDelay: 110 },
 ] as const
 
-const row = css({
-  display: 'flex',
-  justifyContent: 'space-between',
+const root = css({
+  height: '100%',
+  display: 'grid',
+  gridTemplateColumns: '1fr auto',
+  gap: 'clamp(20px, 3vw, 48px)',
   alignItems: 'center',
-  paddingBlock: '11px',
-  borderBottom: '1px solid',
-  borderColor: 'dark.fg/7',
-  fontSize: '14px',
-  color: 'dark.fg',
-  '&:last-child': { borderBottom: 'none' },
+  '@media (max-width: 1000px)': { gridTemplateColumns: '1fr', justifyItems: 'center', gap: '26px' },
 })
 
-const bar = css({
-  flex: 1,
-  height: '4px',
-  borderRadius: 'full',
-  background: 'dark.fg/10',
-  marginInline: '16px',
-  overflow: 'hidden',
+const devices = css({
+  display: 'flex',
+  alignItems: 'flex-end',
+  justifyContent: 'center',
+  gap: 'clamp(14px, 2.2vw, 30px)',
+  flexWrap: 'wrap',
 })
 
-const barFill = cva({
+const device = css({ textAlign: 'center' })
+
+/** Tri rámy, jedna stránka — rovnaký obsah v troch pomeroch. */
+const frame = cva({
   base: {
-    display: 'block',
-    height: '100%',
-    borderRadius: 'full',
-    background: 'accent',
+    border: '1.5px solid',
+    borderColor: 'dark.fg/25',
+    borderRadius: '9px',
+    background: 'paper',
+    padding: '9px',
+    marginInline: 'auto',
   },
   variants: {
-    width: {
-      near: { width: '98%' },
-      full: { width: '100%' },
+    kind: {
+      desktop: { width: 'clamp(150px, 16vw, 214px)' },
+      tablet: { width: 'clamp(96px, 10vw, 130px)', borderRadius: '11px' },
+      mobil: { width: 'clamp(54px, 6vw, 74px)', borderRadius: '13px' },
     },
   },
 })
 
-const rowValue = css({
+const miniLine = css({
+  width: '70%',
+  height: '6px',
+  borderRadius: '3px',
+  background: 'ink/50',
+})
+
+const miniImg = cva({
+  base: {
+    borderRadius: '5px',
+    marginTop: '7px',
+    background: 'linear-gradient(140deg, color-mix(in srgb, token(colors.accent) 45%, transparent), color-mix(in srgb, token(colors.accent) 15%, transparent))',
+  },
+  variants: {
+    kind: {
+      desktop: { height: 'clamp(58px, 6vw, 84px)' },
+      tablet: { height: 'clamp(74px, 8vw, 104px)' },
+      mobil: { height: 'clamp(88px, 9vw, 118px)' },
+    },
+  },
+})
+
+const ok = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '6px',
+  marginTop: '10px',
+  fontSize: '12.5px',
+  fontWeight: 600,
   color: 'accent',
-  fontWeight: 700,
+})
+
+const okIcon = css({
+  width: '17px',
+  height: '17px',
+  borderRadius: 'full',
+  background: 'accent/18',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
 })
 
 const scorePanel = css({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
   gap: '12px',
 })
 
@@ -115,15 +157,19 @@ const scoreCaption = css({
 </script>
 
 <template>
-  <div :class="sceneGrid">
-    <ProcessPanel title="Kontroly">
-      <div v-for="item in ROWS" :key="item.label" :class="[row, sceneItem({ delay: item.delay })]">
-        <span>{{ item.label }}</span>
-        <span :class="bar"><i :class="barFill({ width: item.width })" /></span>
-        <span :class="rowValue">{{ item.value }}</span>
+  <div :class="root">
+    <div :class="devices">
+      <div v-for="item in DEVICES" :key="item.kind" :class="device">
+        <div :class="[frame({ kind: item.kind }), sceneItem({ delay: item.frameDelay })]">
+          <div :class="miniLine" />
+          <div :class="miniImg({ kind: item.kind })" />
+        </div>
+        <span :class="[ok, sceneItem({ delay: item.okDelay })]">
+          <span :class="okIcon"><IconCheck :size="9" /></span>{{ item.label }}
+        </span>
       </div>
-    </ProcessPanel>
-    <ProcessPanel :class="scorePanel">
+    </div>
+    <div :class="scorePanel">
       <svg width="150" height="150" viewBox="0 0 120 120" aria-hidden="true">
         <circle :class="scoreTrack" cx="60" cy="60" r="50" fill="none" stroke-width="7" />
         <circle
@@ -140,6 +186,6 @@ const scoreCaption = css({
         <text :class="scoreText" x="60" y="66" text-anchor="middle" font-size="26">{{ score }}</text>
       </svg>
       <div :class="scoreCaption">Celkové skóre</div>
-    </ProcessPanel>
+    </div>
   </div>
 </template>
