@@ -65,13 +65,6 @@ export const colors = defineTokens.colors({
     green: { value: '#28C840' },
   },
   mockup: {
-    peach: { value: '#E5C8BA' },
-    peach2: { value: '#D9B4A4' },
-    cream: { value: '#EFE3DA' },
-    cream2: { value: '#E2CFC2' },
-    clay: { value: '#D9C4B8' },
-    clay2: { value: '#CBB0A2' },
-    slate: { value: '#3D4548' },
     codeString: { value: '#C9BFA9' },
   },
 })

@@ -3,6 +3,14 @@ useSeoMeta({
   title: 'Projekty — Daktus',
   description: 'Vybraná práca štúdia Daktus. Radšej menej projektov do hĺbky než stena náhľadov — každý staviame, ako keby bol náš vlastný.',
 })
+
+const listEl = ref<HTMLElement | null>(null)
+const { active, select, clear } = useCardFocus(listEl)
+
+const stateFor = (index: number) => (active.value === index ? 'active' : 'idle')
+
+/** Pokoj = MacBook, rozbalený projekt = iMac. Mobilná verzia sa tu nepoužíva. */
+const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
 </script>
 
 <template>
@@ -13,16 +21,23 @@ useSeoMeta({
       note="Radšej menej projektov do hĺbky než stena náhľadov. Každý staviame, ako keby bol náš vlastný."
     />
 
-    <div>
+    <div ref="listEl">
       <ProjectFeature
         name="Pauli Fotografka"
         tagline="Rodinná a lifestyle fotografka, Galanta"
         brief="Portfólio, ktoré pôsobí rovnako jemne ako jej fotografie, a rezervácie fotenia bez dlhého písania správ."
         solution="Elegantný web s galériami podľa kategórií a jednoduchou rezerváciou termínu. Klientky si vyberú fotenie za pár minút."
         tone="blush"
+        :state="stateFor(0)"
         :chips="[{ label: 'Webstránka' }, { label: 'Galérie a rezervácie' }, { label: 'Naživo', accent: true }]"
+        @select="select(0)"
       >
-        <MockupPauli />
+        <LivePreview
+          src="https://www.paulifotografka.sk/"
+          domain="paulifotografka.sk"
+          :device="deviceFor(0)"
+          @close="clear"
+        />
       </ProjectFeature>
 
       <ProjectFeature
@@ -32,9 +47,17 @@ useSeoMeta({
         solution="Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Nový web štartuje v týchto dňoch."
         tone="navy"
         flip
+        :state="stateFor(1)"
         :chips="[{ label: 'Webstránka' }, { label: 'Firemná prezentácia' }, { label: 'Pred spustením', accent: true }]"
+        @select="select(1)"
       >
-        <MockupAditrade />
+        <LivePreview
+          src="/nahlad/aditrade/"
+          domain="aditrade.sk"
+          :device="deviceFor(1)"
+          dark
+          @close="clear"
+        />
       </ProjectFeature>
 
       <ProjectFeature
@@ -43,9 +66,16 @@ useSeoMeta({
         brief="Vizitka štúdia, ktorá nepredáva cudzie logá, ale remeslo samotné."
         solution="Web, ktorý sa návštevníkovi postaví pred očami. Presne tak, ako staviame projekty klientom."
         tone="paper"
+        :state="stateFor(2)"
         :chips="[{ label: 'Webstránka' }, { label: 'Vlastný projekt', accent: true }]"
+        @select="select(2)"
       >
-        <MockupDaktus />
+        <LivePreview
+          src="/"
+          domain="daktus.sk"
+          :device="deviceFor(2)"
+          @close="clear"
+        />
       </ProjectFeature>
     </div>
 

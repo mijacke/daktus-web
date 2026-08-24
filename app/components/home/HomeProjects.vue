@@ -1,29 +1,15 @@
 <script setup lang="ts">
 import { cva } from '~~/styled-system/css'
 
-const active = ref<number | null>(null)
 const gridEl = ref<HTMLElement | null>(null)
+const { active, select, clear } = useCardFocus(gridEl)
 
 const stateFor = (index: number) =>
   active.value === null ? 'idle' : active.value === index ? 'active' : 'dimmed'
 
-const select = (index: number) => {
-  active.value = active.value === index ? null : index
-}
-
 /** Pokoj = Mac okno, rozbalená karta = iMac, odsunutá karta = iPhone s mobilnou verziou. */
 const deviceFor = (index: number) =>
   active.value === null ? 'mac' : active.value === index ? 'imac' : 'iphone'
-
-const onDocClick = (event: MouseEvent) => {
-  if (active.value === null) return
-  // composedPath namiesto contains(target): pri reálnom kliku Vue stihne
-  // prerenderovať uprostred bublania a target (štít karty) je už odpojený z DOM
-  if (gridEl.value && !event.composedPath().includes(gridEl.value)) active.value = null
-}
-
-onMounted(() => document.addEventListener('click', onDocClick))
-onBeforeUnmount(() => document.removeEventListener('click', onDocClick))
 
 // Výber karty animuje priamo fr stĺpce gridu — aktívna výrazne narastie,
 // druhá klesne na polovicu svojej šírky a uhne nabok.
@@ -70,7 +56,7 @@ const grid = cva({
             domain="paulifotografka.sk"
             phone-bar="blush"
             :device="deviceFor(0)"
-            @close="active = null"
+            @close="clear"
           />
         </ProjectCard>
         <ProjectCard
@@ -86,7 +72,7 @@ const grid = cva({
             mobile-src="/nahlad/aditrade/mobil.html"
             :device="deviceFor(1)"
             dark
-            @close="active = null"
+            @close="clear"
           />
         </ProjectCard>
       </div>
