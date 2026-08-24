@@ -13,16 +13,22 @@ const SOCIALS = [
   { label: 'GitHub', href: 'https://github.com/mijacke' },
 ]
 
+/** Tmavý panel v jazyku tmavých pásov — protiváha svetlej karty formulára. */
 const aside = css({
   display: 'flex',
   flexDirection: 'column',
+  background: 'dark.bg',
+  color: 'dark.fg',
+  borderRadius: '20px',
+  padding: 'clamp(24px, 2.6vw, 40px)',
 })
 
 const box = css({
   borderTop: '1px solid',
-  borderColor: 'hairline',
+  borderColor: 'dark.hairline',
   paddingBlock: '26px',
-  '&:last-child': { borderBottom: '1px solid {colors.hairline}' },
+  '&:first-child': { borderTop: 'none', paddingTop: '6px' },
+  '&:last-child': { paddingBottom: '6px' },
 })
 
 const label = css({
@@ -30,7 +36,7 @@ const label = css({
   fontWeight: 600,
   letterSpacing: '0.16em',
   textTransform: 'uppercase',
-  color: 'dim',
+  color: 'dark.dim',
 })
 
 const mailRow = css({
@@ -46,7 +52,7 @@ const mail = css({
   fontWeight: 700,
   fontSize: 'clamp(24px, 2vw, 32px)',
   letterSpacing: '-0.01em',
-  color: 'accent.deep',
+  color: 'accent',
   borderBottom: '2px solid',
   borderColor: 'accent/50',
   paddingBottom: '6px',
@@ -63,13 +69,14 @@ const stepNo = css({
   fontFamily: 'display',
   fontWeight: 800,
   fontSize: '13px',
-  color: 'accent.deep',
+  color: 'accent',
   marginTop: '3px',
 })
 
 const stepText = css({
   fontSize: '15px',
   margin: 0,
+  color: 'dark.fg/88',
 })
 
 const socials = css({
@@ -86,7 +93,8 @@ const socialChip = css({
   paddingInline: '22px',
   borderRadius: 'full',
   border: '1px solid',
-  borderColor: 'hairline',
+  borderColor: 'dark.fg/18',
+  color: 'dark.fg',
   fontSize: '14px',
   fontWeight: 500,
   transitionProperty: 'border-color, background',
@@ -100,7 +108,7 @@ const socialChip = css({
     <div :class="box">
       <div :class="label">Radšej priamo e‑mailom?</div>
       <div :class="mailRow">
-        <ClayGlyph name="obalka" :size="40" />
+        <ClayGlyph name="obalka" :size="40" on-dark />
         <a :class="mail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
       </div>
     </div>

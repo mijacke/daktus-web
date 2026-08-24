@@ -192,11 +192,11 @@ const honeypot = css({ display: 'none' })
     <div :class="fieldGrid">
       <div>
         <label :class="fieldLabel" for="kontakt-meno">Meno a priezvisko</label>
-        <input id="kontakt-meno" v-model="form.name" :class="input" type="text" name="meno" placeholder="Jana Nováková" autocomplete="name">
+        <input id="kontakt-meno" v-model="form.name" :class="input" type="text" name="meno" placeholder="Martin Kováč" autocomplete="name">
       </div>
       <div>
         <label :class="fieldLabel" for="kontakt-email">E‑mail</label>
-        <input id="kontakt-email" v-model="form.email" :class="input" type="email" name="email" placeholder="jana@firma.sk" autocomplete="email" required>
+        <input id="kontakt-email" v-model="form.email" :class="input" type="email" name="email" placeholder="martin@vasafirma.sk" autocomplete="email" required>
       </div>
     </div>
 
@@ -214,7 +214,7 @@ const honeypot = css({ display: 'none' })
         v-model="form.message"
         :class="textarea"
         name="sprava"
-        placeholder="Ahojte, chystáme rezervačný systém pre naše štúdio a potrebujeme…"
+        placeholder="Ahojte, potrebujeme CRM, ktoré prepojí objednávky, faktúry a sklad. Dnes to držíme v tabuľkách…"
         required
       />
     </div>
