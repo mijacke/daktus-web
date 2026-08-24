@@ -45,10 +45,10 @@ const stage = css({
   top: 'clamp(150px, 19vh, 245px)',
   zIndex: 1,
   width: 'clamp(285px, 23vw, 400px)',
-  // objaví sa až po dostavaní hera (sekvencia v HomeHero končí ~1,85 s)
+  // nastúpi presne s koncom build sekvencie hera (trieda done ~1,85 s po mount)
   opacity: 0,
   transform: 'translateY(20px)',
-  transition: 'opacity 0.9s ease 1.7s, transform 1s {easings.out} 1.7s',
+  transition: 'opacity 0.7s ease, transform 0.85s {easings.out}',
   '.done &': { opacity: 1, transform: 'none' },
   _motionReduce: { opacity: 1, transform: 'none', transition: 'none' },
   '@media (max-width: 1180px)': { display: 'none' },

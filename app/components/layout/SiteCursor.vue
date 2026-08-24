@@ -48,11 +48,12 @@ onMounted(() => {
   const evalTarget = (target: Element | null) => {
     const view = target?.closest('[data-cursor="view"]')
     isView.value = !!view
-    // nad veľkými nadpismi narastie guľa na maximum a invertuje ich farby
-    isMega.value = !view && !!target?.closest('[data-cursor="mega"]')
     // svetlé kryty si vyžiadajú pevnú čiernu guľu — difference by tam pôsobil sivo
     isSolid.value = !!view && view.hasAttribute('data-cursor-solid')
-    isLink.value = !view && !isMega.value && !!target?.closest('a, button')
+    // odkazy majú prednosť — v mega zóne ostávajú klikateľné s malou guľkou
+    isLink.value = !view && !!target?.closest('a, button')
+    // nad veľkými nadpismi narastie guľa na maximum a invertuje ich farby
+    isMega.value = !view && !isLink.value && !!target?.closest('[data-cursor="mega"]')
     // rozbalený náhľad je na pozeranie, nie na klikanie — guľka ustúpi natívnemu kurzoru
     isHidden.value = !!target?.closest('[data-cursor="none"]')
   }

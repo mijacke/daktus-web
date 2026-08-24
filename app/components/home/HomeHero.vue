@@ -105,7 +105,7 @@ const ctas = css({
   <header :class="[hero, { done }]">
     <div :class="gridBg" />
     <HeroClayMark />
-    <div :class="[wrap, content]">
+    <div :class="[wrap, content]" data-cursor="mega">
       <BlueprintFrame :class="headingFrame" tag="nadpis / h1" :built="built.h1">
         <h1 :class="[heading, { in: built.h1 }]" data-cursor="mega">
           <span :class="revealLine"><span :class="revealInner({ delay: 1 })">Weby,</span></span>
