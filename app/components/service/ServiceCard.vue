@@ -3,44 +3,34 @@ import { css, cva } from '~~/styled-system/css'
 
 export type ServiceDeviceName = 'browser' | 'code' | 'desktop' | 'phone'
 
-const props = defineProps<{
+defineProps<{
   /** Mini zariadenie v hlave karty — každá služba má vlastnú siluetu produktu. */
   device: ServiceDeviceName
   title: string
   text: string
 }>()
 
-/** Karta softvéru je tmavý terminál — jediná tmavá dlaždica v rade (bento rytmus). */
-const tone = computed(() => (props.device === 'code' ? 'dark' as const : 'light' as const))
-
-const card = cva({
-  base: {
-    height: '100%',
-    border: '1px solid',
-    borderRadius: '18px',
-    padding: '22px 22px 30px',
-    overflow: 'hidden',
-    transitionProperty: 'transform, box-shadow, border-color',
-    transitionDuration: '0.5s',
-    transitionTimingFunction: 'out',
-    _hover: {
-      transform: 'translateY(-6px)',
-      boxShadow: 'card',
-      borderColor: 'accent/50',
-    },
-  },
-  variants: {
-    tone: {
-      light: { background: 'card', borderColor: 'hairline' },
-      dark: { background: 'dark.panel', borderColor: 'dark.hairline', color: 'dark.fg' },
-    },
+const card = css({
+  height: '100%',
+  background: 'card',
+  border: '1px solid',
+  borderColor: 'hairline',
+  borderRadius: '18px',
+  padding: '22px 22px 30px',
+  overflow: 'hidden',
+  transitionProperty: 'transform, box-shadow, border-color',
+  transitionDuration: '0.5s',
+  transitionTimingFunction: 'out',
+  _hover: {
+    transform: 'translateY(-6px)',
+    boxShadow: 'card',
+    borderColor: 'accent/50',
   },
 })
 
 /**
- * Javisko zariadenia — rovnaká výška, iné kotvenie: stred, full-bleed, polička,
- * stred. Zariadenia stoja zmenšené a hover karty ich pritiahne na plnú veľkosť
- * (terminál nie — ten je celou kartou).
+ * Javisko zariadenia — rovnaká výška, iné kotvenie: stred, okno, polička,
+ * stred. Zariadenia stoja zmenšené a hover karty ich pritiahne na plnú veľkosť.
  */
 const stage = cva({
   base: {
@@ -62,7 +52,14 @@ const stage = cva({
           '[data-svc]:hover & > *': { transform: 'scale(1)' },
         },
       },
-      code: { margin: '-22px -22px 0', alignItems: 'stretch', '& > *': { width: '100%' } },
+      code: {
+        alignItems: 'center',
+        '& > *': { width: '100%', transformOrigin: '50% 50%' },
+        '@media (prefers-reduced-motion: no-preference)': {
+          '& > *': { transform: 'scale(0.92)' },
+          '[data-svc]:hover & > *': { transform: 'scale(1)' },
+        },
+      },
       desktop: {
         justifyContent: 'center',
         alignItems: 'flex-end',
@@ -100,19 +97,15 @@ const heading = css({
   lineHeight: 1.15,
 })
 
-const note = cva({
-  base: { fontSize: '14.5px', margin: '12px 0 0' },
-  variants: {
-    tone: {
-      light: { color: 'dim' },
-      dark: { color: 'dark.dim' },
-    },
-  },
+const note = css({
+  fontSize: '14.5px',
+  margin: '12px 0 0',
+  color: 'dim',
 })
 </script>
 
 <template>
-  <div :class="card({ tone })" data-svc>
+  <div :class="card" data-svc>
     <div :class="stage({ device })">
       <ServiceDeviceBrowser v-if="device === 'browser'" />
       <ServiceDeviceCode v-else-if="device === 'code'" />
@@ -120,6 +113,6 @@ const note = cva({
       <ServiceDevicePhone v-else />
     </div>
     <h3 :class="heading">{{ title }}</h3>
-    <p :class="note({ tone })">{{ text }}</p>
+    <p :class="note">{{ text }}</p>
   </div>
 </template>

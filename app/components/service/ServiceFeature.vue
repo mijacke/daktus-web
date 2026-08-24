@@ -185,13 +185,6 @@ const deviceBox = cva({
       code: {
         width: '340px',
         maxWidth: '88%',
-        flexDirection: 'column',
-        background: 'dark.bg',
-        border: '1px solid',
-        borderColor: 'dark.fg/10',
-        borderRadius: '14px',
-        boxShadow: 'window',
-        paddingBottom: '10px',
         transform: 'scale(1.3)',
         '& > *': { width: '100%' },
         '@media (max-width: 640px)': { transform: 'none' },

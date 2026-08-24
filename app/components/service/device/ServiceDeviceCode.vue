@@ -2,13 +2,19 @@
 import { css } from '~~/styled-system/css'
 
 /**
- * Terminál na celú kartu — služba „Vývoj softvéru". Karta sama je tmavá
- * dlaždica; hover dopíše ďalší riadok behu.
+ * Terminál ako samostatné tmavé okno — služba „Vývoj softvéru". Nesie si
+ * vlastný tmavý podklad, takže stojí na svetlej karte homepage aj v tmavom
+ * páse podstránky; hover dopíše ďalší riadok behu.
  */
 const root = css({
-  padding: '16px 22px 6px',
+  padding: '14px 20px 8px',
   display: 'flex',
   flexDirection: 'column',
+  background: 'dark.bg',
+  border: '1px solid',
+  borderColor: 'dark.fg/10',
+  borderRadius: '13px',
+  boxShadow: 'window',
 })
 
 const head = css({
