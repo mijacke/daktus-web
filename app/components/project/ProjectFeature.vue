@@ -1,18 +1,12 @@
 <script setup lang="ts">
 import { css, cva } from '~~/styled-system/css'
 
-interface FeatureChip {
-  label: string
-  accent?: boolean
-}
-
 const props = withDefaults(defineProps<{
   name: string
   tagline: string
   brief: string
   solution: string
-  tone: 'blush' | 'steel' | 'paper' | 'navy'
-  chips: FeatureChip[]
+  tone: 'blush' | 'sky' | 'mint'
   flip?: boolean
   /** Rozbalený stav — okno sa morfuje z MacBooku na iMac a obal narastie. */
   state?: 'idle' | 'active'
@@ -60,9 +54,8 @@ const cover = cva({
   variants: {
     tone: {
       blush: { background: 'linear-gradient(165deg, token(colors.cover.blush), token(colors.cover.blush2))' },
-      steel: { background: 'linear-gradient(165deg, token(colors.cover.steel), token(colors.cover.steel2))' },
-      paper: { background: 'linear-gradient(165deg, token(colors.cover.paper), token(colors.cover.paper2))' },
-      navy: { background: 'linear-gradient(165deg, token(colors.cover.navy), token(colors.cover.navy2))' },
+      sky: { background: 'linear-gradient(165deg, token(colors.cover.sky), token(colors.cover.sky2))' },
+      mint: { background: 'linear-gradient(165deg, token(colors.cover.mint), token(colors.cover.mint2))' },
     },
     state: {
       idle: {},
@@ -123,14 +116,6 @@ const qaText = css({
   margin: '8px 0 0',
   maxWidth: '56ch',
 })
-
-const chipRow = css({
-  display: 'flex',
-  alignItems: 'center',
-  gap: '10px',
-  flexWrap: 'wrap',
-  marginTop: '26px',
-})
 </script>
 
 <template>
@@ -138,7 +123,7 @@ const chipRow = css({
     <div
       :class="cover({ tone, state, flip })"
       :data-cursor="state === 'active' ? 'none' : 'view'"
-      :data-cursor-solid="tone === 'navy' ? undefined : ''"
+      data-cursor-solid
       @click="state !== 'active' && $emit('select')"
     >
       <div :class="coverInner">
@@ -156,9 +141,6 @@ const chipRow = css({
       <div :class="qa">
         <div :class="qaLabel">Riešenie</div>
         <p :class="qaText">{{ solution }}</p>
-      </div>
-      <div :class="chipRow">
-        <AppChip v-for="chip in chips" :key="chip.label" :accent="chip.accent">{{ chip.label }}</AppChip>
       </div>
     </div>
   </article>

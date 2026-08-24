@@ -27,18 +27,20 @@ export const colors = defineTokens.colors({
     dim: { value: '#8A9092' },
     hairline: { value: 'rgba(237, 237, 234, 0.11)' },
   },
-  // dekoratívne podklady mockupov projektov
+  // dekoratívne kryty projektov
   cover: {
     // béžová presne podľa webu paulifotografka.sk (cream-200 → cream-300)
     blush: { value: '#F5F0E8' },
     blush2: { value: '#EBE3D5' },
-    steel: { value: '#D8E2E8' },
-    steel2: { value: '#C6D4DC' },
     // zosvetlená navy z palety aditrade.sk — tmavé okno návrhu na nej kontrastuje
     navy: { value: '#3D5070' },
     navy2: { value: '#283A52' },
-    paper: { value: '#EDEDE8' },
-    paper2: { value: '#E2E2DB' },
+    // tá istá navy stiahnutá do svetlého tónu krytov
+    sky: { value: '#D5E2F0' },
+    sky2: { value: '#BFD2E8' },
+    // šalviový akcent stiahnutý do svetlého tónu krytov — vlastný projekt
+    mint: { value: '#C8DFDA' },
+    mint2: { value: '#AFCFC9' },
   },
   // rámy zariadení v živých náhľadoch projektov — odtiene adaptované
   // z devices.css (MIT, picturepan2): iMac 24" silver a iPhone silver

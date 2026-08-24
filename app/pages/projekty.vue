@@ -29,7 +29,6 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         solution="Elegantný web s galériami podľa kategórií a jednoduchou rezerváciou termínu. Klientky si vyberú fotenie za pár minút."
         tone="blush"
         :state="stateFor(0)"
-        :chips="[{ label: 'Webstránka' }, { label: 'Galérie a rezervácie' }, { label: 'Naživo', accent: true }]"
         @select="select(0)"
       >
         <LivePreview
@@ -45,10 +44,9 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         tagline="Špecialisti na nadrozmernú prepravu v EÚ"
         brief="Web, ktorý pôsobí dôveryhodne pre veľkých partnerov a jasne vysvetlí služby sprievodov nadrozmerných nákladov."
         solution="Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Nový web štartuje v týchto dňoch."
-        tone="navy"
+        tone="sky"
         flip
         :state="stateFor(1)"
-        :chips="[{ label: 'Webstránka' }, { label: 'Firemná prezentácia' }, { label: 'Pred spustením', accent: true }]"
         @select="select(1)"
       >
         <LivePreview
@@ -65,9 +63,8 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         tagline="Vlastný web štúdia"
         brief="Vizitka štúdia, ktorá nepredáva cudzie logá, ale remeslo samotné."
         solution="Web, ktorý sa návštevníkovi postaví pred očami. Presne tak, ako staviame projekty klientom."
-        tone="paper"
+        tone="mint"
         :state="stateFor(2)"
-        :chips="[{ label: 'Webstránka' }, { label: 'Vlastný projekt', accent: true }]"
         @select="select(2)"
       >
         <LivePreview
