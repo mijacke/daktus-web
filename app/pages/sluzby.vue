@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { css } from '~~/styled-system/css'
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
 
@@ -58,10 +57,6 @@ const MOBIL: Service = {
   firstWeek: 'Wireframe hlavných obrazoviek a odhad, kedy bude appka v obchodoch.',
 }
 
-const noteAccent = css({
-  color: 'accent.deep',
-  fontWeight: 600,
-})
 </script>
 
 <template>
@@ -95,7 +90,7 @@ const noteAccent = css({
       <ServiceExtras />
       <div :class="pageBottom">
         <CtaBand title="Koľko to stojí?" cta-label="Pozrieť cenník" cta-href="/cennik">
-          Orientačné ceny máme zverejnené. Na všetky balíky teraz <span :class="noteAccent">úvodná zľava 25&nbsp;%</span>.
+          Orientačné ceny máme zverejnené a na všetky balíky teraz platí <span :class="clayBadge">úvodná zľava 25&nbsp;%</span>
         </CtaBand>
       </div>
     </div>
