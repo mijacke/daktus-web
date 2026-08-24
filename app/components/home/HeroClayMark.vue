@@ -48,7 +48,7 @@ const stage = css({
   // nastúpi presne s koncom build sekvencie hera (trieda done ~1,85 s po mount)
   opacity: 0,
   transform: 'translateY(20px)',
-  transition: 'opacity 0.7s ease, transform 0.85s {easings.out}',
+  transition: 'opacity 0.7s ease 0.5s, transform 0.85s {easings.out} 0.5s',
   '.done &': { opacity: 1, transform: 'none' },
   _motionReduce: { opacity: 1, transform: 'none', transition: 'none' },
   '@media (max-width: 1180px)': { display: 'none' },

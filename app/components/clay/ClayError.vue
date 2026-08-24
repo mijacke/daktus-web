@@ -117,18 +117,18 @@ const bumps = css({ mixBlendMode: 'soft-light', opacity: 0.55 })
                 </feDiffuseLighting>
               </filter>
               <mask id="c404-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="214" height="178">
-                <rect x="22" y="76" width="58" height="88" rx="29" fill="white" />
-                <path d="M 106 84 a 56 38 0 0 1 0 74" stroke="white" stroke-width="42" stroke-linecap="round" />
+                <rect x="22" y="84" width="58" height="80" rx="27" fill="white" />
+                <path d="M 106 104 a 50 20 0 0 1 0 40" stroke="white" stroke-width="40" stroke-linecap="round" />
               </mask>
             </defs>
-            <ellipse :class="ground" cx="108" cy="168" rx="92" ry="8" />
+            <ellipse :class="ground" cx="106" cy="168" rx="90" ry="8" />
             <g filter="url(#c404-edge)">
-              <!-- driek po dopade — nízky a rozliaty -->
-              <rect x="22" y="76" width="58" height="88" rx="29" fill="url(#c404-body)" />
-              <!-- bruško sploštené na elipsu -->
-              <path d="M 106 84 a 56 38 0 0 1 0 74" stroke="url(#c404-sage)" stroke-width="42" stroke-linecap="round" />
-              <path :class="seam" d="M 146 138 l 20 -10" stroke-width="4" stroke-linecap="round" opacity="0.45" />
-              <path :class="seam" d="M 149 146 l 16 -8" stroke-width="3" stroke-linecap="round" opacity="0.3" />
+              <!-- driek po dopade — nízky a rozliaty, sedí na zemi -->
+              <rect x="22" y="84" width="58" height="80" rx="27" fill="url(#c404-body)" />
+              <!-- bruško sploštené, vonkajšie hrany lícujú s driekom ako pri hero -->
+              <path d="M 106 104 a 50 20 0 0 1 0 40" stroke="url(#c404-sage)" stroke-width="40" stroke-linecap="round" />
+              <path :class="seam" d="M 148 134 l 19 -7" stroke-width="4" stroke-linecap="round" opacity="0.45" />
+              <path :class="seam" d="M 150 141 l 15 -6" stroke-width="3" stroke-linecap="round" opacity="0.3" />
               <g :class="bumps" mask="url(#c404-mask)">
                 <rect x="0" y="0" width="214" height="178" filter="url(#c404-bumps)" />
               </g>
