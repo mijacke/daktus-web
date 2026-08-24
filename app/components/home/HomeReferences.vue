@@ -172,7 +172,7 @@ const projLink = css({
           <article :class="card({ tilt: item.tilt })">
             <span :class="[markOpen, mark({ markDelay: item.markDelay })]" aria-hidden="true">
               <span :class="buzz({ phase: item.markDelay })">
-                <ClayGlyph name="uvodzovky" :size="34" />
+                <ClayGlyph name="uvodzovky" :size="42" />
               </span>
             </span>
             <p :class="quote">{{ item.quote }}</p>
