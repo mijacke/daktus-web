@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { css } from '~~/styled-system/css'
+import { css, cva } from '~~/styled-system/css'
 
 const STEPS = [
   { no: '01', title: 'Analýza', text: 'Ciele, používatelia a obsah. Ujasníme si, čo staviame a prečo.' },
@@ -11,10 +11,13 @@ const STEPS = [
 
 /** Sekciu ovláda scroll: na širokej obrazovke sa javisko prilepí a kroky listuje koliesko. */
 const PIN_QUERY = '(min-width: 1001px) and (prefers-reduced-motion: no-preference)'
+/** Zariadenie podľa obrazovky — najväčšie dostanú iMac, bežné MacBook, mobil iPhone. */
+const IMAC_QUERY = '(min-width: 1680px)'
 
 const active = ref(0)
 const progress = ref(0)
 const pinned = ref(false)
+const device = ref<'mac' | 'imac' | 'iphone'>('mac')
 const sectionEl = ref<HTMLElement | null>(null)
 const stageEl = ref<HTMLElement | null>(null)
 const stageIn = useInView(stageEl)
@@ -34,6 +37,9 @@ function measure() {
 
 function applyMode() {
   pinned.value = media?.matches ?? false
+  device.value = window.matchMedia(IMAC_QUERY).matches
+    ? 'imac'
+    : window.matchMedia('(min-width: 1001px)').matches ? 'mac' : 'iphone'
   measure()
 }
 
@@ -41,14 +47,14 @@ onMounted(() => {
   media = window.matchMedia(PIN_QUERY)
   media.addEventListener('change', applyMode)
   window.addEventListener('scroll', measure, { passive: true })
-  window.addEventListener('resize', measure, { passive: true })
+  window.addEventListener('resize', applyMode, { passive: true })
   applyMode()
 })
 
 onBeforeUnmount(() => {
   media?.removeEventListener('change', applyMode)
   window.removeEventListener('scroll', measure)
-  window.removeEventListener('resize', measure)
+  window.removeEventListener('resize', applyMode)
 })
 
 /** Naplnenie pruhu kroku — pri pine podľa scrollu, inak plný aktívny. */
@@ -173,18 +179,32 @@ const dotFill = css({
   _motionReduce: { transition: 'none' },
 })
 
-/** MacBook na plnú šírku sekcie — rovnaký rám ako živé náhľady projektov. */
-const macWrap = css({
-  width: '100%',
-  marginTop: 'clamp(20px, 3.2vh, 40px)',
+/** Rámy v natívnych proporciách, centrované — nenaťahujú sa na šírku sekcie. */
+const shellWrap = cva({
+  base: { marginTop: 'clamp(20px, 3.2vh, 40px)', marginInline: 'auto' },
+  variants: {
+    device: {
+      mac: { width: 'min(880px, 100%)' },
+      imac: { width: 'min(1060px, 100%)' },
+      iphone: { width: 'min(340px, 92%)' },
+    },
+  },
 })
 
-const demo = css({
-  position: 'relative',
-  background: 'dark.panel',
-  overflow: 'hidden',
-  height: 'clamp(300px, min(31vw, calc(100svh - 420px)), 600px)',
-  '@media (max-width: 1000px)': { height: 'auto', minHeight: '500px' },
+/** Výška displeja drží pomer zariadenia a zmestí sa do viewportu s pinom. */
+const demo = cva({
+  base: {
+    position: 'relative',
+    background: 'dark.panel',
+    overflow: 'hidden',
+  },
+  variants: {
+    device: {
+      mac: { height: 'clamp(300px, min(50vw, calc(100svh - 460px)), 540px)' },
+      imac: { height: 'clamp(300px, min(56vw, calc(100svh - 560px)), 600px)' },
+      iphone: { minHeight: '480px' },
+    },
+  },
 })
 
 const scene = css({
@@ -229,16 +249,16 @@ const scene = css({
             </button>
           </div>
 
-          <div :class="macWrap">
-            <DeviceMac url="vas-projekt.sk" dark>
-              <div :class="demo">
+          <div :class="shellWrap({ device })">
+            <DeviceShell :device="device" url="vas-projekt.sk" dark>
+              <div :class="demo({ device })">
                 <div :class="[scene, { 'scene-on': active === 0 }]"><ProcessSceneBrief /></div>
                 <div :class="[scene, { 'scene-on': active === 1 }]"><ProcessSceneDesign /></div>
                 <div :class="[scene, { 'scene-on': active === 2 }]"><ProcessSceneCode /></div>
                 <div :class="[scene, { 'scene-on': active === 3 }]"><ProcessSceneTest :running="active === 3" /></div>
                 <div :class="[scene, { 'scene-on': active === 4 }]"><ProcessSceneLive /></div>
               </div>
-            </DeviceMac>
+            </DeviceShell>
           </div>
         </div>
       </div>

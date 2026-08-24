@@ -2,7 +2,7 @@ import { cva } from '~~/styled-system/css'
 
 /**
  * Farebná edícia zariadení — jediné miesto s premennými rámov. Číta ich
- * LivePreview (morfujúce zariadenia projektov), DeviceFoot aj DeviceMac,
+ * LivePreview (morfujúce zariadenia projektov), DeviceFoot aj DeviceShell,
  * takže MacBook vyzerá všade rovnako.
  */
 export const deviceTone = cva({
