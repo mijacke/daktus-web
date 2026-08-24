@@ -24,8 +24,9 @@ const PRINCIPLES: { no: string, glyph: ClayGlyphName, title: string, text: strin
     text: 'Ľahké weby, ľahká komunikácia, ľahké rozhodovanie. Zložitosť nechávame v kóde, nie u vás.',
   },
   {
+    // globus namiesto štítu — fajka a štít s fajkou boli na pohľad dvojičky
     no: '03',
-    glyph: 'stit',
+    glyph: 'globus',
     title: 'Dlhodobé partnerstvá',
     text: 'Web ani appka nie sú jednorazovka. Zostávame pri produkte aj po spustení.',
   },

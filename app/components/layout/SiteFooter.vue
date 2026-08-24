@@ -9,6 +9,11 @@ const MENU = [
   { label: 'Kontakt', href: '/kontakt' },
 ]
 
+const SOCIALS = [
+  { label: 'Instagram', href: 'https://www.instagram.com/daktus.sk' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/daktus' },
+]
+
 const footer = css({
   background: 'dark.bg',
   color: 'dark.fg',
@@ -181,6 +186,17 @@ const legal = css({
             <span :class="groupLabel">Kontakt</span>
             <a :class="[groupLink, groupLinkAccent]" href="mailto:ahoj@daktus.sk">ahoj@daktus.sk</a>
             <NuxtLink :class="groupLink" to="/">daktus.sk</NuxtLink>
+          </div>
+          <div :class="group">
+            <span :class="groupLabel">Sledujte nás</span>
+            <a
+              v-for="item in SOCIALS"
+              :key="item.label"
+              :class="groupLink"
+              :href="item.href"
+              target="_blank"
+              rel="noopener"
+            >{{ item.label }}</a>
           </div>
         </div>
       </div>
