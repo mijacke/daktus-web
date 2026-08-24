@@ -3,21 +3,29 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { css, cva } from '~~/styled-system/css'
 
+import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
+
 const SEGMENTS = [
   { text: 'Za Daktusom stojí tím vývojárov a dizajnérov s rokmi praxe z veľkého firemného vývoja.', accent: false },
   { text: 'Dizajn aj kód staviame pod jednou strechou.', accent: true },
 ]
 
-const PRINCIPLES = [
+const PRINCIPLES: { no: string, glyph: ClayGlyphName, title: string, text: string }[] = [
   {
+    no: '01',
+    glyph: 'telefon',
     title: 'Píšete si priamo s nami',
     text: 'Žiadni account manažéri ani odovzdávanie medzi firmami. Od prvej správy po spustenie jeden tím.',
   },
   {
+    no: '02',
+    glyph: 'fajka',
     title: 'Ľahkosť ako princíp',
     text: 'Ľahké weby, ľahká komunikácia, ľahké rozhodovanie. Zložitosť nechávame v kóde, nie u vás.',
   },
   {
+    no: '03',
+    glyph: 'stit',
     title: 'Dlhodobé partnerstvá',
     text: 'Web ani appka nie sú jednorazovka. Zostávame pri produkte aj po spustení.',
   },
@@ -110,11 +118,37 @@ const side = css({
 })
 
 const principle = css({
+  display: 'grid',
+  gridTemplateColumns: 'auto 1fr',
+  columnGap: '16px',
+  alignItems: 'start',
   borderTop: '1px solid',
   borderColor: 'hairline',
   paddingBlock: '22px',
   '&:first-child': { borderTop: 'none', paddingTop: 0 },
   '&:last-child': { borderBottom: '1px solid {colors.hairline}' },
+  // glyf sa na hover riadku jemne zdvihne ako zariadenia na službách
+  '&:hover [data-glyph]': { transform: 'translateY(-3px)' },
+})
+
+const principleGlyph = css({
+  display: 'inline-flex',
+  marginTop: '2px',
+  transition: 'transform 0.4s {easings.out}',
+  _motionReduce: { transition: 'none' },
+})
+
+const principleHead = css({
+  display: 'flex',
+  alignItems: 'baseline',
+  gap: '11px',
+})
+
+const principleNo = css({
+  fontFamily: 'display',
+  fontWeight: 800,
+  fontSize: '13px',
+  color: 'accent.deep',
 })
 
 const principleTitle = css({
@@ -144,8 +178,14 @@ const principleText = css({
         </div>
         <div ref="sideEl" :class="[side, fadeIn(), { in: sideIn }]">
           <div v-for="item in PRINCIPLES" :key="item.title" :class="principle">
-            <div :class="principleTitle">{{ item.title }}</div>
-            <p :class="principleText">{{ item.text }}</p>
+            <span :class="principleGlyph" data-glyph><ClayGlyph :name="item.glyph" :size="32" /></span>
+            <div>
+              <div :class="principleHead">
+                <span :class="principleNo">{{ item.no }}</span>
+                <span :class="principleTitle">{{ item.title }}</span>
+              </div>
+              <p :class="principleText">{{ item.text }}</p>
+            </div>
           </div>
         </div>
       </div>
