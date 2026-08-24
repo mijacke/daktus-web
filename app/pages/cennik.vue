@@ -22,7 +22,7 @@ interface Package {
 
 const PACKAGES: Package[] = [
   {
-    glyph: 'raketa',
+    glyph: 'stranka',
     tag: 'balík / onepage',
     title: 'Jednostránkový web',
     price: '450 €',
@@ -37,7 +37,7 @@ const PACKAGES: Package[] = [
     ctaLabel: 'Chcem onepage',
   },
   {
-    glyph: 'globus',
+    glyph: 'kurzor',
     tag: 'balík / web',
     title: 'Webstránka',
     price: '900 €',
@@ -67,7 +67,7 @@ const PACKAGES: Package[] = [
     ctaLabel: 'Chcem e‑shop',
   },
   {
-    glyph: 'zatvorky',
+    glyph: 'kocka',
     tag: 'balík / softvér',
     title: 'Softvér & appky',
     price: '3 675 €',

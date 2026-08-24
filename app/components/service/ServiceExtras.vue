@@ -11,17 +11,17 @@ interface Extra {
 
 const EXTRAS: Extra[] = [
   {
-    glyph: 'ceruzka',
+    glyph: 'obnova',
     title: 'Redizajn webu',
     text: 'Existujúci web prekreslíme do čistej podoby bez straty obsahu a pozícií vo vyhľadávaní.',
   },
   {
-    glyph: 'stit',
+    glyph: 'koleso',
     title: 'Údržba a správa',
     text: 'Aktualizácie, zálohy a dohľad nad prevádzkou. Web beží a vy sa venujete firme.',
   },
   {
-    glyph: 'lupa',
+    glyph: 'bublina',
     title: 'Konzultácie',
     text: 'Poradíme s výberom riešenia skôr, než sa začne stavať. Ušetrí to peniaze aj nervy.',
   },

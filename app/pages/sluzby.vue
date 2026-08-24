@@ -18,7 +18,7 @@ interface Service {
 }
 
 const WEBY: Service = {
-  glyph: 'globus',
+  glyph: 'okno',
   device: 'browser',
   title: 'Tvorba webstránok',
   description: 'Prezentačné weby, landing pages a e‑shopy stavané na mieru vašej značke. Rýchle, prístupné a pripravené predávať od prvého dňa.',
@@ -28,7 +28,7 @@ const WEBY: Service = {
 }
 
 const SOFTVER: Service = {
-  glyph: 'zatvorky',
+  glyph: 'vrstvy',
   device: 'code',
   title: 'Vývoj softvéru',
   description: 'CRM, rezervačné systémy, interné nástroje a automatizácia presne podľa vašich procesov. Pre firmy, ktorým tabuľky už nestačia.',

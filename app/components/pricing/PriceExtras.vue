@@ -12,19 +12,19 @@ interface Extra {
 
 const EXTRAS: Extra[] = [
   {
-    glyph: 'ceruzka',
+    glyph: 'obnova',
     title: 'Redizajn webu',
     price: 'od 600 €',
     text: 'Existujúci web prekreslíme do čistej podoby bez straty obsahu a pozícií vo vyhľadávaní.',
   },
   {
-    glyph: 'stit',
+    glyph: 'koleso',
     title: 'Údržba a správa',
     price: 'od 39 € mesačne',
     text: 'Aktualizácie, zálohy a dohľad nad prevádzkou. Prvý mesiac je v cene každého balíka.',
   },
   {
-    glyph: 'lupa',
+    glyph: 'bublina',
     title: 'Konzultácie',
     price: 'prvá zadarmo',
     text: 'Poradíme s výberom riešenia skôr, než sa začne stavať. Ušetrí to peniaze aj nervy.',
