@@ -106,6 +106,9 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     clearTimeout(delayTimer)
     tl?.kill()
     tl = null
+    // žiadny zamrznutý stav do ďalšieho otvorenia — mierka aj kurzor načisto
+    if (els.board.value) gsap.set(els.board.value, { scale: 1 })
+    if (els.cursor.value) gsap.set(els.cursor.value, { scale: 1 })
   }
 
   function start() {
