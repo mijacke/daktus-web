@@ -50,23 +50,6 @@ const grid = css({
   '@media (max-width: 640px)': { gridTemplateColumns: '1fr' },
 })
 
-/** Uvádzacie ceny ako clay nálepka — jediný pootočený prvok vo vete. */
-const clayBadge = css({
-  display: 'inline-block',
-  fontFamily: 'display',
-  fontWeight: 800,
-  textTransform: 'uppercase',
-  letterSpacing: '0.02em',
-  fontSize: '13px',
-  color: 'dark.bg',
-  background: 'accent',
-  borderRadius: '9px',
-  padding: '5px 13px',
-  transform: 'rotate(-2.5deg)',
-  boxShadow: '0 4px 12px rgba(16, 19, 21, 0.18)',
-  verticalAlign: 'middle',
-  marginInline: '4px',
-})
 </script>
 
 <template>
