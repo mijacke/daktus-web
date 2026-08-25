@@ -13,16 +13,23 @@ const SOCIALS = [
   { label: 'GitHub', href: 'https://github.com/mijacke' },
 ]
 
+/** Panel z mint hmoty — plastelína priamo v ploche, protiváha karty formulára. */
 const aside = css({
   display: 'flex',
   flexDirection: 'column',
+  background: 'linear-gradient(165deg, token(colors.cover.mint), token(colors.cover.mint2))',
+  border: '1px solid',
+  borderColor: 'ink/7',
+  borderRadius: '20px',
+  padding: 'clamp(24px, 2.6vw, 40px)',
 })
 
 const box = css({
   borderTop: '1px solid',
-  borderColor: 'hairline',
+  borderColor: 'ink/14',
   paddingBlock: '26px',
-  '&:last-child': { borderBottom: '1px solid {colors.hairline}' },
+  '&:first-child': { borderTop: 'none', paddingTop: '6px' },
+  '&:last-child': { paddingBottom: '6px' },
 })
 
 const label = css({
@@ -30,7 +37,7 @@ const label = css({
   fontWeight: 600,
   letterSpacing: '0.16em',
   textTransform: 'uppercase',
-  color: 'dim',
+  color: 'ink/55',
 })
 
 const mailRow = css({
@@ -46,7 +53,7 @@ const mail = css({
   fontWeight: 700,
   fontSize: 'clamp(24px, 2vw, 32px)',
   letterSpacing: '-0.01em',
-  color: 'accent.deep',
+  color: 'ink',
   borderBottom: '2px solid',
   borderColor: 'accent/50',
   paddingBottom: '6px',
@@ -63,7 +70,7 @@ const stepNo = css({
   fontFamily: 'display',
   fontWeight: 800,
   fontSize: '13px',
-  color: 'accent.deep',
+  color: 'ink',
   marginTop: '3px',
 })
 
@@ -86,12 +93,13 @@ const socialChip = css({
   paddingInline: '22px',
   borderRadius: 'full',
   border: '1px solid',
-  borderColor: 'hairline',
+  borderColor: 'ink/20',
+  background: 'white/45',
   fontSize: '14px',
   fontWeight: 500,
   transitionProperty: 'border-color, background',
   transitionDuration: '0.3s',
-  _hover: { borderColor: 'accent' },
+  _hover: { borderColor: 'ink' },
 })
 </script>
 
