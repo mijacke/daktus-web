@@ -77,12 +77,6 @@ const wasPrice = css({
   marginLeft: '7px',
 })
 
-const note = css({
-  fontSize: '13.5px',
-  color: 'ink/60',
-  marginTop: '2px',
-})
-
 const cta = css({
   display: 'inline-flex',
   alignItems: 'center',
@@ -106,7 +100,6 @@ const cta = css({
     </div>
     <div :class="priceCol">
       <div :class="amount"><small>od</small> 1 500 €<span :class="wasPrice">2 000 €</span></div>
-      <div :class="note">Ponuku pošleme do 24 hodín</div>
       <NuxtLink :class="cta" to="/kontakt">
         Chcem automatizáciu
         <IconArrow :size="14" />

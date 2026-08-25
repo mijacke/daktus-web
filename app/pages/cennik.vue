@@ -4,10 +4,10 @@ import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 useSeoMeta({
   title: 'Cenník — Daktus',
-  description: 'Ceny na rovinu. Orientačné sumy hneď, presná ponuka do 48 hodín. Jednostránkový web, webstránky, e‑shopy, softvér na mieru aj AI automatizácia.',
+  description: 'Ceny na rovinu. Orientačné sumy hneď, presná ponuka do 24 hodín. Jednostránkový web, webstránky, e‑shopy, softvér na mieru aj AI automatizácia.',
 })
 
-const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 48 hodín.'
+const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 24 hodín.'
 
 interface Package {
   glyph: ClayGlyphName
@@ -137,7 +137,7 @@ const priceNote = css({
     <PriceHighlight />
 
     <p :class="priceNote">
-      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 48 hodín.
+      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 24 hodín.
     </p>
 
     <PriceExtras />
