@@ -1,7 +1,7 @@
 <script setup lang="ts">
 useSeoMeta({
   title: 'Projekty — Daktus',
-  description: 'Vybraná práca štúdia Daktus. Radšej menej projektov do hĺbky než stena náhľadov — každý staviame, ako keby bol náš vlastný.',
+  description: 'Vybraná práca štúdia Daktus. Menej projektov, viac remesla. Každý staviame do hĺbky, ako keby bol náš vlastný.',
 })
 
 const listEl = ref<HTMLElement | null>(null)
@@ -18,7 +18,7 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
     <PageHead
       eyebrow="Projekty"
       title="Vybraná práca"
-      note="Radšej menej projektov do hĺbky než stena náhľadov. Každý staviame, ako keby bol náš vlastný."
+      note="Menej projektov, viac remesla. Každý staviame do hĺbky, ako keby bol náš vlastný."
     />
 
     <div ref="listEl">

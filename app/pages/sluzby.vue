@@ -4,7 +4,7 @@ import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
 
 useSeoMeta({
   title: 'Služby — Daktus',
-  description: 'Od jednostránkového webu po systém, na ktorom stojí celá firma. Weby, softvér na mieru, desktopové a mobilné aplikácie — dizajn aj vývoj pod jednou strechou.',
+  description: 'Od jednostránkového webu po B2B systém, na ktorom stojí celá firma. Weby, softvér na mieru, desktopové a mobilné aplikácie. Automatizácia a AI, dizajn aj vývoj pod jednou strechou.',
 })
 
 interface Service {
@@ -31,9 +31,9 @@ const SOFTVER: Service = {
   glyph: 'vrstvy',
   device: 'code',
   title: 'Vývoj softvéru',
-  description: 'CRM, rezervačné systémy, interné nástroje a automatizácia presne podľa vašich procesov. Pre firmy, ktorým tabuľky už nestačia.',
+  description: 'B2B riešenia na mieru: CRM, rezervačné systémy, interné nástroje a automatizácia podľa vašich procesov. Kde to dáva zmysel, zapriahneme aj AI.',
   audience: 'Pre tímy, ktoré strácajú hodiny ručným prepisovaním a hľadaním v tabuľkách.',
-  features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
+  features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'AI tam, kde reálne šetrí čas', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
   firstWeek: 'Zmapované procesy a návrh riešenia, ktorému rozumie šéf aj účtovníčka.',
 }
 
@@ -65,7 +65,7 @@ const MOBIL: Service = {
       <PageHead
         eyebrow="Služby"
         title="Čo staviame"
-        note="Od jednostránkového webu po systém, na ktorom stojí celá firma. Dizajn aj vývoj pod jednou strechou."
+        note="Od jednostránkového webu po B2B systém, na ktorom stojí celá firma. Zľahčujeme firmám prácu, aj s pomocou AI."
       />
       <ServiceFeature v-bind="WEBY" flip />
     </div>
