@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
-import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
+import type { FeatureDeviceName } from '~/components/service/ServiceFeature.vue'
 
 useSeoMeta({
   title: 'Služby — Daktus',
@@ -9,7 +9,7 @@ useSeoMeta({
 
 interface Service {
   glyph: ClayGlyphName
-  device: ServiceDeviceName
+  device: FeatureDeviceName
   title: string
   description: string
   audience: string
@@ -35,6 +35,16 @@ const SOFTVER: Service = {
   audience: 'Pre tímy, ktoré strácajú hodiny ručným prepisovaním a hľadaním v tabuľkách.',
   features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'AI tam, kde reálne šetrí čas', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
   firstWeek: 'Zmapované procesy a návrh riešenia, ktorému rozumie šéf aj účtovníčka.',
+}
+
+const AI: Service = {
+  glyph: 'iskra',
+  device: 'chat',
+  title: 'AI a automatizácia',
+  description: 'AI agenti, chatboty a automatizácia rutiny: dopyty, faktúry, dokumenty aj zákaznícka podpora. Prepojené na systémy, ktoré už používate.',
+  audience: 'Pre firmy, kde rutina žerie hodiny a ľudia majú robiť prácu s hodnotou.',
+  features: ['Audit procesov a návrh využitia AI', 'Chatboty a AI agenti na mieru', 'Automatické spracovanie dopytov a faktúr', 'Prepojenie na vaše nástroje a dáta'],
+  firstWeek: 'Zoznam automatizácií zoradený podľa návratnosti a návrh pilotu.',
 }
 
 const DESKTOP: Service = {
@@ -77,12 +87,13 @@ const MOBIL: Service = {
     </ServiceDarkBand>
 
     <div :class="wrap">
-      <ServiceFeature v-bind="DESKTOP" flip />
+      <ServiceFeature v-bind="AI" flip />
+      <ServiceFeature v-bind="DESKTOP" />
     </div>
 
     <ServiceDarkBand>
       <div :class="wrap">
-        <ServiceFeature v-bind="MOBIL" dark />
+        <ServiceFeature v-bind="MOBIL" flip dark />
       </div>
     </ServiceDarkBand>
 
