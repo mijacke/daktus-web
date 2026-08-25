@@ -4,11 +4,13 @@ import { css } from '~~/styled-system/css'
 
 const ITEMS = [
   'Webdizajn',
-  'Vývoj na mieru',
+  'B2B riešenia',
+  'AI automatizácia',
   'E‑shopy',
+  'CRM systémy',
   'Mobilné aplikácie',
   'Desktopové aplikácie',
-  'Softvérové riešenia',
+  'Vývoj na mieru',
 ]
 
 /** Rýchlosť posunu v px/s — pri ~1500 px obsahu zodpovedá tempu prototypu (42 s na cyklus). */
