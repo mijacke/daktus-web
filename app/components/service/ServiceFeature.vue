@@ -3,6 +3,9 @@ import { css, cva } from '~~/styled-system/css'
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
 
+/** Podstránka pozná navyše AI chat okno — homepage karty ostávajú pri štyroch. */
+export type FeatureDeviceName = ServiceDeviceName | 'chat'
+
 /**
  * Veľký blok služby na podstránke — rozvinutá verzia mini kariet z homepage.
  * Zariadenie stojí na vlastnom javisku, obsah vedľa hovorí, pre koho služba
@@ -12,7 +15,7 @@ import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
  */
 withDefaults(defineProps<{
   glyph: ClayGlyphName
-  device: ServiceDeviceName
+  device: FeatureDeviceName
   title: string
   description: string
   audience: string
@@ -199,6 +202,14 @@ const deviceBox = cva({
         transform: 'scale(1.5) translateY(9%)',
         '@media (max-width: 640px)': { transform: 'scale(1.15) translateY(9%)' },
       },
+      chat: {
+        width: '340px',
+        maxWidth: '88%',
+        flexDirection: 'column',
+        transform: 'scale(1.3)',
+        '& > *': { width: '100%' },
+        '@media (max-width: 640px)': { transform: 'none' },
+      },
     },
   },
 })
@@ -240,6 +251,7 @@ const deviceBox = cva({
         <ServiceDeviceBrowser v-if="device === 'browser'" />
         <ServiceDeviceCode v-else-if="device === 'code'" />
         <ServiceDeviceDesktop v-else-if="device === 'desktop'" />
+        <ServiceDeviceChat v-else-if="device === 'chat'" />
         <ServiceDevicePhone v-else />
       </div>
     </div>

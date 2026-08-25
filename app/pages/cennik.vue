@@ -4,10 +4,10 @@ import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 useSeoMeta({
   title: 'Cenník — Daktus',
-  description: 'Ceny na rovinu. Orientačné sumy hneď, presná ponuka do 48 hodín — jednostránkový web, webstránky, e‑shopy aj softvér na mieru.',
+  description: 'Ceny na rovinu. Orientačné sumy hneď, presná ponuka do 24 hodín. Jednostránkový web, webstránky, e‑shopy, softvér na mieru aj AI automatizácia.',
 })
 
-const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 48 hodín.'
+const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 24 hodín.'
 
 interface Package {
   glyph: ClayGlyphName
@@ -40,8 +40,8 @@ const PACKAGES: Package[] = [
     glyph: 'kurzor',
     tag: 'balík / web',
     title: 'Webstránka',
-    price: '900 €',
-    was: '1 200 €',
+    price: '1 350 €',
+    was: '1 800 €',
     note: 'Dodanie 3 až 4 týždne',
     features: [
       'Dizajn na mieru, žiadna šablóna',
@@ -70,11 +70,12 @@ const PACKAGES: Package[] = [
     glyph: 'kocka',
     tag: 'balík / softvér',
     title: 'Softvér & appky',
-    price: '3 675 €',
-    was: '4 900 €',
+    price: '4 400 €',
+    was: '5 900 €',
     note: 'Podľa rozsahu, odhad vopred',
     features: [
-      'CRM systémy, rezervácie a interné nástroje',
+      'Rezervačné systémy a interné nástroje',
+      'Celý CRM systém od 8 600 €',
       'Mobilné a desktopové aplikácie',
       'Klikateľný prototyp pred vývojom',
       'Dlhodobý rozvoj a podpora',
@@ -133,8 +134,10 @@ const priceNote = css({
       />
     </div>
 
+    <PriceHighlight />
+
     <p :class="priceNote">
-      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 48 hodín.
+      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 24 hodín.
     </p>
 
     <PriceExtras />

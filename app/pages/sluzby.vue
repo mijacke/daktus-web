@@ -1,15 +1,15 @@
 <script setup lang="ts">
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
-import type { ServiceDeviceName } from '~/components/service/ServiceCard.vue'
+import type { FeatureDeviceName } from '~/components/service/ServiceFeature.vue'
 
 useSeoMeta({
   title: 'Služby — Daktus',
-  description: 'Od jednostránkového webu po systém, na ktorom stojí celá firma. Weby, softvér na mieru, desktopové a mobilné aplikácie — dizajn aj vývoj pod jednou strechou.',
+  description: 'Od jednostránkového webu po B2B systém, na ktorom stojí celá firma. Weby, softvér na mieru, desktopové a mobilné aplikácie. Automatizácia a AI, dizajn aj vývoj pod jednou strechou.',
 })
 
 interface Service {
   glyph: ClayGlyphName
-  device: ServiceDeviceName
+  device: FeatureDeviceName
   title: string
   description: string
   audience: string
@@ -31,10 +31,20 @@ const SOFTVER: Service = {
   glyph: 'vrstvy',
   device: 'code',
   title: 'Vývoj softvéru',
-  description: 'CRM, rezervačné systémy, interné nástroje a automatizácia presne podľa vašich procesov. Pre firmy, ktorým tabuľky už nestačia.',
+  description: 'B2B riešenia na mieru: CRM, rezervačné systémy, interné nástroje a automatizácia podľa vašich procesov. Kde to dáva zmysel, zapriahneme aj AI.',
   audience: 'Pre tímy, ktoré strácajú hodiny ručným prepisovaním a hľadaním v tabuľkách.',
-  features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
+  features: ['Analýza procesov pred vývojom', 'API a integrácie na vaše nástroje', 'AI tam, kde reálne šetrí čas', 'Bezpečnosť a zálohovanie', 'Zaškolenie tímu v cene'],
   firstWeek: 'Zmapované procesy a návrh riešenia, ktorému rozumie šéf aj účtovníčka.',
+}
+
+const AI: Service = {
+  glyph: 'blesk',
+  device: 'chat',
+  title: 'AI a automatizácia',
+  description: 'AI agenti, chatboty a automatizácia rutiny: dopyty, faktúry, dokumenty aj zákaznícka podpora. Prepojené na systémy, ktoré už používate.',
+  audience: 'Pre firmy, kde rutina žerie hodiny a ľudia majú robiť prácu s hodnotou.',
+  features: ['Audit procesov a návrh využitia AI', 'Chatboty a AI agenti na mieru', 'Automatické spracovanie dopytov a faktúr', 'Prepojenie na vaše nástroje a dáta'],
+  firstWeek: 'Zoznam automatizácií zoradený podľa návratnosti a ponuka do 24 hodín.',
 }
 
 const DESKTOP: Service = {
@@ -65,7 +75,7 @@ const MOBIL: Service = {
       <PageHead
         eyebrow="Služby"
         title="Čo staviame"
-        note="Od jednostránkového webu po systém, na ktorom stojí celá firma. Dizajn aj vývoj pod jednou strechou."
+        note="Od jednostránkového webu po B2B systém, na ktorom stojí celá firma. Zľahčujeme firmám prácu, aj s pomocou AI."
       />
       <ServiceFeature v-bind="WEBY" flip />
     </div>
@@ -77,7 +87,7 @@ const MOBIL: Service = {
     </ServiceDarkBand>
 
     <div :class="wrap">
-      <ServiceFeature v-bind="DESKTOP" flip />
+      <ServiceFeature v-bind="AI" flip />
     </div>
 
     <ServiceDarkBand>
@@ -87,6 +97,7 @@ const MOBIL: Service = {
     </ServiceDarkBand>
 
     <div :class="wrap">
+      <ServiceFeature v-bind="DESKTOP" flip />
       <ServiceExtras />
       <div :class="pageBottom">
         <CtaBand title="Koľko to stojí?" cta-label="Pozrieť cenník" cta-href="/cennik">
