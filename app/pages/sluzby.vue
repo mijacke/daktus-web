@@ -38,13 +38,13 @@ const SOFTVER: Service = {
 }
 
 const AI: Service = {
-  glyph: 'iskra',
+  glyph: 'blesk',
   device: 'chat',
   title: 'AI a automatizácia',
   description: 'AI agenti, chatboty a automatizácia rutiny: dopyty, faktúry, dokumenty aj zákaznícka podpora. Prepojené na systémy, ktoré už používate.',
   audience: 'Pre firmy, kde rutina žerie hodiny a ľudia majú robiť prácu s hodnotou.',
   features: ['Audit procesov a návrh využitia AI', 'Chatboty a AI agenti na mieru', 'Automatické spracovanie dopytov a faktúr', 'Prepojenie na vaše nástroje a dáta'],
-  firstWeek: 'Zoznam automatizácií zoradený podľa návratnosti a návrh pilotu.',
+  firstWeek: 'Zoznam automatizácií zoradený podľa návratnosti a ponuka do 24 hodín.',
 }
 
 const DESKTOP: Service = {
@@ -88,16 +88,16 @@ const MOBIL: Service = {
 
     <div :class="wrap">
       <ServiceFeature v-bind="AI" flip />
-      <ServiceFeature v-bind="DESKTOP" />
     </div>
 
     <ServiceDarkBand>
       <div :class="wrap">
-        <ServiceFeature v-bind="MOBIL" flip dark />
+        <ServiceFeature v-bind="MOBIL" dark />
       </div>
     </ServiceDarkBand>
 
     <div :class="wrap">
+      <ServiceFeature v-bind="DESKTOP" flip />
       <ServiceExtras />
       <div :class="pageBottom">
         <CtaBand title="Koľko to stojí?" cta-label="Pozrieť cenník" cta-href="/cennik">

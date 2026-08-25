@@ -4,7 +4,7 @@ import { css } from '~~/styled-system/css'
 export type ClayGlyphName
   = | 'lupa' | 'ceruzka' | 'zatvorky' | 'stit' | 'raketa'
     | 'globus' | 'monitor' | 'telefon' | 'fajka' | 'uvodzovky' | 'bodka' | 'kosik'
-    | 'okno' | 'vrstvy' | 'koleso' | 'bublina' | 'obnova' | 'stranka' | 'kurzor' | 'kocka' | 'obalka' | 'iskra'
+    | 'okno' | 'vrstvy' | 'koleso' | 'bublina' | 'obnova' | 'stranka' | 'kurzor' | 'kocka' | 'obalka' | 'blesk'
 
 /**
  * Knižnica plastelínových glyfov — rovnaká kuchyňa ako hero logomark:
@@ -175,9 +175,8 @@ const detailFill = css({ fill: 'var(--clay-detail)' })
         <path :class="detailStroke" d="M 10.5 15.5 L 24 26 L 37.5 15.5" stroke-width="4" />
       </template>
 
-      <template v-else-if="name === 'iskra'">
-        <path d="M 24 6 C 26 16 32 22 42 24 C 32 26 26 32 24 42 C 22 32 16 26 6 24 C 16 22 22 16 24 6 Z" :fill="sageUrl" />
-        <circle :class="detailFill" cx="38.5" cy="9.5" r="2.6" />
+      <template v-else-if="name === 'blesk'">
+        <path d="M 27.5 6 L 13 27 H 21.5 L 19.5 42 L 35 20 H 25.5 Z" :fill="sageUrl" />
       </template>
 
       <template v-else>

@@ -3,7 +3,7 @@ import { css } from '~~/styled-system/css'
 
 /**
  * Zvýraznená ponuka v plnej šírke pod tehličkami — hlavný ťah štúdia.
- * Mint hmota podklad, veľký glyf iskry a pilot ako lacný vstup do B2B.
+ * Mint hmota podklad, veľký glyf blesku a dostupný vstup do B2B.
  */
 const root = ref<HTMLElement | null>(null)
 const inView = useInView(root)
@@ -96,19 +96,19 @@ const cta = css({
 
 <template>
   <div ref="root" :class="[band, fadeIn(), { in: inView }]">
-    <span :class="glyphBox"><ClayGlyph name="iskra" :size="76" /></span>
+    <span :class="glyphBox"><ClayGlyph name="blesk" :size="76" /></span>
     <div :class="content">
       <h3 :class="heading">AI a automatizácia</h3>
       <p :class="text">
-        Pilot za pár týždňov: audit procesov, prvý automatizovaný proces a zaškolenie tímu.
+        Audit procesov, prvý automatizovaný proces a zaškolenie tímu do 4 týždňov.
         Najrýchlejšia cesta, ako si B2B riešenie od nás vyskúšať v malom.
       </p>
     </div>
     <div :class="priceCol">
       <div :class="amount"><small>od</small> 1 500 €<span :class="wasPrice">2 000 €</span></div>
-      <div :class="note">Pilot do 4 týždňov</div>
+      <div :class="note">Ponuku pošleme do 24 hodín</div>
       <NuxtLink :class="cta" to="/kontakt">
-        Chcem AI pilot
+        Chcem automatizáciu
         <IconArrow :size="14" />
       </NuxtLink>
     </div>
