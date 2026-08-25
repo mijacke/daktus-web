@@ -6,7 +6,7 @@ withDefaults(defineProps<{
   description: string
   tone: 'blush' | 'navy'
   state?: 'idle' | 'active' | 'dimmed'
-  /** Stavová clay nálepka pri názve (napr. „Vo vývoji"). */
+  /** Stavová clay nálepka pri názve (napr. „Koncept"). */
   badge?: string
 }>(), { state: 'idle', badge: undefined })
 
