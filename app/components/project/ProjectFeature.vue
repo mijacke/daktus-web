@@ -7,10 +7,12 @@ const props = withDefaults(defineProps<{
   brief: string
   solution: string
   tone: 'blush' | 'navy' | 'mint'
+  /** Plastelínová nálepka vedľa názvu, napr. „Koncept" pri nenasadenom návrhu. */
+  badge?: string
   flip?: boolean
   /** Rozbalený stav — okno sa morfuje z MacBooku na iMac a obal narastie. */
   state?: 'idle' | 'active'
-}>(), { flip: false, state: 'idle' })
+}>(), { badge: undefined, flip: false, state: 'idle' })
 
 defineEmits<{ select: [] }>()
 
@@ -132,7 +134,9 @@ const qaText = css({
       <div v-if="state !== 'active'" :class="shield" aria-hidden="true" />
     </div>
     <div>
-      <div :class="heading">{{ name }}</div>
+      <div :class="heading">
+        {{ name }}<span v-if="badge" :class="clayBadge">{{ badge }}</span>
+      </div>
       <div :class="tag">{{ tagline }}</div>
       <div :class="qa">
         <div :class="qaLabel">Zadanie</div>

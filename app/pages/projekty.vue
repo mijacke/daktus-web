@@ -41,9 +41,10 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
 
       <ProjectFeature
         name="Aditrade"
-        tagline="Špecialisti na nadrozmernú prepravu v EÚ"
-        brief="Web, ktorý pôsobí dôveryhodne pre veľkých partnerov a jasne vysvetlí služby sprievodov nadrozmerných nákladov."
-        solution="Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Nový web štartuje v týchto dňoch."
+        badge="Koncept"
+        tagline="Návrh webu pre špecialistov na nadrozmernú prepravu"
+        brief="Ukázať, ako by mohol vyzerať web firmy, ktorá sprevádza nadrozmerné náklady po Európe a potrebuje pôsobiť dôveryhodne aj pre veľkých partnerov."
+        solution="Koncept, ktorý sme pripravili z vlastnej iniciatívy. Prehľadná prezentácia služieb, referencie a rýchly dopytový formulár. Zatiaľ nie je nasadený."
         tone="navy"
         flip
         :state="stateFor(1)"
