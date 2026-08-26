@@ -72,40 +72,9 @@ const shellWrap = cva({
   variants: {
     device: {
       mac: { width: 'min(900px, 100%)' },
-      iphone: { width: 'min(340px, 92%)' },
+      iphone: { width: 'min(340px, 100%)' },
     },
   },
-})
-
-/**
- * Výška displeja podľa devices.css MacBook Pro (2022): displej 600 × 386,
- * pomer 1,554. Pri šírke shellu 900 px (displej 882) je natívna výška
- * obrazovky 568 px vrátane 38 px lišty → demo 530 px; kratšie viewporty
- * to stiahnu cez 100svh klauzulu.
- */
-const demo = cva({
-  base: {
-    position: 'relative',
-    background: 'dark.panel',
-    overflow: 'hidden',
-  },
-  variants: {
-    device: {
-      mac: { height: 'clamp(300px, calc(100svh - 460px), 530px)' },
-      iphone: { minHeight: '480px' },
-    },
-  },
-})
-
-const scene = css({
-  position: 'absolute',
-  inset: 0,
-  opacity: 0,
-  transform: 'scale(0.985)',
-  transition: 'opacity 0.6s ease 0.3s, transform 0.7s {easings.out} 0.3s',
-  pointerEvents: 'none',
-  padding: 'clamp(20px, 2.2vw, 36px)',
-  '&.scene-on': { opacity: 1, transform: 'none' },
 })
 </script>
 
@@ -123,11 +92,9 @@ const scene = css({
           <ProcessStepCard v-bind="step" :open="active === index">
             <div :class="shellWrap({ device })">
               <DeviceShell :device="device" url="vas-projekt.sk" dark>
-                <div :class="demo({ device })">
-                  <div :class="[scene, { 'scene-on': active === index }]">
-                    <component :is="SCENES[index]" :running="index > 0 ? active === index : undefined" />
-                  </div>
-                </div>
+                <ProcessSceneStage :device="device" :on="active === index">
+                  <component :is="SCENES[index]" :running="index > 0 ? active === index : undefined" />
+                </ProcessSceneStage>
               </DeviceShell>
             </div>
           </ProcessStepCard>

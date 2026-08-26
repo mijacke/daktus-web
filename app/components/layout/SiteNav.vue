@@ -20,6 +20,8 @@ function update() {
     const rect = el.getBoundingClientRect()
     return rect.top < 56 && rect.bottom > 22
   })
+  // Safari na iOS tónuje svoje lišty farbou body — nech idú s hlavičkou.
+  document.body.toggleAttribute('data-chrome-dark', overDark.value)
 }
 
 function collect() {

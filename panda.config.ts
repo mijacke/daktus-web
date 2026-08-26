@@ -94,10 +94,19 @@ export default defineConfig({
     },
   },
   globalCss: {
+    /** Vlastné pozadie html nechá pozadie body na body — inak by sa propagovalo
+     * na plátno a Safari by ho pri tónovaní líšt nečítalo ako farbu stránky. */
     html: {
+      bg: 'paper',
       scrollbarWidth: 'thin',
       scrollbarColor: 'color-mix(in srgb, token(colors.ink) 35%, transparent) token(colors.paper)',
     },
+    /**
+     * Pozadie body nekreslí stránku (tú kreslí jej vlastný povrch v app.vue),
+     * ale je to jediná farba, podľa ktorej si Safari na iOS tónuje svoje lišty
+     * — bez tmavého variantu svietil pod tmavou pätou biely pruh. Prepína ho
+     * SiteNav podľa toho, nad akou sekciou stojíme.
+     */
     body: {
       bg: 'paper',
       color: 'ink',
@@ -105,6 +114,8 @@ export default defineConfig({
       lineHeight: 1.6,
       WebkitFontSmoothing: 'antialiased',
       overflowX: 'hidden',
+      transition: 'background-color 0.4s ease',
+      '&[data-chrome-dark]': { bg: 'dark.bg' },
     },
     a: { color: 'inherit', textDecoration: 'none' },
     button: { fontFamily: 'sans' },
