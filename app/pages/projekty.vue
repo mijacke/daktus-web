@@ -5,11 +5,15 @@ useSeoMeta({
 })
 
 const listEl = ref<HTMLElement | null>(null)
-const { active, select, clear } = useCardFocus(listEl)
+// rozbaľovanie až od dvoch stĺpcov — pod 900px je riadok jednostĺpcový (ProjectFeature)
+const { active, select, clear, enabled } = useCardFocus(listEl, '(min-width: 901px)')
 
 const stateFor = (index: number) => (active.value === index ? 'active' : 'idle')
 
-/** Pokoj = MacBook, rozbalený projekt = iMac. Mobilná verzia sa tu nepoužíva. */
+/**
+ * Pokoj = MacBook, rozbalený projekt = iMac. Na mobile sa karta nerozbaľuje,
+ * takže tam ostáva vždy MacBook.
+ */
 const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
 </script>
 
@@ -29,6 +33,7 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         solution="Elegantný web s galériami podľa kategórií a jednoduchou rezerváciou termínu. Klientky si vyberú fotenie za pár minút."
         tone="blush"
         :state="stateFor(0)"
+        :selectable="enabled"
         @select="select(0)"
       >
         <LivePreview
@@ -48,6 +53,7 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         tone="navy"
         flip
         :state="stateFor(1)"
+        :selectable="enabled"
         @select="select(1)"
       >
         <LivePreview
@@ -66,6 +72,7 @@ const deviceFor = (index: number) => (active.value === index ? 'imac' : 'mac')
         solution="Web, ktorý sa návštevníkovi postaví pred očami. Presne tak, ako staviame projekty klientom."
         tone="mint"
         :state="stateFor(2)"
+        :selectable="enabled"
         @select="select(2)"
       >
         <LivePreview

@@ -12,7 +12,9 @@ const props = withDefaults(defineProps<{
   flip?: boolean
   /** Rozbalený stav — okno sa morfuje z MacBooku na iMac a obal narastie. */
   state?: 'idle' | 'active'
-}>(), { badge: undefined, flip: false, state: 'idle' })
+  /** false = karta sa nedá rozkliknúť (mobil), tak ani neponúka kurzor „view". */
+  selectable?: boolean
+}>(), { badge: undefined, flip: false, state: 'idle', selectable: true })
 
 defineEmits<{ select: [] }>()
 
@@ -43,15 +45,22 @@ const block = cva({
   },
 })
 
+/**
+ * Obal je size container a jeho tvar udáva pomer strán, nie pevná výška — výška
+ * tak sleduje šírku stĺpca a zariadenie vnútri (LivePreview si z výšky obalu
+ * počíta svoje rozmery) si drží proporcie pri každej šírke aj počas rozbalenia.
+ * Pomery sú zvolené tak, aby zariadenie zabralo ~85 % šírky obalu.
+ */
 const cover = cva({
   base: {
     position: 'relative',
-    height: 'clamp(300px, 26vw, 440px)',
+    containerType: 'size',
+    aspectRatio: '3 / 2',
     borderRadius: '18px',
     overflow: 'hidden',
     border: '1px solid',
     borderColor: 'ink/7',
-    transition: 'height 0.7s {easings.out}',
+    transition: 'aspect-ratio 0.7s {easings.out}',
   },
   variants: {
     tone: {
@@ -61,8 +70,8 @@ const cover = cva({
     },
     state: {
       idle: {},
-      // výška ide ruka v ruke so širším stĺpcom — iMac tak drží pomer 16:9
-      active: { height: 'clamp(420px, 44vw, 660px)' },
+      // iMac je vyšší než MacBook, tak sa obal pri rozbalení mierne postaví
+      active: { aspectRatio: '14 / 9' },
     },
     flip: {
       true: {
@@ -124,9 +133,9 @@ const qaText = css({
   <article :class="[block({ focus }), 'group']">
     <div
       :class="cover({ tone, state, flip })"
-      :data-cursor="state === 'active' ? 'none' : 'view'"
+      :data-cursor="!selectable ? undefined : state === 'active' ? 'none' : 'view'"
       :data-cursor-solid="tone === 'navy' ? undefined : ''"
-      @click="state !== 'active' && $emit('select')"
+      @click="selectable && state !== 'active' && $emit('select')"
     >
       <div :class="coverInner">
         <slot />
