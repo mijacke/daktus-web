@@ -96,8 +96,12 @@ const input = css({
 
 const textarea = css({
   width: '100%',
-  minHeight: '92px',
-  paddingTop: '16px',
+  /**
+   * Výšku dáva atribút rows, teda celé riadky textu. Pevná min-height nesedela
+   * na násobok riadku a spodná linka poľa rezala posledný riadok v polovici —
+   * na mobile, kde sa placeholder láme do štyroch riadkov, to bolo vidieť najviac.
+   */
+  paddingBlock: '16px 14px',
   background: 'transparent',
   border: 'none',
   borderBottom: '1px solid',
@@ -226,6 +230,7 @@ const honeypot = css({ display: 'none' })
         v-model="form.message"
         :class="textarea"
         name="sprava"
+        rows="4"
         placeholder="Ahojte, potrebujeme CRM, ktoré prepojí objednávky, faktúry a sklad. Dnes to držíme v tabuľkách…"
         required
       />

@@ -8,7 +8,9 @@ withDefaults(defineProps<{
   state?: 'idle' | 'active' | 'dimmed'
   /** Stavová clay nálepka pri názve (napr. „Koncept"). */
   badge?: string
-}>(), { state: 'idle', badge: undefined })
+  /** false = karta sa nedá rozkliknúť (mobil), tak ani neponúka kurzor „view". */
+  selectable?: boolean
+}>(), { state: 'idle', badge: undefined, selectable: true })
 
 defineEmits<{ select: [] }>()
 
@@ -32,14 +34,21 @@ const card = css({
   minWidth: 0,
 })
 
+/**
+ * Obal je size container a jeho tvar udáva pomer strán, nie pevná výška — výška
+ * tak sleduje šírku stĺpca a zariadenie vnútri (LivePreview si z výšky obalu
+ * počíta svoje rozmery) si drží proporcie v každom stave aj pri každej šírke.
+ * Každý stav má tvar zariadenia, ktoré drží: MacBook, iMac, iPhone na výšku.
+ */
 const cover = cva({
   base: {
-    height: 'clamp(280px, 26vw, 420px)',
+    containerType: 'size',
+    aspectRatio: '3 / 2',
     borderRadius: '18px',
     overflow: 'hidden',
     border: '1px solid',
     borderColor: 'ink/7',
-    transition: 'height 0.7s {easings.out}',
+    transition: 'aspect-ratio 0.7s {easings.out}',
   },
   variants: {
     tone: {
@@ -48,8 +57,8 @@ const cover = cva({
     },
     state: {
       idle: {},
-      active: { height: 'clamp(380px, 40vw, 660px)' },
-      dimmed: {},
+      active: { aspectRatio: '14 / 9' },
+      dimmed: { aspectRatio: '5 / 6' },
     },
   },
 })
@@ -102,9 +111,9 @@ const metaNote = css({
       tag="projekt"
       :built="built"
       :content-class="coverFill"
-      :data-cursor="state === 'active' ? 'none' : 'view'"
+      :data-cursor="!selectable ? undefined : state === 'active' ? 'none' : 'view'"
       :data-cursor-solid="tone === 'navy' ? undefined : ''"
-      @click="state !== 'active' && $emit('select')"
+      @click="selectable && state !== 'active' && $emit('select')"
     >
       <div :class="coverScale">
         <slot />

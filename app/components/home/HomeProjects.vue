@@ -2,12 +2,16 @@
 import { cva } from '~~/styled-system/css'
 
 const gridEl = ref<HTMLElement | null>(null)
-const { active, select, clear } = useCardFocus(gridEl)
+// rozbaľovanie až od dvoch stĺpcov — pod 860px je grid jednostĺpcový
+const { active, select, clear, enabled } = useCardFocus(gridEl, '(min-width: 861px)')
 
 const stateFor = (index: number) =>
   active.value === null ? 'idle' : active.value === index ? 'active' : 'dimmed'
 
-/** Pokoj = Mac okno, rozbalená karta = iMac, odsunutá karta = iPhone s mobilnou verziou. */
+/**
+ * Pokoj = Mac okno, rozbalená karta = iMac, odsunutá karta = iPhone s mobilnou
+ * verziou. Na mobile sa karta nerozbaľuje, takže tam ostáva vždy MacBook.
+ */
 const deviceFor = (index: number) =>
   active.value === null ? 'mac' : active.value === index ? 'imac' : 'iphone'
 
@@ -49,6 +53,7 @@ const grid = cva({
           description="Portfólio a rezervácie pre rodinnú fotografku"
           tone="blush"
           :state="stateFor(0)"
+          :selectable="enabled"
           @select="select(0)"
         >
           <LivePreview
@@ -65,6 +70,7 @@ const grid = cva({
           tone="navy"
           badge="Koncept"
           :state="stateFor(1)"
+          :selectable="enabled"
           @select="select(1)"
         >
           <LivePreview

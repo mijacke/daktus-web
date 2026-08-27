@@ -56,6 +56,18 @@ const frameStyle = computed(() => {
  * Plášť náhľadu — rozmery a morfovanie medzi zariadeniami. Farebné premenné
  * edície dodáva zdieľaný deviceTone (utils/device.ts) — rám, brada, prstenec
  * telefónu aj stojan ich len čítajú cez var().
+ *
+ * Rozmery majú jediný zdroj — výšku obalu (`cqh`, obal je size container).
+ * Výšku určí percento z obalu, šírka sa z nej dopočíta cez skutočný pomer
+ * displeja. Kým šírka prichádzala zo stĺpca gridu a výška z obalu, pomer
+ * displeja vyšiel náhodne (namerané 1.69 až 2.32 namiesto 1.6 MacBooku)
+ * a web v ňom bol orezaný na úzky pás.
+ *
+ * V `calc` figuruje rám zariadenia, ktorý na displej nepatrí:
+ *   mac    — 40px na výšku (podstavec 14 + padding 8/16 + rám 2), 18px na šírku
+ *   imac   — 122px na výšku (stojan 52 + padding 12/56 + rám 2), 26px na šírku
+ *   iphone — 20px na výšku aj šírku (padding 9/9 + rám 2)
+ * Pomery displejov: MacBook 16:10, iMac 24" 16:9, iPhone 9:19.5.
  */
 const shell = cva({
   base: {
@@ -70,9 +82,21 @@ const shell = cva({
   },
   variants: {
     device: {
-      mac: { bottom: '3%', height: '86%', width: 'min(560px, 84%)' },
-      imac: { bottom: '3%', height: '94%', width: '88%' },
-      iphone: { bottom: '-8%', height: '104%', width: 'min(64%, 245px)' },
+      mac: {
+        bottom: '3%',
+        height: '86cqh',
+        width: 'calc((86cqh - 40px) * 16 / 10 + 18px)',
+      },
+      imac: {
+        bottom: '3%',
+        height: '94cqh',
+        width: 'calc((94cqh - 122px) * 16 / 9 + 26px)',
+      },
+      iphone: {
+        bottom: '-8%',
+        height: '104cqh',
+        width: 'calc((104cqh - 20px) * 9 / 19.5 + 20px)',
+      },
     },
   },
 })
