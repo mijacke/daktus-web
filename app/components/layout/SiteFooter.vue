@@ -1,14 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
-const MENU = [
-  { label: 'Domov', href: '/' },
-  { label: 'Projekty', href: '/projekty' },
-  { label: 'Služby', href: '/sluzby' },
-  { label: 'Cenník', href: '/cennik' },
-  { label: 'Kontakt', href: '/kontakt' },
-]
-
 const scrollTopOnHome = useScrollTopLink()
 
 // kým profily nie sú založené, odkazy vedú na homepage — potom doplniť URL
