@@ -116,6 +116,12 @@ export default defineConfig({
      * ale je to jediná farba, podľa ktorej si Safari na iOS tónuje svoje lišty
      * — bez tmavého variantu svietil pod tmavou pätou biely pruh. Prepína ho
      * SiteNav podľa toho, nad akou sekciou stojíme.
+     *
+     * Bez prechodu na background-color: Safari si farbu lišty odčíta raz
+     * krátko po zmene a už ju neprevzorkuje, takže z rozbehnutého prechodu
+     * chytilo medzitón a lišty zamrzli na sivej medzi paper a dark.bg.
+     * Skoková zmena je jediná, ktorú prečíta celú. Na stránke to nevidno,
+     * pozadie body kreslí povrch v app.vue.
      */
     body: {
       bg: 'paper',
@@ -124,7 +130,6 @@ export default defineConfig({
       lineHeight: 1.6,
       WebkitFontSmoothing: 'antialiased',
       overflowX: 'hidden',
-      transition: 'background-color 0.4s ease',
       '&[data-chrome-dark]': { bg: 'dark.bg' },
     },
     a: { color: 'inherit', textDecoration: 'none' },
