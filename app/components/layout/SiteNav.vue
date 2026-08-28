@@ -6,7 +6,7 @@ const scrollTopOnHome = useScrollTopLink()
 const scrolled = ref(false)
 const overDark = ref(false)
 const menuOpen = ref(false)
-let darkSections: Element[] = []
+let frame = 0
 
 // nad mobilným zlomom menu neexistuje — po rozšírení okna ho zavri
 const isMobile = useMediaQuery('(max-width: 860px)')
@@ -14,38 +14,41 @@ watch(isMobile, (mobile) => {
   if (!mobile) menuOpen.value = false
 })
 
+/** Stred hlavičky — v jej zvislej osi, nech sa meria plocha priamo pod textom. */
 function update() {
   scrolled.value = window.scrollY > 30
-  overDark.value = !menuOpen.value && darkSections.some((el) => {
-    const rect = el.getBoundingClientRect()
-    return rect.top < 56 && rect.bottom > 22
-  })
+  overDark.value = !menuOpen.value && isDarkUnder(window.innerWidth / 2, 40)
   // Safari na iOS tónuje svoje lišty farbou body — nech idú s hlavičkou.
   document.body.toggleAttribute('data-chrome-dark', overDark.value)
 }
 
-function collect() {
-  darkSections = Array.from(document.querySelectorAll('[data-dark]'))
-  update()
+// meranie je čítanie layoutu, tak ho drž na jednom snímku
+function onScroll() {
+  if (frame) return
+  frame = requestAnimationFrame(() => {
+    frame = 0
+    update()
+  })
 }
 
 watch(menuOpen, () => update())
 
 onMounted(() => {
-  collect()
-  window.addEventListener('scroll', update, { passive: true })
-  window.addEventListener('resize', update)
+  update()
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('resize', onScroll)
 })
 
-// po prepnutí stránky sa tmavé sekcie menia — pozbieraj ich nanovo
+// nová stránka má pod hlavičkou inú plochu — premeraj ju, až keď je vykreslená
 useNuxtApp().hook('page:finish', () => {
   menuOpen.value = false
-  nextTick(collect)
+  nextTick(update)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('scroll', update)
-  window.removeEventListener('resize', update)
+  cancelAnimationFrame(frame)
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('resize', onScroll)
 })
 
 const nav = css({
