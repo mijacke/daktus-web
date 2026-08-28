@@ -62,9 +62,17 @@ const nav = css({
   borderBottom: '1px solid transparent',
   transitionProperty: 'background, border-color, height, color',
   transitionDuration: '0.4s',
+  /**
+   * Žiadny backdrop-filter: Safari na iOS tónuje hornú lištu podľa fixného
+   * prvku na hornej hrane a blur ju pripne na farbu navzorkovanú pri prvom
+   * renderi — pri scrolle na tmavú sekciu potom ostala svetlá. Bez neho
+   * priesvitné pozadie preskočí a lištu si vezme z body, ktoré prepíname
+   * nižšie (data-chrome-dark) a ktoré Safari sleduje živo. Priesvitnosť
+   * musí ostať: pri nepriehľadnom pozadí by si lištu vzalo z hlavičky
+   * a zamrzlo by to znova.
+   */
   '&.scrolled': {
     background: 'paper/90',
-    backdropFilter: 'blur(14px)',
     borderColor: 'hairline.soft',
     height: '66px',
   },
