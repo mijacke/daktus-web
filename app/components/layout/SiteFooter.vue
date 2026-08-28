@@ -65,37 +65,6 @@ const brandMail = css({
   _hover: { color: 'dark.fg' },
 })
 
-const avail = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  gap: '9px',
-  marginTop: '16px',
-  fontFamily: 'mono',
-  fontSize: '11.5px',
-  letterSpacing: '0.1em',
-  textTransform: 'uppercase',
-  color: 'dark.dim',
-})
-
-const availDot = css({
-  position: 'relative',
-  width: '6px',
-  height: '6px',
-  borderRadius: 'full',
-  background: 'accent',
-  flexShrink: 0,
-  _after: {
-    content: '""',
-    position: 'absolute',
-    inset: '-4px',
-    borderRadius: 'full',
-    border: '1.5px solid',
-    borderColor: 'accent/50',
-    animation: 'pulse 1.8s ease-out infinite',
-  },
-  _motionReduce: { _after: { animation: 'none' } },
-})
-
 const groups = css({
   display: 'flex',
   gap: 'clamp(40px, 6vw, 120px)',
@@ -171,7 +140,6 @@ const legal = css({
           </NuxtLink>
           <p :class="brandNote">Webdizajn a vývoj digitálnych produktov. Navrhujeme, kódujeme a staráme sa.</p>
           <a :class="brandMail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
-          <div :class="avail"><span :class="availDot" />Prijímame nové projekty</div>
         </div>
         <div :class="groups">
           <div :class="group">
