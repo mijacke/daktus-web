@@ -1,22 +1,22 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
 
-const NAV_LINKS = [
-  { label: 'Projekty', href: '/projekty' },
-  { label: 'Služby', href: '/sluzby' },
-  { label: 'Cenník', href: '/cennik' },
-  { label: 'Kontakt', href: '/kontakt' },
-]
-
 const scrollTopOnHome = useScrollTopLink()
 
 const scrolled = ref(false)
 const overDark = ref(false)
+const menuOpen = ref(false)
 let darkSections: Element[] = []
+
+// nad mobilným zlomom menu neexistuje — po rozšírení okna ho zavri
+const isMobile = useMediaQuery('(max-width: 860px)')
+watch(isMobile, (mobile) => {
+  if (!mobile) menuOpen.value = false
+})
 
 function update() {
   scrolled.value = window.scrollY > 30
-  overDark.value = darkSections.some((el) => {
+  overDark.value = !menuOpen.value && darkSections.some((el) => {
     const rect = el.getBoundingClientRect()
     return rect.top < 56 && rect.bottom > 22
   })
@@ -29,6 +29,8 @@ function collect() {
   update()
 }
 
+watch(menuOpen, () => update())
+
 onMounted(() => {
   collect()
   window.addEventListener('scroll', update, { passive: true })
@@ -36,7 +38,10 @@ onMounted(() => {
 })
 
 // po prepnutí stránky sa tmavé sekcie menia — pozbieraj ich nanovo
-useNuxtApp().hook('page:finish', () => nextTick(collect))
+useNuxtApp().hook('page:finish', () => {
+  menuOpen.value = false
+  nextTick(collect)
+})
 
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', update)
@@ -90,6 +95,7 @@ const links = css({
   display: 'flex',
   alignItems: 'center',
   gap: '36px',
+  '@media (max-width: 860px)': { display: 'none' },
 })
 
 const navLink = css({
@@ -110,12 +116,11 @@ const navLink = css({
   },
   _hover: { _after: { transform: 'scaleX(1)', transformOrigin: 'left' } },
   '&.cur': { _after: { transform: 'scaleX(1)', transformOrigin: 'left' } },
-  '@media (max-width: 860px)': { display: 'none' },
 })
 </script>
 
 <template>
-  <nav :class="[nav, { 'scrolled': scrolled, 'over-dark': overDark }]">
+  <nav :class="[nav, { 'scrolled': scrolled && !menuOpen, 'over-dark': overDark }]">
     <NuxtLink :class="logo" to="/" data-logo @click="scrollTopOnHome">
       <span :class="logoMark"><LogoMark :size="24" /></span>
       <span>Daktus</span>
@@ -128,5 +133,7 @@ const navLink = css({
         Napíšme si
       </AppButton>
     </div>
+    <NavBurger :open="menuOpen" @click="menuOpen = !menuOpen" />
   </nav>
+  <NavDrawer :open="menuOpen" @close="menuOpen = false" />
 </template>

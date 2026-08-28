@@ -100,6 +100,16 @@ export default defineConfig({
       bg: 'paper',
       scrollbarWidth: 'thin',
       scrollbarColor: 'color-mix(in srgb, token(colors.ink) 35%, transparent) token(colors.paper)',
+      /**
+       * Zámok scrollu pod otvoreným mobilným menu (NavDrawer). `clip` zruší
+       * scrollport aj na dotykových prehliadačoch — `hidden` tam neplatí.
+       * Platí len pod mobilným zlomom, teda presne tam, kde menu existuje:
+       * nad ním sa panel skrýva cez CSS a zamknutá stránka by ostala bez
+       * ovládacieho prvku, ktorý ju odomkne.
+       */
+      '&[data-scroll-lock]': {
+        '@media (max-width: 860px)': { overflow: 'clip' },
+      },
     },
     /**
      * Pozadie body nekreslí stránku (tú kreslí jej vlastný povrch v app.vue),
