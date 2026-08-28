@@ -19,11 +19,28 @@ interface DesignSceneLoopElements {
 const SCALE_MIN = 0.92
 
 /**
+ * Poloha prvku voči koreňu scény v layout px — v tých istých súradniciach,
+ * aké kurzoru píše GSAP ako x/y. `getBoundingClientRect()` sa sem nehodí:
+ * scéna beží vnútri mierky displeja (`--fit` v ProcessSceneStage) a rect by
+ * polohy stlačil o ňu, kým `offsetLeft`/`offsetWidth` ostávajú layout.
+ */
+function offsetWithin(el: HTMLElement, root: HTMLElement) {
+  let x = 0
+  let y = 0
+  for (let node: HTMLElement | null = el; node && node !== root; node = node.offsetParent as HTMLElement | null) {
+    x += node.offsetLeft
+    y += node.offsetTop
+  }
+  return { x, y }
+}
+
+/**
  * Slučka scény Dizajn ako GSAP timeline (repeat -1): kurzor klikne na roh
  * artboardu, ťahom ho zmenší, pustí, ťahom vráti, odletí do palety a klikne
  * (s prstencom). Výber začína nabielo, prvý klik je mint (prefarbí rám aj
  * menu mini stránky), ďalšie kolo biela — a tak dookola. Polohy sa merajú
- * pri štarte, takže sedia na každom breakpointe.
+ * pri štarte v layout px scény, takže sedia na každom breakpointe bez ohľadu
+ * na to, akou mierkou displej scénu posadil.
  */
 export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopElements) {
   const reduced = useReducedMotion()
@@ -37,20 +54,18 @@ export function useDesignSceneLoop(running: Ref<boolean>, els: DesignSceneLoopEl
     const root = els.root.value
     const board = els.board.value
     if (!root || !board) return null
-    const rootRect = root.getBoundingClientRect()
-    const boardRect = board.getBoundingClientRect()
+    const at = offsetWithin(board, root)
     return {
-      x: boardRect.left - rootRect.left + board.offsetWidth * target - 3,
-      y: boardRect.top - rootRect.top + board.offsetHeight * target - 2,
+      x: at.x + board.offsetWidth * target - 3,
+      y: at.y + board.offsetHeight * target - 2,
     }
   }
 
   function swatchCenter(swatch: HTMLElement) {
     const root = els.root.value
     if (!root) return null
-    const rootRect = root.getBoundingClientRect()
-    const rect = swatch.getBoundingClientRect()
-    return { x: rect.left - rootRect.left + rect.width / 2 - 2, y: rect.top - rootRect.top + rect.height / 2 - 2 }
+    const at = offsetWithin(swatch, root)
+    return { x: at.x + swatch.offsetWidth / 2 - 2, y: at.y + swatch.offsetHeight / 2 - 2 }
   }
 
   /** Klik: prstenec sa rozpŕskne od hrotu, prípadný swatch pruží. */
