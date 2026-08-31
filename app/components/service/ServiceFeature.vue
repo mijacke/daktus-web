@@ -37,9 +37,10 @@ const block = cva({
     gap: 'clamp(36px, 5vw, 90px)',
     paddingBlock: 'clamp(56px, 8vh, 92px)',
     '& + &': { borderTop: '1px solid {colors.hairline}' },
+    // v stĺpci sa číta zhora nadol — najprv text služby, potom jej zariadenie
     '@media (max-width: 900px)': {
       gridTemplateColumns: '1fr !important',
-      '& > [data-stage]': { order: -1 },
+      '& > [data-stage]': { order: '0 !important' },
     },
   },
   variants: {

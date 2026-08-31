@@ -14,10 +14,10 @@ watch(isMobile, (mobile) => {
   if (!mobile) menuOpen.value = false
 })
 
-/** Stred hlavičky — v jej zvislej osi, nech sa meria plocha priamo pod textom. */
+/** 40px = zvislý stred hlavičky, meria sa plocha priamo pod jej textom. */
 function update() {
   scrolled.value = window.scrollY > 30
-  overDark.value = !menuOpen.value && isDarkUnder(window.innerWidth / 2, 40)
+  overDark.value = !menuOpen.value && isDarkUnder(40)
   // Safari na iOS tónuje svoje lišty farbou body — nech idú s hlavičkou.
   document.body.toggleAttribute('data-chrome-dark', overDark.value)
 }
