@@ -7,8 +7,6 @@ import { css, cva } from '~~/styled-system/css'
  * sekciu odlišujú karty. Pri jedinej referencii by pod nadpisom ostala prázdna
  * polovica riadku, preto si vtedy nadpis a citát sadnú vedľa seba. Plastelína vstupuje mieseným glyfom úvodzoviek,
  * karty ležia mierne pootočené a hover ich vyrovná.
- * POZOR: citáty sú zatiaľ ilustračné — pred nasadením na produkciu ich
- * musia nahradiť skutočné vety so súhlasom klientov.
  */
 const REFERENCES = [
   {

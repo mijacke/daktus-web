@@ -3,13 +3,13 @@ import { css } from '~~/styled-system/css'
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
 
 defineProps<{
+  packageId: string
   /** Popisok blueprint rámu, napr. „balík / web". */
   tag: string
   /** Veľký clay glyf balíka — rovnaká prítomnosť hmoty ako hero logomark. */
   glyph: ClayGlyphName
   title: string
   price: string
-  was: string
   note: string
   features: string[]
   ctaLabel: string
@@ -81,15 +81,6 @@ const amount = css({
   },
 })
 
-const wasPrice = css({
-  fontSize: '16px',
-  fontWeight: 600,
-  color: 'dim',
-  textDecoration: 'line-through',
-  letterSpacing: 0,
-  marginLeft: '8px',
-})
-
 const noteText = css({
   fontSize: '14px',
   color: 'dim',
@@ -136,14 +127,14 @@ const cta = css({
     <BlueprintFrame :class="card" :tag="tag" :built="built" :content-class="body">
       <span :class="glyphBox"><ClayGlyph :name="glyph" :size="76" /></span>
       <h3 :class="heading">{{ title }}</h3>
-      <div :class="amount"><small>od</small> {{ price }} <span :class="wasPrice">{{ was }}</span></div>
+      <div :class="amount"><small>od</small> {{ price }}</div>
       <div :class="noteText">{{ note }}</div>
       <ul :class="featureList">
         <li v-for="feature in features" :key="feature" :class="featureItem">
           <span :class="featureIcon"><IconCheck /></span>{{ feature }}
         </li>
       </ul>
-      <NuxtLink :class="cta" to="/kontakt">
+      <NuxtLink :class="cta" :to="{ path: '/kontakt', query: { balik: packageId } }">
         {{ ctaLabel }}
         <IconArrow :size="14" />
       </NuxtLink>

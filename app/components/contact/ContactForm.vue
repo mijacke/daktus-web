@@ -3,18 +3,30 @@ import { css } from '~~/styled-system/css'
 import type { ChipOption } from '~/components/contact/ChoiceChips.vue'
 
 const INTERESTS: ChipOption[] = [
-  { label: 'Web', glyph: 'okno' },
+  { label: 'Jednostránkový web', glyph: 'okno' },
+  { label: 'Viacstránkový web', glyph: 'okno' },
   { label: 'E‑shop', glyph: 'kosik' },
-  { label: 'Mobilná appka', glyph: 'telefon' },
-  { label: 'Softvér na mieru', glyph: 'vrstvy' },
+  { label: 'Softvér alebo appka', glyph: 'vrstvy' },
+  { label: 'AI a automatizácia', glyph: 'bublina' },
   { label: 'Ešte neviem presne', glyph: 'bublina' },
 ]
 const BUDGETS: ChipOption[] = [
-  { label: 'do 3 000 €' },
+  { label: 'do 500 €' },
+  { label: '500 až 1 000 €' },
+  { label: '1 000 až 3 000 €' },
   { label: '3 000 až 8 000 €' },
   { label: 'nad 8 000 €' },
   { label: 'Ešte neviem' },
 ]
+
+const PACKAGE_INTERESTS = new Map<string, string>([
+  ['onepage', 'Jednostránkový web'],
+  ['web', 'Viacstránkový web'],
+  ['eshop', 'E‑shop'],
+  ['software', 'Softvér alebo appka'],
+  ['ai', 'AI a automatizácia'],
+])
+const route = useRoute()
 
 const form = reactive({
   name: '',
@@ -25,22 +37,19 @@ const form = reactive({
 })
 
 const status = ref<'idle' | 'sending' | 'sent' | 'error'>('idle')
-
-/** Pasca na botov — človek nevyplní formulár pod pár sekúnd od načítania. */
-const MIN_FILL_MS = 4000
-let mountedAt = 0
+const botField = ref('')
 onMounted(() => {
-  mountedAt = Date.now()
+  const packageId = route.query.balik
+  if (typeof packageId === 'string') {
+    form.interest = PACKAGE_INTERESTS.get(packageId) ?? ''
+  }
 })
 
 /** Netlify Forms AJAX submit — statický HTML formulár Netlify zachytí pri builde. */
 async function submit() {
   if (status.value === 'sending') return
-  // podozrivo rýchle odoslanie potichu „prejde" bez requestu — bot sa nič nedozvie
-  if (Date.now() - mountedAt < MIN_FILL_MS) {
-    status.value = 'sent'
-    return
-  }
+  // Skrytý honeypot nesmie odoslanie človeka blokovať podľa rýchlosti vyplnenia.
+  if (botField.value) return
   status.value = 'sending'
   try {
     const body = new URLSearchParams({
@@ -50,6 +59,7 @@ async function submit() {
       'zaujem': form.interest,
       'rozpocet': form.budget,
       'sprava': form.message,
+      'bot-field': botField.value,
     })
     const response = await fetch('/', {
       method: 'POST',
@@ -202,7 +212,7 @@ const honeypot = css({ display: 'none' })
   >
     <input type="hidden" name="form-name" value="kontakt">
     <p :class="honeypot" aria-hidden="true">
-      <label>Nevypĺňajte: <input name="bot-field"></label>
+      <label>Nevypĺňajte: <input v-model="botField" name="bot-field" tabindex="-1" autocomplete="off"></label>
     </p>
 
     <div :class="fieldGrid">
@@ -231,7 +241,7 @@ const honeypot = css({ display: 'none' })
         :class="textarea"
         name="sprava"
         rows="4"
-        placeholder="Ahojte, potrebujeme CRM, ktoré prepojí objednávky, faktúry a sklad. Dnes to držíme v tabuľkách…"
+        placeholder="Ahojte, potrebujem web pre svoje služby. Chcem predstaviť ponuku a získať dopyty…"
         required
       />
     </div>

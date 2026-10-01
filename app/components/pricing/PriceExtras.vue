@@ -15,7 +15,7 @@ const EXTRAS: Extra[] = [
     glyph: 'obnova',
     title: 'Redizajn webu',
     price: 'od 600 €',
-    text: 'Existujúci web prekreslíme do čistej podoby bez straty obsahu a pozícií vo vyhľadávaní.',
+    text: 'Existujúci web prekreslíme do čistej podoby. Pri prechode chránime obsah, adresy stránok a SEO základy.',
   },
   {
     glyph: 'koleso',

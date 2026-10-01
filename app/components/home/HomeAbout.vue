@@ -4,9 +4,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { css, cva } from '~~/styled-system/css'
 
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
+import { TEAM_MEMBERS } from '~/utils/team'
 
 const SEGMENTS = [
-  { text: 'Za Daktusom stojí tím vývojárov a dizajnérov s rokmi praxe z veľkého firemného vývoja.', accent: false },
+  { text: 'Za Daktusom stojí tím ľudí so skúsenosťami v IT a riadení projektov.', accent: false },
   { text: 'Dizajn aj kód staviame pod jednou strechou.', accent: true },
 ]
 
@@ -15,7 +16,7 @@ const PRINCIPLES: { no: string, glyph: ClayGlyphName, title: string, text: strin
     no: '01',
     glyph: 'telefon',
     title: 'Píšete si priamo s nami',
-    text: 'Žiadni account manažéri ani odovzdávanie medzi firmami. Od prvej správy po spustenie jeden tím.',
+    text: 'Od prvého rozhovoru po spustenie komunikujete priamo s ľuďmi, ktorí na projekte pracujú.',
   },
   {
     no: '02',
@@ -162,6 +163,41 @@ const principleText = css({
   color: 'dim',
   margin: '8px 0 0',
 })
+
+const teamSection = css({
+  borderTop: '1px solid',
+  borderColor: 'hairline',
+  marginTop: 'clamp(40px, 6vw, 72px)',
+  paddingTop: 'clamp(28px, 4vw, 48px)',
+})
+
+const teamTitle = css({
+  fontFamily: 'display',
+  fontWeight: 800,
+  fontSize: 'clamp(22px, 2.2vw, 32px)',
+  textTransform: 'uppercase',
+  margin: 0,
+})
+
+const teamGrid = css({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+  gap: '16px',
+  marginTop: '24px',
+  '@media (max-width: 760px)': { gridTemplateColumns: '1fr' },
+})
+
+const teamCard = css({
+  border: '1px solid',
+  borderColor: 'hairline',
+  borderRadius: '18px',
+  background: 'card',
+  padding: '24px',
+})
+
+const teamName = css({ fontFamily: 'display', fontWeight: 800, fontSize: '24px' })
+const teamRole = css({ color: 'dim', marginTop: '4px', fontSize: '14px' })
+const teamPhone = css({ display: 'inline-block', color: 'accent.deep', marginTop: '18px', fontWeight: 600 })
 </script>
 
 <template>
@@ -187,6 +223,16 @@ const principleText = css({
               </div>
               <p :class="principleText">{{ item.text }}</p>
             </div>
+          </div>
+        </div>
+      </div>
+      <div :class="teamSection">
+        <h3 :class="teamTitle">Ľudia za Daktusom</h3>
+        <div :class="teamGrid">
+          <div v-for="member in TEAM_MEMBERS" :key="member.name" :class="teamCard">
+            <div :class="teamName">{{ member.name }}</div>
+            <div :class="teamRole">{{ member.role }}</div>
+            <a :class="teamPhone" :href="member.phoneHref">{{ member.phone }}</a>
           </div>
         </div>
       </div>

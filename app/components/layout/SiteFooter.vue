@@ -3,10 +3,7 @@ import { css } from '~~/styled-system/css'
 
 const scrollTopOnHome = useScrollTopLink()
 
-// kým profily nie sú založené, odkazy vedú na homepage — potom doplniť URL
 const SOCIALS = [
-  { label: 'Instagram', href: '/' },
-  { label: 'LinkedIn', href: '/' },
   { label: 'GitHub', href: 'https://github.com/mijacke' },
 ]
 

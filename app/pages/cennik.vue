@@ -10,11 +10,11 @@ useSeoMeta({
 const HEAD_NOTE = 'Žiadne „cena na vyžiadanie“. Orientačné sumy hneď, presná ponuka do 24 hodín.'
 
 interface Package {
+  id: string
   glyph: ClayGlyphName
   tag: string
   title: string
   price: string
-  was: string
   note: string
   features: string[]
   ctaLabel: string
@@ -22,41 +22,41 @@ interface Package {
 
 const PACKAGES: Package[] = [
   {
+    id: 'onepage',
     glyph: 'stranka',
     tag: 'balík / onepage',
     title: 'Jednostránkový web',
-    price: '450 €',
-    was: '600 €',
+    price: '300 €',
     note: 'Dodanie 1 až 2 týždne',
     features: [
       'Jedna stránka so všetkým podstatným',
       'Dizajn na mieru, žiadna šablóna',
       'Kontaktný formulár a mapa v cene',
-      'Dlhodobá spolupráca aj po spustení',
+      'Doména a hosting sa platia zvlášť',
     ],
     ctaLabel: 'Chcem onepage',
   },
   {
+    id: 'web',
     glyph: 'kurzor',
     tag: 'balík / web',
     title: 'Webstránka',
-    price: '1 350 €',
-    was: '1 800 €',
+    price: '650 €',
     note: 'Dodanie 3 až 4 týždne',
     features: [
       'Dizajn na mieru, žiadna šablóna',
       'Rýchlosť a SEO základ v cene',
       'Texty doladíme spolu',
-      'Dlhodobá spolupráca aj po spustení',
+      'Doména a hosting sa platia zvlášť',
     ],
     ctaLabel: 'Chcem web',
   },
   {
+    id: 'eshop',
     glyph: 'kosik',
     tag: 'balík / e-shop',
     title: 'E‑shop',
     price: '1 800 €',
-    was: '2 400 €',
     note: 'Dodanie 4 až 6 týždňov',
     features: [
       'Katalóg, košík a platby (Stripe / GoPay)',
@@ -67,11 +67,11 @@ const PACKAGES: Package[] = [
     ctaLabel: 'Chcem e‑shop',
   },
   {
+    id: 'software',
     glyph: 'kocka',
     tag: 'balík / softvér',
     title: 'Softvér & appky',
     price: '4 400 €',
-    was: '5 900 €',
     note: 'Podľa rozsahu, odhad vopred',
     features: [
       'Rezervačné systémy a interné nástroje',
@@ -123,11 +123,11 @@ const priceNote = css({
       <PriceCard
         v-for="pkg in PACKAGES"
         :key="pkg.title"
+        :package-id="pkg.id"
         :glyph="pkg.glyph"
         :tag="pkg.tag"
         :title="pkg.title"
         :price="pkg.price"
-        :was="pkg.was"
         :note="pkg.note"
         :features="pkg.features"
         :cta-label="pkg.ctaLabel"
@@ -137,7 +137,7 @@ const priceNote = css({
     <PriceHighlight />
 
     <p :class="priceNote">
-      Ceny sú orientačné a závisia od rozsahu. Po krátkom hovore pošleme presnú ponuku do 24 hodín.
+      Ceny sú orientačné a závisia od rozsahu. K uvedeným cenám nepripočítavame DPH. Pri webových balíkoch sa doména a hosting platia zvlášť. Po krátkom hovore pošleme presnú ponuku do 24 hodín.
     </p>
 
     <PriceExtras />
