@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import { MARIO_PHONE, TEAM_NAMES } from '~/utils/team'
+import { MARIO_PHONE } from '~/utils/team'
 
 const STEPS = [
   'Ozveme sa do 24 hodín a dohodneme krátky úvodný hovor.',
@@ -58,8 +58,18 @@ const mail = css({
   paddingBottom: '6px',
 })
 
-const phoneRow = css({ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '16px' })
-const phoneLink = css({ color: 'ink', fontWeight: 600, textDecoration: 'underline', textDecorationColor: 'accent/50' })
+const phoneLink = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontWeight: 700,
+  fontSize: 'clamp(24px, 2vw, 32px)',
+  letterSpacing: '-0.01em',
+  color: 'ink',
+  borderBottom: '2px solid',
+  borderColor: 'accent/50',
+  marginTop: '14px',
+  paddingBottom: '6px',
+})
 
 const step = css({
   display: 'flex',
@@ -116,10 +126,7 @@ const socialChip = css({
     </div>
     <div :class="box">
       <div :class="label">Alebo nám zavolajte</div>
-      <div :class="phoneRow">
-        <span>{{ TEAM_NAMES[0] }}</span>
-        <a :class="phoneLink" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
-      </div>
+      <a :class="phoneLink" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
     </div>
     <div :class="box">
       <div :class="label">Ako to prebieha</div>
