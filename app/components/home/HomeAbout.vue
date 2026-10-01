@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { css, cva } from '~~/styled-system/css'
 
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
-import { TEAM_MEMBERS } from '~/utils/team'
+import { MARIO_PHONE, TEAM_NAMES } from '~/utils/team'
 
 const SEGMENTS = [
   { text: 'Za Daktusom stojí tím ľudí so skúsenosťami v IT a riadení projektov.', accent: false },
@@ -196,7 +196,6 @@ const teamCard = css({
 })
 
 const teamName = css({ fontFamily: 'display', fontWeight: 800, fontSize: '24px' })
-const teamRole = css({ color: 'dim', marginTop: '4px', fontSize: '14px' })
 const teamPhone = css({ display: 'inline-block', color: 'accent.deep', marginTop: '18px', fontWeight: 600 })
 </script>
 
@@ -229,10 +228,9 @@ const teamPhone = css({ display: 'inline-block', color: 'accent.deep', marginTop
       <div :class="teamSection">
         <h3 :class="teamTitle">Ľudia za Daktusom</h3>
         <div :class="teamGrid">
-          <div v-for="member in TEAM_MEMBERS" :key="member.name" :class="teamCard">
-            <div :class="teamName">{{ member.name }}</div>
-            <div :class="teamRole">{{ member.role }}</div>
-            <a :class="teamPhone" :href="member.phoneHref">{{ member.phone }}</a>
+          <div v-for="name in TEAM_NAMES" :key="name" :class="teamCard">
+            <div :class="teamName">{{ name }}</div>
+            <a v-if="name === 'Mário'" :class="teamPhone" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
           </div>
         </div>
       </div>

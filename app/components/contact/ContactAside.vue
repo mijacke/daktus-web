@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
-import { TEAM_MEMBERS } from '~/utils/team'
+import { MARIO_PHONE, TEAM_NAMES } from '~/utils/team'
 
 const STEPS = [
   'Ozveme sa do 24 hodín a dohodneme krátky úvodný hovor.',
@@ -58,8 +58,7 @@ const mail = css({
   paddingBottom: '6px',
 })
 
-const phoneList = css({ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px' })
-const phoneRow = css({ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' })
+const phoneRow = css({ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '16px' })
 const phoneLink = css({ color: 'ink', fontWeight: 600, textDecoration: 'underline', textDecorationColor: 'accent/50' })
 
 const step = css({
@@ -117,11 +116,9 @@ const socialChip = css({
     </div>
     <div :class="box">
       <div :class="label">Alebo nám zavolajte</div>
-      <div :class="phoneList">
-        <div v-for="member in TEAM_MEMBERS" :key="member.name" :class="phoneRow">
-          <span>{{ member.name }} · {{ member.role }}</span>
-          <a :class="phoneLink" :href="member.phoneHref">{{ member.phone }}</a>
-        </div>
+      <div :class="phoneRow">
+        <span>{{ TEAM_NAMES[0] }}</span>
+        <a :class="phoneLink" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
       </div>
     </div>
     <div :class="box">
