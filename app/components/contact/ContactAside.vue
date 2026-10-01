@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { css } from '~~/styled-system/css'
+import { MARIO_PHONE, TEAM_NAMES } from '~/utils/team'
 
 const STEPS = [
   'Ozveme sa do 24 hodín a dohodneme krátky úvodný hovor.',
@@ -8,8 +9,6 @@ const STEPS = [
 ]
 
 const SOCIALS = [
-  { label: 'Instagram', href: '#' },
-  { label: 'LinkedIn', href: '#' },
   { label: 'GitHub', href: 'https://github.com/mijacke' },
 ]
 
@@ -58,6 +57,9 @@ const mail = css({
   borderColor: 'accent/50',
   paddingBottom: '6px',
 })
+
+const phoneRow = css({ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap', marginTop: '16px' })
+const phoneLink = css({ color: 'ink', fontWeight: 600, textDecoration: 'underline', textDecorationColor: 'accent/50' })
 
 const step = css({
   display: 'flex',
@@ -110,6 +112,13 @@ const socialChip = css({
       <div :class="mailRow">
         <ClayGlyph name="obalka" :size="40" />
         <a :class="mail" href="mailto:napiste@daktus.sk">napiste@daktus.sk</a>
+      </div>
+    </div>
+    <div :class="box">
+      <div :class="label">Alebo nám zavolajte</div>
+      <div :class="phoneRow">
+        <span>{{ TEAM_NAMES[0] }}</span>
+        <a :class="phoneLink" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
       </div>
     </div>
     <div :class="box">

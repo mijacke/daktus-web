@@ -68,15 +68,6 @@ const amount = css({
   },
 })
 
-const wasPrice = css({
-  fontSize: '15px',
-  fontWeight: 600,
-  color: 'ink/55',
-  textDecoration: 'line-through',
-  letterSpacing: 0,
-  marginLeft: '7px',
-})
-
 const cta = css({
   display: 'inline-flex',
   alignItems: 'center',
@@ -99,8 +90,8 @@ const cta = css({
       </p>
     </div>
     <div :class="priceCol">
-      <div :class="amount"><small>od</small> 1 500 €<span :class="wasPrice">2 000 €</span></div>
-      <NuxtLink :class="cta" to="/kontakt">
+      <div :class="amount"><small>od</small> 1 500 €</div>
+      <NuxtLink :class="cta" :to="{ path: '/kontakt', query: { balik: 'ai' } }">
         Chcem automatizáciu
         <IconArrow :size="14" />
       </NuxtLink>

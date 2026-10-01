@@ -101,7 +101,7 @@ const MOBIL: Service = {
       <ServiceExtras />
       <div :class="pageBottom">
         <CtaBand title="Koľko to stojí?" cta-label="Pozrieť cenník" cta-href="/cennik">
-          Orientačné ceny máme zverejnené a na všetky balíky teraz platí <span :class="clayBadge">úvodná zľava 25&nbsp;%</span>
+          Orientačné ceny máme zverejnené. Jednostránkový web začína na <span :class="clayBadge">300 €</span>.
         </CtaBand>
       </div>
     </div>
