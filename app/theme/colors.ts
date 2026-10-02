@@ -66,4 +66,46 @@ export const colors = defineTokens.colors({
   mockup: {
     codeString: { value: '#C9BFA9' },
   },
+  // pastelové figúrky tímu (sekcia Ľudia za Daktusom) — každý člen má vlastný
+  // tón s rovnakou sadou kľúčov, aby ich TeamFigure prepínal len cez CSS premenné
+  figure: {
+    skin: { value: '#F5D9C4' },
+    skinShade: { value: '#EBC5AB' },
+    cheek: { value: '#F2A79C' },
+    face: { value: '#2B2A28' },
+    shadow: { value: 'rgba(16, 19, 21, 0.07)' },
+    mario: {
+      stage: { value: '#DDEBE7' },
+      body: { value: '{colors.cover.mint}' },
+      shade: { value: '{colors.cover.mint2}' },
+      hair: { value: '#4A3A31' },
+      brow: { value: '#4A3A31' },
+      prop: { value: '#EEF6F2' },
+      propLine: { value: '#97C0B6' },
+      detail: { value: '{colors.accent.deep}' },
+      soft: { value: '#F2A79C' },
+    },
+    viktor: {
+      stage: { value: '#E6E1F7' },
+      body: { value: '#CBC2EE' },
+      shade: { value: '#B8ADE3' },
+      hair: { value: '#7A5A44' },
+      brow: { value: '#7A5A44' },
+      prop: { value: '#F3F0FB' },
+      propLine: { value: '#A99EE0' },
+      detail: { value: '#7B6CC9' },
+      soft: { value: '#9C90D6' },
+    },
+    boris: {
+      stage: { value: '#F9E3D6' },
+      body: { value: '#F5CDB6' },
+      shade: { value: '#FFF8F2' },
+      hair: { value: '#A8754A' },
+      brow: { value: '#8C5E37' },
+      prop: { value: '#FFF8F2' },
+      propLine: { value: '#E0A27E' },
+      detail: { value: '#C47A50' },
+      soft: { value: '#E7BFA6' },
+    },
+  },
 })

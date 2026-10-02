@@ -4,7 +4,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { css, cva } from '~~/styled-system/css'
 
 import type { ClayGlyphName } from '~/components/clay/ClayGlyph.vue'
-import { MARIO_PHONE, TEAM_MEMBERS } from '~/utils/team'
+import { TEAM_MEMBERS } from '~/utils/team'
 
 const SEGMENTS = [
   { text: 'Za Daktusom stojí tím ľudí so skúsenosťami v IT a riadení projektov.', accent: false },
@@ -43,6 +43,8 @@ const headEl = ref<HTMLElement | null>(null)
 const headIn = useInView(headEl)
 const sideEl = ref<HTMLElement | null>(null)
 const sideIn = useInView(sideEl)
+const teamEl = ref<HTMLElement | null>(null)
+const teamIn = useInView(teamEl)
 let trigger: ScrollTrigger | null = null
 
 onMounted(() => {
@@ -186,18 +188,6 @@ const teamGrid = css({
   marginTop: '24px',
   '@media (max-width: 760px)': { gridTemplateColumns: '1fr' },
 })
-
-const teamCard = css({
-  border: '1px solid',
-  borderColor: 'hairline',
-  borderRadius: '18px',
-  background: 'card',
-  padding: '24px',
-})
-
-const teamName = css({ fontFamily: 'display', fontWeight: 800, fontSize: '24px' })
-const teamRole = css({ color: 'dim', fontSize: '15px', marginTop: '8px' })
-const teamPhone = css({ display: 'inline-block', color: 'accent.deep', marginTop: '18px', fontWeight: 600 })
 </script>
 
 <template>
@@ -228,12 +218,15 @@ const teamPhone = css({ display: 'inline-block', color: 'accent.deep', marginTop
       </div>
       <div :class="teamSection">
         <h3 :class="teamTitle">Ľudia za Daktusom</h3>
-        <div :class="teamGrid">
-          <div v-for="member in TEAM_MEMBERS" :key="member.name" :class="teamCard">
-            <div :class="teamName">{{ member.name }}</div>
-            <div :class="teamRole">{{ member.role }}</div>
-            <a v-if="member.name === 'Mário'" :class="teamPhone" :href="MARIO_PHONE.href">{{ MARIO_PHONE.label }}</a>
-          </div>
+        <div ref="teamEl" :class="[teamGrid, fadeIn(), { in: teamIn }]">
+          <TeamCard
+            v-for="member in TEAM_MEMBERS"
+            :key="member.name"
+            :name="member.name"
+            :role="member.role"
+            :figure="member.figure"
+            :phone="member.phone"
+          />
         </div>
       </div>
     </div>

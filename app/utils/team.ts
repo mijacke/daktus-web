@@ -1,8 +1,10 @@
-export const TEAM_MEMBERS = [
-  { name: 'Mário', role: 'IT špecialista a DevOps' },
-  { name: 'Viktor', role: 'Programátor' },
-  { name: 'Boris', role: 'Projektový manažér' },
-] as const
+export type TeamFigureName = 'mario' | 'viktor' | 'boris'
+
+export const TEAM_MEMBERS: readonly { name: string, role: string, figure: TeamFigureName, phone?: boolean }[] = [
+  { name: 'Mário', role: 'IT špecialista a DevOps', figure: 'mario', phone: true },
+  { name: 'Viktor', role: 'Programátor', figure: 'viktor' },
+  { name: 'Boris', role: 'Projektový manažér', figure: 'boris' },
+]
 
 export const MARIO_PHONE = {
   label: '+421 903 051 759',
